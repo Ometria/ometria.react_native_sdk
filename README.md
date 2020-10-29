@@ -11,11 +11,11 @@ npm install ometria.react-native_sdk
 ## Usage
 
 ```js
-import OmetriaReactNativeSdk from "ometria.react-native_sdk";
+import Ometria from "ometria.react-native_sdk";
 
 // ...
 
-const result = await OmetriaReactNativeSdk.multiply(3, 7);
+const result = await Ometria.multiply(3, 7);
 ```
 
 ## Contributing
