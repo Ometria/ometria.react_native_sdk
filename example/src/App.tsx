@@ -2,16 +2,28 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import OmetriaReactNativeSdk from 'ometria.react-native_sdk';
 
-export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+export default function App({
+  apiToken = 'as897da9cukjduas9',
+}: {
+  apiToken: string;
+}) {
+  const [token, setToken] = React.useState<string | undefined>();
 
   React.useEffect(() => {
-    OmetriaReactNativeSdk.multiply(3, 7).then(setResult);
-  }, []);
+    async function OmetriaInit() {
+      const response = await OmetriaReactNativeSdk.initializeWithApiToken(
+        apiToken
+      );
+      setToken(response);
+    }
+
+    OmetriaInit();
+  }, [apiToken]);
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Text>API Token:</Text>
+      <Text>{token}</Text>
     </View>
   );
 }
