@@ -1,4 +1,4 @@
-// import Ometria
+import Ometria
 
 @objc(OmetriaReactNativeSdk)
 class OmetriaReactNativeSdk: NSObject {
@@ -10,8 +10,8 @@ class OmetriaReactNativeSdk: NSObject {
 
     @objc(initializeWithApiToken:withResolver:withRejecter:)
     func initialize(apiToken: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        // let ometriaInit = Ometria.initialize(apiToken: apiToken)
-        resolve(apiToken)
+        let ometriaInit = Ometria.initialize(apiToken: apiToken)
+        resolve(ometriaInit)
     }
 
 }

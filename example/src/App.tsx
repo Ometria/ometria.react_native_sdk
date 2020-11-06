@@ -14,6 +14,7 @@ export default function App({
       const response = await OmetriaReactNativeSdk.initializeWithApiToken(
         apiToken
       );
+      console.log('response', response)
       setToken(response);
     }
 
