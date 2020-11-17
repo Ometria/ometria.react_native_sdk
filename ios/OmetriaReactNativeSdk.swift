@@ -12,49 +12,73 @@ class OmetriaReactNativeSdk: NSObject {
     func trackProfileIdentifiedEventByCustomerID(customerId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackProfileIdentifiedEventByEmail:withResolver:withRejecter:)
     func trackProfileIdentifiedEventByEmail(email: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackProductViewedEvent:withResolver:withRejecter:)
     func trackProductViewedEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackProductCategoryViewedEvent:withResolver:withRejecter:)
     func trackProductCategoryViewedEvent(category: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackWishlistAddedToEvent:withResolver:withRejecter:)
     func trackWishlistAddedToEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackWishlistRemovedFromEvent:withResolver:withRejecter:)
     func trackWishlistRemovedFromEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackBasketViewedEvent:withResolver:withRejecter:)
     func trackBasketViewedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackBasketUpdatedEvent:withResolver:withRejecter:)
     func trackBasketUpdatedEvent(basket: OmetriaBasket, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackOrderCompletedEvent:withResolver:withRejecter:)
     func trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackDeepLinkOpenedEvent:withResolver:withRejecter:)
     func trackDeepLinkOpenedEvent(link: String, screenName: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackScreenViewedEvent:withResolver:withRejecter:)
     func trackScreenViewedEvent(screenName: String, additionalInfo: [String: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
+
     @objc(trackCustomEvent:withResolver:withRejecter:)
     func trackCustomEvent(customEventType: String, additionalInfo: [String: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve()
     }
 
+    @objc(flush:withResolver:withRejecter:)
+    func flush(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        resolve()
+    }
+
+    @objc(clear:withResolver:withRejecter:)
+    func clear(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        resolve()
+    }
+    @objc(isLoggingEnabled:enabled = false)
+    func isLoggingEnabled(enabled: Bool) -> Void {
+        Ometria.isLoggingEnabled = enabled
+    }
 }
