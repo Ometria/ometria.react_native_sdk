@@ -25,8 +25,8 @@ type OmetriaReactNativeSdkType = {
   trackBasketUpdatedEvent(basket: OmetriaBasket): Promise<any>;
   trackOrderCompletedEvent(orderId: string, basket: OmetriaBasket): Promise<any>;
   trackDeepLinkOpenedEvent(link: string, screenName: string): Promise<any>;
-  trackScreenViewedEvent(screenName: string, additionalInfo: [string]): Promise<any>;
-  trackCustomEvent(customEventType: string, additionalInfo: [string]): Promise<any>;
+  trackScreenViewedEvent(screenName: string, additionalInfo: {}): Promise<any>;
+  trackCustomEvent(customEventType: string, additionalInfo: {}): Promise<any>;
   flush(): Promise<any>;
   clear(): Promise<any>;
   isLoggingEnabled: Boolean;
