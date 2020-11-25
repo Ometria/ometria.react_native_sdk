@@ -10,7 +10,7 @@ type OmetriaBasketItem = {
 type OmetriaBasket = {
   currency: string;
   totalPrice: number;
-  item: [OmetriaBasketItem];
+  items: [OmetriaBasketItem];
 }
 
 type OmetriaReactNativeSdkType = {
@@ -27,9 +27,11 @@ type OmetriaReactNativeSdkType = {
   trackDeepLinkOpenedEvent(link: string, screenName: string): Promise<any>;
   trackScreenViewedEvent(screenName: string, additionalInfo: {}): Promise<any>;
   trackCustomEvent(customEventType: string, additionalInfo: {}): Promise<any>;
+  basket(currency: string, totalPrice: number, items: [OmetriaBasketItem]): Promise<any>;
+  basketItem(productId: string, sku: string, quantity: number, price: number): Promise<any>;
   flush(): Promise<any>;
   clear(): Promise<any>;
-  isLoggingEnabled: Boolean;
+  isLoggingEnabled(enabled: Boolean): Promise<any>;
 };
 
 const { OmetriaReactNativeSdk } = NativeModules;

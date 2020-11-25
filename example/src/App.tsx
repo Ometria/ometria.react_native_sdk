@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import OmetriaReactNativeSdk from 'ometria.react-native_sdk';
 
 export default function App({
-  apiToken = 'as897da9cukjduas9',
+  apiToken = 'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP',
 }: {
   apiToken: string;
 }) {
@@ -11,89 +11,115 @@ export default function App({
 
   React.useEffect(() => {
     async function OmetriaInit() {
-      const response = await OmetriaReactNativeSdk.initializeWithApiToken(
-        apiToken
-      );
-      console.log('response', response);
-      setToken(response);
+      await OmetriaReactNativeSdk.initializeWithApiToken(apiToken);
+      setToken(apiToken);
     }
-
     OmetriaInit();
   }, [apiToken]);
 
+  const handleBasketItem = React.useCallback(async (
+    productId: string,
+    sku: string,
+    quantity: number,
+    price: number
+  ) => {
+    const basketItem = await OmetriaReactNativeSdk.basketItem(
+      productId,
+      sku,
+      quantity,
+      price
+    );
+    console.log('handleBasketItem', basketItem)
+  }, [])
+
   return (
     <View style={styles.container}>
-      <Text>API Token:</Text>
-      <Text>{token}</Text>
+      <Text>Ometria example</Text>
+
       <View>
-        <Button
-          title="Track profile identified event by customerID"
-          onPress={() => OmetriaReactNativeSdk.trackProfileIdentifiedEventByCustomerID('product0')}
-        />
-        <Button
-          title="Track profile identified event by email"
+
+        <TouchableOpacity
+          onPress={() => OmetriaReactNativeSdk.trackProfileIdentifiedEventByCustomerID('customer1')}
+        >
+          <Text>Track profile identified event by customerID</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => OmetriaReactNativeSdk.trackProfileIdentifiedEventByEmail('customer@email.com')}
-        />
-        <Button
-          title="Track product viewed event"
+        >
+          <Text>Track profile identified event by email</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={() => OmetriaReactNativeSdk.trackProductViewedEvent('product1')}
-        />
-        <Button
+        >
+          <Text>Track product viewed event</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => handleBasketItem("product-1", "sku-product-1", 1, 12.0)}
+        >
+          <Text>Track basket updated event</Text>
+        </TouchableOpacity>
+
+        {/* 
+        <TouchableOpacity
           title="Track product category viewed event"
           onPress={() => OmetriaReactNativeSdk.trackProductCategoryViewedEvent('category1')}
         />
-        <Button
+        <TouchableOpacity
           title="Track wishlist added to event"
           onPress={() => OmetriaReactNativeSdk.trackWishlistAddedToEvent('product2')}
         />
-        <Button
+        <TouchableOpacity
           title="Track wishlist removed from event"
           onPress={() => OmetriaReactNativeSdk.trackWishlistRemovedFromEvent()}
         />
-        <Button
+        <TouchableOpacity
           title="Track basket viewed event"
           onPress={() => OmetriaReactNativeSdk.trackBasketViewedEvent()}
         />
-        <Button
+        
+        <TouchableOpacity
           title="Track basket updated event"
           onPress={() => {
-            const myItem = OmetriaBasketItem({
+            const myItem = OmetriaBasketItem(
               productId: "product-1",
               sku: "sku-product-1",
               quantity: 1,
               price: 12.0
-            })
+            )
             const myItems = [myItem]
             const myBasket = OmetriaBasket({ totalPrice: 12.0, currency: "USD", items: myItems })
             OmetriaReactNativeSdk.trackBasketUpdatedEvent(myBasket)
           }}
         />
-        <Button
+        <TouchableOpacity
           title="Track order completed event"
           onPress={() => OmetriaReactNativeSdk.trackOrderCompletedEvent('order1', {})}
-        />
-        <Button
+        /> 
+        <TouchableOpacity
           title="Track deeplink opened event"
           onPress={() => OmetriaReactNativeSdk.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen')}
         />
-        <Button
+        <TouchableOpacity
           title="Track screen viewed event"
           onPress={() => OmetriaReactNativeSdk.trackScreenViewedEvent('OnboardingScreen', {})}
         />
-        <Button
+        <TouchableOpacity
           title="Track custom event"
           onPress={() => OmetriaReactNativeSdk.trackCustomEvent('customEventType', {})}
         />
-        <Button
+        <TouchableOpacity
           title="Flush events"
           onPress={() => OmetriaReactNativeSdk.flush()}
         />
-        <Button
+        <TouchableOpacity
           title="Clear events"
           onPress={() => OmetriaReactNativeSdk.clear()}
-        />
+        />*/}
       </View>
-    </View>
+    </View >
   );
 }
 
