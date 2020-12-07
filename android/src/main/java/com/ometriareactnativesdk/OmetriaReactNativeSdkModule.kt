@@ -1,13 +1,11 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
+import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
-import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.*
 
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
     override fun getName(): String {
@@ -15,13 +13,16 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     }
 
     @ReactMethod
-    fun basketItem(productId: String, sku: String, quantity: Int, price: Float, promise: Promise) {
-      return promise.resolve(OmetriaBasketItem(productId, sku, quantity, price))
+    fun basket(totalPrice: Float, currency: String) {
+      // items: ReadableArray
+      // OmetriaBasket(totalPrice, currency, items.toArrayList().toList())
+      var basket = OmetriaBasket(totalPrice, currency)
+      return Ometria.instance().trackBasketUpdatedEvent(basket)
     }
 
     @ReactMethod
-    fun basket(totalPrice: Float, currency: String, items: List<OmetriaBasketItem>, promise: Promise) {
-      return promise.resolve(OmetriaBasket(totalPrice, currency, items))
+    fun basketItem(productId: String, sku: String, quantity: Int, price: Float): OmetriaBasketItem {
+      return OmetriaBasketItem(productId, sku, quantity, price)
     }
 
     @ReactMethod
@@ -70,7 +71,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     }
 
     @ReactMethod
-    fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket, promise: Promise) {
+    fun trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket) {
       Ometria.instance().trackOrderCompletedEvent(orderId, basket)
     }
 
@@ -80,13 +81,13 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     }
 
     @ReactMethod
-    fun trackScreenViewedEvent(screenName: String, additionalInfo: Map<String, Any>) {
-      Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo)
+    fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap) {
+      Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo.toHashMap())
     }
 
     @ReactMethod
-    fun trackCustomEvent(customEventType: String, additionalInfo: Map<String, Any>) {
-      Ometria.instance().trackCustomEvent(customEventType, additionalInfo)
+    fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap) {
+      Ometria.instance().trackCustomEvent(customEventType, additionalInfo.toHashMap())
     }
 
     @ReactMethod
