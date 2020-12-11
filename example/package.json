@@ -9,6 +9,8 @@
     "start": "react-native start"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^10.1.0",
+    "@react-native-firebase/messaging": "^10.1.1",
     "react": "16.11.0",
     "react-native": "0.62.2"
   },
