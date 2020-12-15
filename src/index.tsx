@@ -11,11 +11,20 @@ type OmetriaReactNativeSdkType = {
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
   trackBasketUpdatedEvent(totalPrice: number, currency: String): () => void;
-  trackOrderCompletedEvent(orderId: String, totalPrice: number, currency: String): () => void;
+  trackOrderCompletedEvent(
+    orderId: String,
+    totalPrice: number,
+    currency: String
+  ): () => void;
   trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
   trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
   trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;
-  addBasketItem(productId: string, sku: string, quantity: number, price: number): () => void;
+  addBasketItem(
+    productId: string,
+    sku: string,
+    quantity: number,
+    price: number
+  ): () => void;
   flush(): () => void;
   clear(): () => void;
   isLoggingEnabled(enabled: Boolean): () => void;
@@ -23,6 +32,9 @@ type OmetriaReactNativeSdkType = {
   onNewToken(token: String): () => void;
 };
 
-export const { OmetriaReactNativeSdk, OmetriaReactNativeBasket } = NativeModules;
+export const {
+  OmetriaReactNativeSdk,
+  OmetriaReactNativeBasket,
+} = NativeModules;
 
 export default OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
