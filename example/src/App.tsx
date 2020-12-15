@@ -8,7 +8,8 @@ import {
   View,
   TextInput,
 } from 'react-native';
-import Ometria from 'ometria.react-native_sdk';
+// @ts-ignore
+import Ometria from 'react-native-ometria';
 import messaging from '@react-native-firebase/messaging';
 
 const EventType = {
