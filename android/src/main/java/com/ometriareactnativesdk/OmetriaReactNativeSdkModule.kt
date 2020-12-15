@@ -1,6 +1,7 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
+import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
@@ -8,6 +9,15 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
+
+private const val KEY_REMOTE_MESSAGE = "_"
+private const val KEY_COLLAPSE_KEY = "collapseKey"
+private const val KEY_DATA = "data"
+private const val KEY_MESSAGE_ID = "messageId"
+private const val KEY_MESSAGE_TYPE = "messageType"
+private const val KEY_TTL = "ttl"
 
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
