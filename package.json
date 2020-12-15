@@ -1,5 +1,5 @@
 {
-  "name": "ometria.react-native_sdk",
+  "name": "react-native-ometria",
   "version": "0.1.0",
   "description": "We help retailers create marketing experiences their customers will love",
   "main": "lib/commonjs/index",

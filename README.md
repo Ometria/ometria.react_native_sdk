@@ -1,21 +1,17 @@
-# ometria.react-native_sdk
+# react-native-ometria
 
 We help retailers create marketing experiences their customers will love
 
 ## Installation
 
 ```sh
-npm install ometria.react-native_sdk
+npm install react-native-ometria
 ```
 
 ## Usage
 
 ```js
-import Ometria from "ometria.react-native_sdk";
-
-// ...
-
-const result = await Ometria.multiply(3, 7);
+import Ometria from "react-native-ometria";
 ```
 
 ## Contributing

@@ -28,13 +28,18 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedEventByCustomerID(customerId: String) {
+  fun trackProfileIdentifiedByCustomerIdEvent(customerId: String) {
     Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId)
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedEventByEmail(email: String) {
+  fun trackProfileIdentifiedByEmailEvent(email: String) {
     Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(email)
+  }
+
+  @ReactMethod
+  fun trackProfileDeidentifiedEvent() {
+    Ometria.instance().trackProfileDeidentifiedEvent()
   }
 
   @ReactMethod
@@ -43,8 +48,8 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackProductCategoryViewedEvent(category: String) {
-    Ometria.instance().trackProductViewedEvent(category)
+  fun trackProductListingViewedEvent() {
+    Ometria.instance().trackProductListingViewedEvent()
   }
 
   @ReactMethod
