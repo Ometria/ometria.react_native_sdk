@@ -1,7 +1,6 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
-import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.event.OmetriaBasket
 import com.android.ometriasdk.core.event.OmetriaBasketItem
@@ -9,8 +8,6 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
-import com.google.firebase.messaging.RemoteMessage
-import com.google.gson.Gson
 
 private const val KEY_REMOTE_MESSAGE = "_"
 private const val KEY_COLLAPSE_KEY = "collapseKey"
@@ -38,13 +35,18 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedEventByCustomerID(customerId: String) {
+  fun trackProfileIdentifiedByCustomerIdEvent(customerId: String) {
     Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId)
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedEventByEmail(email: String) {
+  fun trackProfileIdentifiedByEmailEvent(email: String) {
     Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(email)
+  }
+
+  @ReactMethod
+  fun trackProfileDeidentifiedEvent() {
+    Ometria.instance().trackProfileDeidentifiedEvent()
   }
 
   @ReactMethod
@@ -53,8 +55,8 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackProductCategoryViewedEvent(category: String) {
-    Ometria.instance().trackProductViewedEvent(category)
+  fun trackProductListingViewedEvent() {
+    Ometria.instance().trackProductListingViewedEvent()
   }
 
   @ReactMethod
@@ -122,37 +124,13 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   @ReactMethod
   fun onMessageReceived(remoteMessage: ReadableMap) {
     val message = remoteMessageFromReadableMap(remoteMessage)
-    Log.d("remoteMessage", remoteMessage.toString())
-    Ometria.instance().onMessageReceived(message!!)
+    message.let {
+      Ometria.instance().onMessageReceived(message)
+    }
   }
 
   @ReactMethod
   fun onNewToken(token: String) {
     Ometria.instance().onNewToken(token)
-  }
-
-  fun remoteMessageFromReadableMap(readableMap: ReadableMap): RemoteMessage? {
-    val builder = RemoteMessage.Builder(KEY_REMOTE_MESSAGE)
-    if (readableMap.hasKey(KEY_TTL)) {
-      builder.setTtl(readableMap.getInt(KEY_TTL))
-    }
-    if (readableMap.hasKey(KEY_MESSAGE_ID)) {
-      builder.setMessageId(readableMap.getString(KEY_MESSAGE_ID)!!)
-    }
-    if (readableMap.hasKey(KEY_MESSAGE_TYPE)) {
-      builder.setMessageType(readableMap.getString(KEY_MESSAGE_TYPE))
-    }
-    if (readableMap.hasKey(KEY_COLLAPSE_KEY)) {
-      builder.setCollapseKey(readableMap.getString(KEY_COLLAPSE_KEY))
-    }
-    if (readableMap.hasKey(KEY_DATA)) {
-      val messageData = readableMap.getMap(KEY_DATA)
-      val iterator = messageData!!.keySetIterator()
-      while (iterator.hasNextKey()) {
-        val key = iterator.nextKey()
-        builder.addData(key, messageData.getString(key))
-      }
-    }
-    return builder.build()
   }
 }
