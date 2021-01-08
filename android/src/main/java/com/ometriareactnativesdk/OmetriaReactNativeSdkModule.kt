@@ -123,7 +123,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun onMessageReceived(remoteMessage: ReadableMap) {
-    val message = remoteMessageFromReadableMap(remoteMessage)
+    val message = remoteMessage.remoteMessageFromReadableMap()
     message.let {
       Ometria.instance().onMessageReceived(message)
     }

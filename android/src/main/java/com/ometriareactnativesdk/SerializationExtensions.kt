@@ -10,23 +10,23 @@ private const val KEY_MESSAGE_ID = "messageId"
 private const val KEY_MESSAGE_TYPE = "messageType"
 private const val KEY_TTL = "ttl"
 
-fun remoteMessageFromReadableMap(readableMap: ReadableMap): RemoteMessage {
+fun ReadableMap.remoteMessageFromReadableMap(): RemoteMessage {
   val builder = RemoteMessage.Builder(KEY_REMOTE_MESSAGE)
 
-  if (readableMap.hasKey(KEY_TTL)) {
-    builder.setTtl(readableMap.getInt(KEY_TTL))
+  if (hasKey(KEY_TTL)) {
+    builder.setTtl(getInt(KEY_TTL))
   }
-  if (readableMap.hasKey(KEY_MESSAGE_ID)) {
-    builder.setMessageId(readableMap.getString(KEY_MESSAGE_ID)!!)
+  if (hasKey(KEY_MESSAGE_ID)) {
+    builder.setMessageId(getString(KEY_MESSAGE_ID)!!)
   }
-  if (readableMap.hasKey(KEY_MESSAGE_TYPE)) {
-    builder.setMessageType(readableMap.getString(KEY_MESSAGE_TYPE))
+  if (hasKey(KEY_MESSAGE_TYPE)) {
+    builder.setMessageType(getString(KEY_MESSAGE_TYPE))
   }
-  if (readableMap.hasKey(KEY_COLLAPSE_KEY)) {
-    builder.setCollapseKey(readableMap.getString(KEY_COLLAPSE_KEY))
+  if (hasKey(KEY_COLLAPSE_KEY)) {
+    builder.setCollapseKey(getString(KEY_COLLAPSE_KEY))
   }
-  if (readableMap.hasKey(KEY_DATA)) {
-    val messageData = readableMap.getMap(KEY_DATA)
+  if (hasKey(KEY_DATA)) {
+    val messageData = getMap(KEY_DATA)
     val iterator = messageData!!.keySetIterator()
     while (iterator.hasNextKey()) {
       val key = iterator.nextKey()
