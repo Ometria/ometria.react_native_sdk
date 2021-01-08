@@ -1,11 +1,12 @@
 #import <React/RCTBridgeModule.h>
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface RCT_EXTERN_MODULE
+//@interface RCT_EXTERN_MODULE
 
-//@interface RCT_EXTERN_MODULE(OmetriaReactNativeSdk, NSObject, NSDictionary)
+@interface RCT_EXTERN_MODULE(OmetriaReactNativeSdk, NSObject)
 
-//RCT_EXTERN_METHOD(initializeWithApiToken:(NSString *)apiToken withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(initializeWithApiToken:(NSString *)apiToken withResolver:(RCTPromiseResolveBlock)resolve withRejecter:(RCTPromiseRejectBlock)reject)
 
 //RCT_EXTERN_METHOD(trackProfileIdentifiedEventByCustomerID:(NSString *)customerId
 //                 withResolver:(RCTPromiseResolveBlock)resolve
