@@ -5,9 +5,15 @@ target 'OmetriaReactNativeSdk' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   use_modular_headers!
-
-  # Pods for OmetriaReactNativeSdk
-  pod 'Ometria', :modular_headers => true
+  
+  pod 'FirebaseMessaging'
+  
+  target "Ometria" do
+    project './Frameworks/Ometria/Ometria.xcodeproj'
+    workspace './OmetriaReactNativeSDK.xcworkspace'
+    inherit! :search_paths
+    pod 'FirebaseMessaging'
+  end
 
   # Pods for React Native
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
