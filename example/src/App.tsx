@@ -7,8 +7,9 @@ import {
   ScrollView,
   View,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
-import Ometria from 'ometria.react-native_sdk';
+import Ometria from 'react-native-ometria';
 import messaging from '@react-native-firebase/messaging';
 
 const EventType = {
@@ -290,20 +291,25 @@ export default function App() {
   }, [token]);
 
   return (
-    <ScrollView renderToHardwareTextureAndroid style={styles.container}>
-      <Home onToken={async (value) => setToken(value)} />
-      {Boolean(token) && (
-        <>
-          <Text style={styles.title}>EVENTS</Text>
-          <Events />
-        </>
-      )}
-    </ScrollView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView
+        renderToHardwareTextureAndroid
+        contentContainerStyle={styles.container}
+      >
+        <Home onToken={async (value) => setToken(value)} />
+        {Boolean(token) && (
+          <>
+            <Text style={styles.title}>EVENTS</Text>
+            <Events />
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { margin: 10 },
+  container: { flex: 1, margin: 10 },
   title: { fontSize: 18, marginTop: 20, marginBottom: 10, textAlign: 'center' },
   button: {
     borderWidth: StyleSheet.hairlineWidth,

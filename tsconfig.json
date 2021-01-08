@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "ometria.react-native_sdk": ["./src/index"]
+      "react-native-ometria": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
