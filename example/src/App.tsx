@@ -71,7 +71,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
         measurementId: 'G-B0VV1142L6',
       });
     }
-  }, [apiToken])
+  }, [apiToken]);
 
   return (
     <View>

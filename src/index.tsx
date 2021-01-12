@@ -5,13 +5,13 @@ export type OmetriaBasketItem = {
   sku: string;
   quantity: number;
   price: number;
-}
+};
 
 export type OmetriaBasket = {
   currency: string;
   totalPrice: number;
   items: OmetriaBasketItem[];
-}
+};
 
 type OmetriaReactNativeSdkType = {
   initializeWithApiToken(token: string): () => void;
