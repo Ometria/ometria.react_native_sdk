@@ -1,4 +1,5 @@
 import Ometria
+import Foundation
 
 @objc(OmetriaReactNativeSdk)
 class OmetriaReactNativeSdk: NSObject {
@@ -79,10 +80,20 @@ class OmetriaReactNativeSdk: NSObject {
 
     @objc(trackBasketUpdatedEventWithTotalPrice:currency:items:resolver:rejecter:)
     func trackBasketUpdatedEvent(totalPrice: Float, currency: NSString, items: [String: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        for itemDictionary in items {
-            let item = OmetriaBasketItem(itemDictionary)
+        var items: [OmetriaBasketItem] = []
+        let decoder = JSONDecoder()
+        do {
+            for itemDictionary in items {
+                let data = try JSONSerialization.data(withJSONObject: itemDictionary, options: .fragmentsAllowed)
+                let item = try decoder.decode(OmetriaBasketItem.self, from: data)
+                items.append(item)
+            }
+        } catch {
+            reject("0", "Invalid items structure", error)
         }
-        Ometria.sharedInstance().trackBasketUpdatedEvent(basket: OmetriaBasket(totalPrice: Float, currency: String))
+        
+        let basket = OmetriaBasket(totalPrice: totalPrice, currency: currency as String, items: items)
+        Ometria.sharedInstance().trackBasketUpdatedEvent(basket: basket)
         resolve(nil)
     }
 //
