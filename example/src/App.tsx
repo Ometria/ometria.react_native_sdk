@@ -8,8 +8,10 @@ import {
   View,
   TextInput,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import Ometria from 'react-native-ometria';
+import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 
 const EventType = {
@@ -40,6 +42,22 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
   const handleInitialize = React.useCallback(async () => {
     setLoading('token');
 
+    if (Platform.OS === "ios") {
+      // Firebase init only on iOS
+      // Android is done automatically 
+      await firebase.initializeApp({
+        apiKey: 'AIzaSyBLFHD7AhLul1jU5OyrjKa_SQ_jQPYJ4bo',
+        authDomain: 'ometriasdk-internal.firebaseapp.com',
+        databaseURL: 'https://ometriasdk-internal.firebaseio.com',
+        projectId: 'ometriasdk-internal',
+        storageBucket: 'ometriasdk-internal.appspot.com',
+        messagingSenderId: '921921093359',
+        appId: '1:921921093359:web:04a08c0c35aab77ddfa51a',
+        measurementId: 'G-B0VV1142L6',
+      });
+    }
+
+    // Ometria init
     await Ometria.initializeWithApiToken(apiToken);
 
     onToken && onToken(apiToken);
@@ -57,6 +75,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
     <View>
       <View>
         <TextInput
+          style={styles.input}
           onChangeText={(value) => setApiToken(value)}
           placeholder="API TOKEN"
         />
@@ -74,6 +93,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
       {authenticated && (
         <View>
           <TextInput
+            style={styles.input}
             onChangeText={(value) => setEmail(value)}
             placeholder="Email"
           />
@@ -117,34 +137,67 @@ const Events = () => {
       Ometria.trackWishlistRemovedFromEvent('product_1');
     if (eventType === EventType.BASKET_VIEWED) Ometria.trackBasketViewedEvent();
     if (eventType === EventType.BASKET_UPDATED) {
-      const items = {
-        product1: ['product-1', 'sku-product-1', 1, 12.0],
-        product2: ['product-2', 'sku-product-2', 1, 9.0],
-        product3: ['product-3', 'sku-product-3', 1, 20.0],
-      };
+      // list of products
+      const items = [
+        {
+          productId: 'product-1',
+          sku: 'sku-product-1',
+          qty: 1,
+          price: 12.0,
+        },
+        {
+          productId: 'product-2',
+          sku: 'sku-product-2',
+          qty: 2,
+          price: 9.0,
+        },
+        {
+          productId: 'product-3',
+          sku: 'sku-product-3',
+          qty: 3,
+          price: 20.0,
+        },
+      ];
 
-      Object.values(items).map(([productId, sku, qty, price]) => {
+      // for each value add it to basket
+      items.map((product) => {
         Ometria.addBasketItem(
-          String(productId),
-          String(sku),
-          Number(qty),
-          Number(price)
+          String(product.productId),
+          String(product.sku),
+          Number(product.qty),
+          Number(product.price)
         );
       });
-      Ometria.trackBasketUpdatedEvent(12.0, 'USD');
+      Ometria.trackBasketUpdatedEvent(12.0, 'USD', items);
     }
     if (eventType === EventType.ORDER_COMPLETED) {
-      const items = {
-        product1: ['product-1', 'sku-product-1', 1, 12.0],
-        product2: ['product-2', 'sku-product-2', 1, 9.0],
-        product3: ['product-3', 'sku-product-3', 1, 20.0],
-      };
-      Object.values(items).map(([productId, sku, qty, price]) => {
+      const items = [
+        {
+          productId: 'product-1',
+          sku: 'sku-product-1',
+          qty: 1,
+          price: 12.0,
+        },
+        {
+          productId: 'product-2',
+          sku: 'sku-product-2',
+          qty: 2,
+          price: 9.0,
+        },
+        {
+          productId: 'product-3',
+          sku: 'sku-product-3',
+          qty: 3,
+          price: 20.0,
+        },
+      ];
+
+      items.map((product) => {
         Ometria.addBasketItem(
-          String(productId),
-          String(sku),
-          Number(qty),
-          Number(price)
+          String(product.productId),
+          String(product.sku),
+          Number(product.qty),
+          Number(product.price)
         );
       });
 
@@ -270,14 +323,21 @@ export default function App() {
         Ometria.onMessageReceived(remoteMessage);
       });
 
-      // Get the device token
-      messaging()
-        .getToken()
-        .then((pushToken) => Ometria.onNewToken(pushToken));
-
       // If using other push notification providers (ie Amazon SNS, etc)
       // you may need to get the APNs token instead for iOS:
-      // if(Platform.OS == 'ios') { messaging().getAPNSToken().then(token => { return saveTokenToDatabase(token); }); }
+      if (Platform.OS == 'android') {
+        // Get Android device token
+        messaging()
+          .getToken()
+          .then((pushToken) => Ometria.onNewToken(pushToken));
+      } else {
+        // Get iOS APN token
+        /*
+          messaging()
+            .getAPNSToken()
+            .then((pushToken) => Ometria.onNewToken(String(pushToken)));
+        */
+      }
 
       return () => {
         unsubscribe;
@@ -311,10 +371,16 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { flex: 1, margin: 10 },
   title: { fontSize: 18, marginTop: 20, marginBottom: 10, textAlign: 'center' },
+  input: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#CCC',
+    padding: 12,
+  },
   button: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#CCC',
     padding: 12,
+    marginVertical: 12,
     alignItems: 'center',
   },
   gray: { backgroundColor: '#CCC' },
