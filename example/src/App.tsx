@@ -42,9 +42,9 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
   const handleInitialize = React.useCallback(async () => {
     setLoading('token');
 
-    if (Platform.OS === "ios") {
+    if (Platform.OS === 'ios') {
       // Firebase init only on iOS
-      // Android is done automatically 
+      // Android is done automatically
       await firebase.initializeApp({
         apiKey: 'AIzaSyBLFHD7AhLul1jU5OyrjKa_SQ_jQPYJ4bo',
         authDomain: 'ometriasdk-internal.firebaseapp.com',
@@ -325,7 +325,7 @@ export default function App() {
 
       // If using other push notification providers (ie Amazon SNS, etc)
       // you may need to get the APNs token instead for iOS:
-      if (Platform.OS == 'android') {
+      if (Platform.OS === 'android') {
         // Get Android device token
         messaging()
           .getToken()
@@ -351,6 +351,7 @@ export default function App() {
   }, [token]);
 
   return (
+    // @ts-ignore
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
         renderToHardwareTextureAndroid
