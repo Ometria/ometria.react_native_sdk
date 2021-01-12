@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   Platform,
 } from 'react-native';
-import Ometria from 'react-native-ometria';
+import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 
@@ -42,21 +42,6 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
   const handleInitialize = React.useCallback(async () => {
     setLoading('token');
 
-    if (Platform.OS === 'ios') {
-      // Firebase init only on iOS
-      // Android is done automatically
-      await firebase.initializeApp({
-        apiKey: 'AIzaSyBLFHD7AhLul1jU5OyrjKa_SQ_jQPYJ4bo',
-        authDomain: 'ometriasdk-internal.firebaseapp.com',
-        databaseURL: 'https://ometriasdk-internal.firebaseio.com',
-        projectId: 'ometriasdk-internal',
-        storageBucket: 'ometriasdk-internal.appspot.com',
-        messagingSenderId: '921921093359',
-        appId: '1:921921093359:web:04a08c0c35aab77ddfa51a',
-        measurementId: 'G-B0VV1142L6',
-      });
-    }
-
     // Ometria init
     await Ometria.initializeWithApiToken(apiToken);
 
@@ -70,6 +55,23 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
     await Ometria.trackProfileIdentifiedByEmailEvent(email);
     setLoading('');
   }, [email]);
+
+  React.useEffect(() => {
+    if (Platform.OS === 'ios' && apiToken !== '') {
+      // Firebase init only on iOS
+      // Android is done automatically
+      firebase.initializeApp({
+        apiKey: 'AIzaSyBLFHD7AhLul1jU5OyrjKa_SQ_jQPYJ4bo',
+        authDomain: 'ometriasdk-internal.firebaseapp.com',
+        databaseURL: 'https://ometriasdk-internal.firebaseio.com',
+        projectId: 'ometriasdk-internal',
+        storageBucket: 'ometriasdk-internal.appspot.com',
+        messagingSenderId: '921921093359',
+        appId: '1:921921093359:web:04a08c0c35aab77ddfa51a',
+        measurementId: 'G-B0VV1142L6',
+      });
+    }
+  }, [apiToken])
 
   return (
     <View>
@@ -138,69 +140,30 @@ const Events = () => {
     if (eventType === EventType.BASKET_VIEWED) Ometria.trackBasketViewedEvent();
     if (eventType === EventType.BASKET_UPDATED) {
       // list of products
-      const items = [
+      const items: OmetriaBasketItem[] = [
         {
           productId: 'product-1',
           sku: 'sku-product-1',
-          qty: 1,
+          quantity: 1,
           price: 12.0,
         },
         {
           productId: 'product-2',
           sku: 'sku-product-2',
-          qty: 2,
+          quantity: 2,
           price: 9.0,
         },
         {
           productId: 'product-3',
           sku: 'sku-product-3',
-          qty: 3,
+          quantity: 3,
           price: 20.0,
         },
       ];
 
-      // for each value add it to basket
-      items.map((product) => {
-        Ometria.addBasketItem(
-          String(product.productId),
-          String(product.sku),
-          Number(product.qty),
-          Number(product.price)
-        );
-      });
       Ometria.trackBasketUpdatedEvent(12.0, 'USD', items);
     }
     if (eventType === EventType.ORDER_COMPLETED) {
-      const items = [
-        {
-          productId: 'product-1',
-          sku: 'sku-product-1',
-          qty: 1,
-          price: 12.0,
-        },
-        {
-          productId: 'product-2',
-          sku: 'sku-product-2',
-          qty: 2,
-          price: 9.0,
-        },
-        {
-          productId: 'product-3',
-          sku: 'sku-product-3',
-          qty: 3,
-          price: 20.0,
-        },
-      ];
-
-      items.map((product) => {
-        Ometria.addBasketItem(
-          String(product.productId),
-          String(product.sku),
-          Number(product.qty),
-          Number(product.price)
-        );
-      });
-
       Ometria.trackOrderCompletedEvent('order-1', 12.0, 'USD');
     }
     if (eventType === EventType.CUSTOM)
@@ -370,7 +333,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, margin: 10 },
+  container: { margin: 10 },
   title: { fontSize: 18, marginTop: 20, marginBottom: 10, textAlign: 'center' },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
