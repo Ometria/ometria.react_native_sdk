@@ -12,8 +12,6 @@ import com.facebook.react.bridge.ReadableMap
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
-  private val basketItems = mutableListOf<OmetriaBasketItem>()
-
   override fun getName(): String {
     return "OmetriaReactNativeSdk"
   }
@@ -69,19 +67,12 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun trackBasketUpdatedEvent(basket: ReadableMap) {
-    // Ometria.instance().trackBasketUpdatedEvent(OmetriaBasket(basket))
-    basketItems.clear()
+    Ometria.instance().trackBasketUpdatedEvent(basket.basketFromReadableMap())
   }
 
   @ReactMethod
-  fun addBasketItem(productId: String, sku: String, quantity: Int, price: Float) {
-    basketItems.add(OmetriaBasketItem(productId, sku, quantity, price))
-  }
-
-  @ReactMethod
-  fun trackOrderCompletedEvent(orderId: String, totalPrice: Float, currency: String) {
-    Ometria.instance().trackOrderCompletedEvent(orderId, OmetriaBasket(totalPrice, currency, basketItems))
-    basketItems.clear()
+  fun trackOrderCompletedEvent(orderId: String, basket: ReadableMap) {
+    Ometria.instance().trackOrderCompletedEvent(orderId, basket.basketFromReadableMap())
   }
 
   @ReactMethod

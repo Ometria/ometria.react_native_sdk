@@ -51,12 +51,12 @@ fun String.toOmetriaBasketItem(): OmetriaBasketItem {
     jsonObject.getString("productId"),
     jsonObject.getString("sku"),
     jsonObject.getInt("quantity"),
-    jsonObject.getDouble("totalPrice").toFloat()
+    jsonObject.getDouble("price").toFloat()
   )
 }
 
 fun ReadableMap.basketFromReadableMap(): OmetriaBasket {
-  val jsonArray = JSONArray(getString(ITEMS))
+  val jsonArray = JSONArray(getArray(ITEMS).toString())
   val basketItems = mutableListOf<OmetriaBasketItem>()
   for (i in 0 until jsonArray.length()) {
     basketItems.add(jsonArray[i].toString().toOmetriaBasketItem())

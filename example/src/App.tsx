@@ -41,15 +41,23 @@ const EventType = {
   CLEAR: 'CLEAR',
 };
 
-const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
+const Home = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = React.useState<string>('');
   const [authenticated, setAuthenticated] = React.useState(false);
   const [apiToken, setApiToken] = React.useState('');
+  const [isReady, setIsReady] = React.useState(false);
   const [email, setEmail] = React.useState('');
 
+  const requestUserPermission = React.useCallback(async () => {
+    const authorizationStatus = await messaging().requestPermission();
+    if (authorizationStatus) {
+      console.log('Permission status:', authorizationStatus);
+    }
+  }, []);
+
   React.useEffect(() => {
-    if (apiToken) {
+    if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
         Ometria.onMessageReceived(remoteMessage);
       });
@@ -62,6 +70,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
           .getToken()
           .then((pushToken) => Ometria.onNewToken(pushToken));
       } else {
+        requestUserPermission();
         // Get iOS APN token
         /*
         messaging()
@@ -79,18 +88,17 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
       };
     }
     return;
-  }, [apiToken]);
+  }, [isReady, requestUserPermission]);
 
   const handleInitialize = React.useCallback(async () => {
     setLoading('token');
 
     // Ometria init
     await Ometria.initializeWithApiToken(apiToken);
-
-    onToken && onToken(apiToken);
+    setIsReady(true);
     setAuthenticated(true);
     setLoading('');
-  }, [apiToken, onToken]);
+  }, [apiToken]);
 
   const handleLogin = React.useCallback(async () => {
     setLoading('email');
@@ -116,7 +124,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
   }, [apiToken]);
 
   return (
-    <View>
+    <View style={styles.container}>
       <View>
         <TextInput
           style={styles.input}
@@ -124,7 +132,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
           placeholder="API TOKEN"
         />
         <TouchableOpacity
-          style={[styles.button, styles.gray]}
+          style={styles.button}
           onPress={() => handleInitialize()}
         >
           {loading === 'token' ? (
@@ -141,10 +149,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
             onChangeText={(value) => setEmail(value)}
             placeholder="Email"
           />
-          <TouchableOpacity
-            style={[styles.button, styles.gray]}
-            onPress={() => handleLogin()}
-          >
+          <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
             {loading === 'email' ? (
               <ActivityIndicator />
             ) : (
@@ -152,7 +157,7 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
             )}
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, styles.gray]}
+            style={styles.button}
             onPress={() => navigation.navigate('Events')}
           >
             <Text>Go to Events</Text>
@@ -360,16 +365,17 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, marginTop: 20, marginBottom: 10, textAlign: 'center' },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#CCC',
+    borderColor: '#33323A',
     padding: 12,
   },
   button: {
-    backgroundColor: 'orange',
+    color: '#FFF',
+    borderColor: '#33323A',
+    backgroundColor: '#E53062',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#CCC',
     padding: 12,
     marginVertical: 12,
     alignItems: 'center',
   },
-  gray: { backgroundColor: '#CCC' },
+  gray: { backgroundColor: '#33323A' },
 });

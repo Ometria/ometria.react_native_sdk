@@ -28,15 +28,10 @@ type OmetriaReactNativeSdkType = {
   trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
   trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
   trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;
-  addBasketItem(
-    productId: string,
-    sku: string,
-    quantity: number,
-    price: number
-  ): () => void;
   flush(): () => void;
   clear(): () => void;
   isLoggingEnabled(enabled: Boolean): () => void;
+  // Android only
   onMessageReceived(remoteMessage: String): () => void;
   onNewToken(token: String): () => void;
 };
