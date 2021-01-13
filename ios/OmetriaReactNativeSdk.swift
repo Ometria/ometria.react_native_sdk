@@ -106,7 +106,7 @@ class OmetriaReactNativeSdk: NSObject {
     
     @objc(trackCustomEvent:additionalInfo:resolver:rejecter:)
     func trackCustomEvent(customEventType: String, additionalInfo: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().trackCustomEvent(customEventType: customEventType, additionalInfo: additionalInfo)
+        Ometria.sharedInstance().trackCustomEvent(customEventType: customEventType, additionalInfo: additionalInfo ?? [:])
         resolve(nil)
     }
     
