@@ -9,13 +9,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 
-private const val KEY_REMOTE_MESSAGE = "_"
-private const val KEY_COLLAPSE_KEY = "collapseKey"
-private const val KEY_DATA = "data"
-private const val KEY_MESSAGE_ID = "messageId"
-private const val KEY_MESSAGE_TYPE = "messageType"
-private const val KEY_TTL = "ttl"
-
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
@@ -75,8 +68,8 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackBasketUpdatedEvent(totalPrice: Float, currency: String) {
-    Ometria.instance().trackBasketUpdatedEvent(OmetriaBasket(totalPrice, currency, basketItems))
+  fun trackBasketUpdatedEvent(basket: ReadableMap) {
+    // Ometria.instance().trackBasketUpdatedEvent(OmetriaBasket(basket))
     basketItems.clear()
   }
 
