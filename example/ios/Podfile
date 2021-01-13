@@ -53,9 +53,10 @@ target 'OmetriaReactNativeSdkExample' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'ometria-react-native-sdk', :path => '../..'
+  pod 'FirebaseMessaging', :modular_headers => true
+  pod 'ometria-react-native-sdk', :path => '../..', :modular_headers => true
 
-  # use_native_modules!
+  use_native_modules!
 
   # Enables Flipper.
   #

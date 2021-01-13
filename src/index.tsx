@@ -1,5 +1,18 @@
 import { NativeModules } from 'react-native';
 
+export type OmetriaBasketItem = {
+  productId: string;
+  sku: string;
+  quantity: number;
+  price: number;
+};
+
+export type OmetriaBasket = {
+  currency: string;
+  totalPrice: number;
+  items: OmetriaBasketItem[];
+};
+
 type OmetriaReactNativeSdkType = {
   initializeWithApiToken(token: string): () => void;
   trackProfileIdentifiedByCustomerIdEvent(customerId: string): () => void;
@@ -10,7 +23,11 @@ type OmetriaReactNativeSdkType = {
   trackWishlistAddedToEvent(productId: string): () => void;
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
-  trackBasketUpdatedEvent(totalPrice: number, currency: String): () => void;
+  trackBasketUpdatedEvent(
+    totalPrice: number,
+    currency: String,
+    items: OmetriaBasketItem[]
+  ): () => void;
   trackOrderCompletedEvent(
     orderId: String,
     totalPrice: number,
