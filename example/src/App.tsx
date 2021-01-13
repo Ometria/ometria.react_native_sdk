@@ -13,6 +13,14 @@ import {
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+
+// import { createStackNavigator } from '@react-navigation/stack';
+import { enableScreens } from 'react-native-screens';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+
+enableScreens();
+const Stack = createNativeStackNavigator();
 
 const EventType = {
   SCREEN_VIEWED: 'SCREEN_VIEWED',
@@ -34,10 +42,45 @@ const EventType = {
 };
 
 const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
+  const navigation = useNavigation();
   const [loading, setLoading] = React.useState<string>('');
   const [authenticated, setAuthenticated] = React.useState(false);
   const [apiToken, setApiToken] = React.useState('');
   const [email, setEmail] = React.useState('');
+
+  React.useEffect(() => {
+    if (apiToken) {
+      const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        Ometria.onMessageReceived(remoteMessage);
+      });
+
+      // If using other push notification providers (ie Amazon SNS, etc)
+      // you may need to get the APNs token instead for iOS:
+      if (Platform.OS === 'android') {
+        // Get Android device token
+        messaging()
+          .getToken()
+          .then((pushToken) => Ometria.onNewToken(pushToken));
+      } else {
+        // Get iOS APN token
+        /*
+        messaging()
+          .getAPNSToken()
+          .then((pushToken) => Ometria.onNewToken(String(pushToken)));
+      */
+      }
+
+      return () => {
+        unsubscribe;
+        // Listen to whether the token changes
+        messaging().onTokenRefresh((pushToken) =>
+          Ometria.onNewToken(pushToken)
+        );
+      };
+    }
+    return;
+  }, [apiToken]);
+
 
   const handleInitialize = React.useCallback(async () => {
     setLoading('token');
@@ -109,6 +152,12 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
               <Text>LOGIN WITH EMAIL</Text>
             )}
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.gray]}
+            onPress={() => navigation.navigate('Events')}
+          >
+            <Text>Go to Events</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>
@@ -161,174 +210,149 @@ const Events = () => {
         },
       ];
 
-      Ometria.trackBasketUpdatedEvent(12.0, 'USD', items);
+      Ometria.trackBasketUpdatedEvent({
+        totalPrice: 12.0,
+        currency: 'USD',
+        items,
+      });
     }
     if (eventType === EventType.ORDER_COMPLETED) {
-      Ometria.trackOrderCompletedEvent('order-1', 12.0, 'USD');
+      Ometria.trackOrderCompletedEvent('order-1', {
+        totalPrice: 12.0,
+        currency: 'USD',
+        items: [],
+      });
     }
     if (eventType === EventType.CUSTOM)
-      Ometria.trackCustomEvent('my_custom_type', []);
+      Ometria.trackCustomEvent('my_custom_type', {});
     if (eventType === EventType.FLUSH) Ometria.flush();
     if (eventType === EventType.CLEAR) Ometria.clear();
   };
 
   return (
-    <View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => Ometria.isLoggingEnabled(true)}
+    <SafeAreaView>
+      <ScrollView
+        renderToHardwareTextureAndroid
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.container}
       >
-        <Text>ENABLE LOGGING</Text>
-      </TouchableOpacity>
+        <View>
+          <Text style={styles.title}>EVENTS</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => Ometria.isLoggingEnabled(true)}
+          >
+            <Text>ENABLE LOGGING</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.PROFILE_IDENTIFIED_BY_EMAIL)}
-      >
-        <Text>{EventType.PROFILE_IDENTIFIED_BY_EMAIL}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.PROFILE_IDENTIFIED_BY_EMAIL)}
+          >
+            <Text>{EventType.PROFILE_IDENTIFIED_BY_EMAIL}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID)}
-      >
-        <Text>{EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              sendEvent(EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID)
+            }
+          >
+            <Text>{EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.PROFILE_DEIDENTIFIED)}
-      >
-        <Text>{EventType.PROFILE_DEIDENTIFIED}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.PROFILE_DEIDENTIFIED)}
+          >
+            <Text>{EventType.PROFILE_DEIDENTIFIED}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.PRODUCT_VIEWED)}
-      >
-        <Text>{EventType.PRODUCT_VIEWED}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.PRODUCT_VIEWED)}
+          >
+            <Text>{EventType.PRODUCT_VIEWED}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.WISH_LIST_ADDED_TO)}
-      >
-        <Text>{EventType.WISH_LIST_ADDED_TO}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.WISHLIST_REMOVED_FROM)}
-      >
-        <Text>{EventType.WISHLIST_REMOVED_FROM}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.BASKET_VIEWED)}
-      >
-        <Text>{EventType.BASKET_VIEWED}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.WISH_LIST_ADDED_TO)}
+          >
+            <Text>{EventType.WISH_LIST_ADDED_TO}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.WISHLIST_REMOVED_FROM)}
+          >
+            <Text>{EventType.WISHLIST_REMOVED_FROM}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.BASKET_VIEWED)}
+          >
+            <Text>{EventType.BASKET_VIEWED}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.BASKET_UPDATED)}
-      >
-        <Text>{EventType.BASKET_UPDATED}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.BASKET_UPDATED)}
+          >
+            <Text>{EventType.BASKET_UPDATED}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.ORDER_COMPLETED)}
-      >
-        <Text>{EventType.ORDER_COMPLETED}</Text>
-      </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.ORDER_COMPLETED)}
+          >
+            <Text>{EventType.ORDER_COMPLETED}</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.DEEPLINK_OPENED_EVENT)}
-      >
-        <Text>{EventType.DEEPLINK_OPENED_EVENT}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.SCREEN_VIEWED)}
-      >
-        <Text>{EventType.SCREEN_VIEWED}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.CUSTOM)}
-      >
-        <Text>{EventType.CUSTOM}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.FLUSH)}
-      >
-        <Text>FLUSH EVENTS</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => sendEvent(EventType.CLEAR)}
-      >
-        <Text>CLEAR EVENTS</Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.DEEPLINK_OPENED_EVENT)}
+          >
+            <Text>{EventType.DEEPLINK_OPENED_EVENT}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.SCREEN_VIEWED)}
+          >
+            <Text>{EventType.SCREEN_VIEWED}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.CUSTOM)}
+          >
+            <Text>{EventType.CUSTOM}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.FLUSH)}
+          >
+            <Text>FLUSH EVENTS</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.CLEAR)}
+          >
+            <Text>CLEAR EVENTS</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default function App() {
   // apiToken = 'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP',
-  const [token, setToken] = React.useState<string | undefined>();
-
-  React.useEffect(() => {
-    if (token) {
-      const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        Ometria.onMessageReceived(remoteMessage);
-      });
-
-      // If using other push notification providers (ie Amazon SNS, etc)
-      // you may need to get the APNs token instead for iOS:
-      if (Platform.OS === 'android') {
-        // Get Android device token
-        messaging()
-          .getToken()
-          .then((pushToken) => Ometria.onNewToken(pushToken));
-      } else {
-        // Get iOS APN token
-        /*
-          messaging()
-            .getAPNSToken()
-            .then((pushToken) => Ometria.onNewToken(String(pushToken)));
-        */
-      }
-
-      return () => {
-        unsubscribe;
-        // Listen to whether the token changes
-        messaging().onTokenRefresh((pushToken) =>
-          Ometria.onNewToken(pushToken)
-        );
-      };
-    }
-    return;
-  }, [token]);
-
   return (
-    // @ts-ignore
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        renderToHardwareTextureAndroid
-        contentContainerStyle={styles.container}
-      >
-        <Home onToken={async (value) => setToken(value)} />
-        {Boolean(token) && (
-          <>
-            <Text style={styles.title}>EVENTS</Text>
-            <Events />
-          </>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Events" component={Events} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -341,6 +365,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   button: {
+    backgroundColor: 'orange',
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#CCC',
     padding: 12,

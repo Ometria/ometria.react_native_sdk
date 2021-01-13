@@ -23,16 +23,8 @@ type OmetriaReactNativeSdkType = {
   trackWishlistAddedToEvent(productId: string): () => void;
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
-  trackBasketUpdatedEvent(
-    totalPrice: number,
-    currency: String,
-    items: OmetriaBasketItem[]
-  ): () => void;
-  trackOrderCompletedEvent(
-    orderId: String,
-    totalPrice: number,
-    currency: String
-  ): () => void;
+  trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
+  trackOrderCompletedEvent(orderId: String, basket?: OmetriaBasket): () => void;
   trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
   trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
   trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;

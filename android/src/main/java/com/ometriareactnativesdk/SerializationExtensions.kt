@@ -1,7 +1,11 @@
 package com.ometriareactnativesdk
 
+import com.android.ometriasdk.core.event.OmetriaBasket
+import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.facebook.react.bridge.ReadableMap
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONArray
+import org.json.JSONObject
 
 private const val KEY_REMOTE_MESSAGE = "_"
 private const val KEY_COLLAPSE_KEY = "collapseKey"
@@ -9,6 +13,10 @@ private const val KEY_DATA = "data"
 private const val KEY_MESSAGE_ID = "messageId"
 private const val KEY_MESSAGE_TYPE = "messageType"
 private const val KEY_TTL = "ttl"
+
+private const val ITEMS = "items"
+private const val TOTAL_PRICE = "totalPrice"
+private const val CURRENCY = "currency"
 
 fun ReadableMap.remoteMessageFromReadableMap(): RemoteMessage {
   val builder = RemoteMessage.Builder(KEY_REMOTE_MESSAGE)
@@ -35,4 +43,24 @@ fun ReadableMap.remoteMessageFromReadableMap(): RemoteMessage {
   }
 
   return builder.build()
+}
+
+fun String.toOmetriaBasketItem(): OmetriaBasketItem {
+  val jsonObject = JSONObject(this)
+  return OmetriaBasketItem(
+    jsonObject.getString("productId"),
+    jsonObject.getString("sku"),
+    jsonObject.getInt("quantity"),
+    jsonObject.getDouble("totalPrice").toFloat()
+  )
+}
+
+fun ReadableMap.basketFromReadableMap(): OmetriaBasket {
+  val jsonArray = JSONArray(getString(ITEMS))
+  val basketItems = mutableListOf<OmetriaBasketItem>()
+  for (i in 0 until jsonArray.length()) {
+    basketItems.add(jsonArray[i].toString().toOmetriaBasketItem())
+  }
+
+  return OmetriaBasket(getDouble(TOTAL_PRICE).toFloat(), getString(CURRENCY).orEmpty(), basketItems)
 }

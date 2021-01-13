@@ -39,9 +39,7 @@ RCT_EXTERN_METHOD(trackWishlistRemovedFromEvent:(NSString *)productId
 RCT_EXTERN_METHOD(trackBasketViewedEvent:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(trackBasketUpdatedEvent:(float)totalPrice
-                  currency:(NSString *)currency
-                  items:(NSArray *)items
+RCT_EXTERN_METHOD(trackBasketUpdatedEvent:(NSDictionary *)basket
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
