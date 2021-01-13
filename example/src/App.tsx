@@ -81,7 +81,6 @@ const Home = ({ onToken }: { onToken: (token: string) => {} }) => {
     return;
   }, [apiToken]);
 
-
   const handleInitialize = React.useCallback(async () => {
     setLoading('token');
 
