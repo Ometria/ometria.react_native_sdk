@@ -161,7 +161,11 @@ const Events = () => {
         },
       ];
 
-      Ometria.trackBasketUpdatedEvent(12.0, 'USD', items);
+      Ometria.trackBasketUpdatedEvent({
+        totalPrice: 12.0,
+        currency: 'USD',
+        items,
+      });
     }
     if (eventType === EventType.ORDER_COMPLETED) {
       Ometria.trackOrderCompletedEvent('order-1', 12.0, 'USD');
