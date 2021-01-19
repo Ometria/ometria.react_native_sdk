@@ -184,8 +184,6 @@ const Home = () => {
 
 const Events = () => {
   const sendEvent = (eventType: string) => {
-    if (eventType === EventType.SCREEN_VIEWED)
-      Ometria.trackScreenViewedEvent('OnboardingScreen', { a: '1', b: '2' });
     if (eventType === EventType.DEEPLINK_OPENED_EVENT)
       Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
     if (eventType === EventType.SCREEN_VIEWED)
