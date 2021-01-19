@@ -78,4 +78,7 @@ RCT_EXTERN_METHOD(onNewToken:(NSString *)pushToken
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(onDeepLinkInteracted:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 @end

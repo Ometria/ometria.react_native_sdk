@@ -8,7 +8,7 @@ import {
   View,
   TextInput,
   SafeAreaView,
-  Platform,
+  Platform, Alert,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
 import firebase from '@react-native-firebase/app';
@@ -53,13 +53,20 @@ const Home = () => {
     const authorizationStatus = await messaging().requestPermission();
     if (authorizationStatus) {
       console.log('Permission status:', authorizationStatus);
+      messaging()
+        .getAPNSToken()
+        .then((pushToken) => console.log('pushToken', pushToken));
     }
   }, []);
 
   React.useEffect(() => {
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        Ometria.onMessageReceived(remoteMessage);
+        Alert.alert(
+          'A new FCM message arrived!',
+          JSON.stringify(remoteMessage)
+        );
+        // Ometria.onMessageReceived(remoteMessage);
       });
 
       // If using other push notification providers (ie Amazon SNS, etc)
@@ -70,21 +77,27 @@ const Home = () => {
           .getToken()
           .then((pushToken) => Ometria.onNewToken(pushToken));
       } else {
-        requestUserPermission();
+        requestUserPermission({
+          sound: true,
+          badge: true,
+          alert: true,
+        });
         // Get iOS APN token
-        /*
         messaging()
           .getAPNSToken()
-          .then((pushToken) => Ometria.onNewToken(String(pushToken)));
-      */
+          .then((pushToken) => console.log('pushToken', pushToken));
       }
 
       return () => {
         unsubscribe;
         // Listen to whether the token changes
-        messaging().onTokenRefresh((pushToken) =>
-          Ometria.onNewToken(pushToken)
-        );
+        messaging().onTokenRefresh((pushToken) => {
+          messaging()
+            .getAPNSToken()
+            .then((token) => console.log('APNS token: ', token));
+          console.log('OnTokenRefresh:', pushToken);
+          Ometria.onNewToken(pushToken);
+        });
       };
     }
     return;
@@ -95,6 +108,15 @@ const Home = () => {
 
     // Ometria init
     await Ometria.initializeWithApiToken(apiToken);
+    Ometria.onDeepLinkInteracted()
+      .then((notificationURL) => {
+        console.log('Notification URL interacted: ', notificationURL);
+      })
+      .catch((error: any) => {
+        console.warn('Error: ', error);
+      });
+
+    await Ometria.isLoggingEnabled(true);
     setIsReady(true);
     setAuthenticated(true);
     setLoading('');
