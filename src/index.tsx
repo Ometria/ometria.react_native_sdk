@@ -26,6 +26,7 @@ type OmetriaReactNativeSdkType = {
   trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
   trackOrderCompletedEvent(orderId: String, basket?: OmetriaBasket): () => void;
   trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
+  trackHomeScreenViewedEvent(): () => void;
   trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
   trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;
   flush(): () => void;
@@ -39,9 +40,6 @@ type OmetriaReactNativeSdkType = {
   onDeepLinkInteracted(): Promise<string>;
 };
 
-export const {
-  OmetriaReactNativeSdk,
-  OmetriaReactNativeBasket,
-} = NativeModules;
+export const { OmetriaReactNativeSdk } = NativeModules;
 
 export default OmetriaReactNativeSdk as OmetriaReactNativeSdkType;

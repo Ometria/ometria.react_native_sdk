@@ -54,6 +54,9 @@ RCT_EXTERN_METHOD(trackDeepLinkOpenedEvent:(NSString *)link
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(trackHomeScreenViewedEvent:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(trackScreenViewedEvent:(NSString *) screenName
                   additionalInfo: (NSDictionary *)additionalInfo
                   resolver:(RCTPromiseResolveBlock)resolve

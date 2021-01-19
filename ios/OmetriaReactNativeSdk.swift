@@ -103,6 +103,12 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         resolve(nil)
     }
     
+    @objc(trackHomeScreenViewedEvent:rejecter:)
+    func trackHomeScreenViewedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().trackHomeScreenViewedEvent()
+        resolve(nil)
+    }
+    
     @objc(trackScreenViewedEvent:additionalInfo:resolver:rejecter:)
     func trackScreenViewedEvent(screenName: String, additionalInfo: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackScreenViewedEvent(screenName: screenName, additionalInfo: additionalInfo ?? [:])
