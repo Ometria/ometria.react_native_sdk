@@ -11,7 +11,6 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
         DispatchQueue.main.async {
             let ometriaInit = Ometria.initialize(apiToken: apiToken)
-            ometriaInit.notificationInteractionDelegate = self
             resolve(ometriaInit)
         }
     }
@@ -141,9 +140,12 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     
     @objc(onDeepLinkInteracted:rejecter:)
     func onDeepLinkInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().notificationInteractionDelegate = self
         self.deeplinkInteractionResolver = resolve
         self.deeplinkInteractionRejecter = reject
     }
+    
+    // MARK: - OmetriaNotificationInteractionDelegate
     
     func handleDeepLinkInteraction(_ deepLink: URL) {
         deeplinkInteractionResolver?(deepLink.absoluteString)
