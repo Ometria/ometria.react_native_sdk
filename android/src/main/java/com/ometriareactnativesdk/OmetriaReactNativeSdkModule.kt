@@ -81,6 +81,11 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
+  fun trackHomeScreenViewedEvent() {
+    Ometria.instance().trackHomeScreenViewedEvent()
+  }
+
+  @ReactMethod
   fun trackDeepLinkOpenedEvent(link: String, screenName: String) {
     Ometria.instance().trackDeepLinkOpenedEvent(link, screenName)
   }
