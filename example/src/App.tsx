@@ -188,6 +188,8 @@ const Events = () => {
       Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
     if (eventType === EventType.SCREEN_VIEWED)
       Ometria.trackScreenViewedEvent('OnboardingScreen', { a: '1', b: '2' });
+    if (eventType === EventType.HOME_SCREEN_VIEWED)
+      Ometria.trackHomeScreenViewedEvent();
     if (eventType === EventType.PROFILE_IDENTIFIED_BY_EMAIL)
       Ometria.trackProfileIdentifiedByEmailEvent('test@gmail.com');
     if (eventType === EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID)
@@ -334,6 +336,12 @@ const Events = () => {
             onPress={() => sendEvent(EventType.SCREEN_VIEWED)}
           >
             <Text>{EventType.SCREEN_VIEWED}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.HOME_SCREEN_VIEWED)}
+          >
+            <Text>{EventType.HOME_SCREEN_VIEWED}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
