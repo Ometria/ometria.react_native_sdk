@@ -2,12 +2,18 @@ import Ometria
 import Foundation
 
 @objc(OmetriaReactNativeSdk)
-class OmetriaReactNativeSdk: NSObject {
+class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
+    
+    var deeplinkInteractionResolver: RCTPromiseResolveBlock?
+    var deeplinkInteractionRejecter: RCTPromiseRejectBlock?
     
     @objc(initializeWithApiToken:resolver:rejecter:)
-    func initialize(apiToken: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        let ometriaInit = Ometria.initialize(apiToken: apiToken)
-        resolve(ometriaInit)
+    func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
+        DispatchQueue.main.async {
+            let ometriaInit = Ometria.initialize(apiToken: apiToken)
+            ometriaInit.notificationInteractionDelegate = self
+            resolve(ometriaInit)
+        }
     }
     
     @objc(trackProfileIdentifiedByCustomerIdEvent:resolver:rejecter:)
@@ -131,5 +137,15 @@ class OmetriaReactNativeSdk: NSObject {
     @objc(onNewToken:resolver:rejecter:)
     func onNewToken(pushToken: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         resolve(nil)
+    }
+    
+    @objc(onDeepLinkInteracted:rejecter:)
+    func onDeepLinkInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        self.deeplinkInteractionResolver = resolve
+        self.deeplinkInteractionRejecter = reject
+    }
+    
+    func handleDeepLinkInteraction(_ deepLink: URL) {
+        deeplinkInteractionResolver?(deepLink.absoluteString)
     }
 }
