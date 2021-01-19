@@ -356,7 +356,7 @@ To do this, call the following method:
 Ometria.clear()
 ```
 
-6\. Push notifications guide
+6\. Push notifications guide for React-Native apps
 ----------------------------
 
 When correctly set up, Ometria can send personalised notifications for your mobile application.
@@ -375,70 +375,45 @@ Before continuing, you must have already configured:
 
 * The Ometria SDK
 * Firebase
+#### iOS
 
-Once you managed to properly create or modify your application to support push notifications, you can move on to configure everything in your AppDelegate like so:
+On iOS you have to request push notifications permissions using Firebase Messaging, e.g.:
 
-```swift
-import UserNotifications
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Ometria.initialize(apiToken: "OMETRIA_API_TOKEN")
-        FirebaseApp.configure()
-        configurePushNotifications()
-
-        return true
-    }
-
-    func configurePushNotifications() {
-        UNUserNotificationCenter.current().delegate = self
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) {
-            [weak self] (granted, error) in
-
-            print("Permission granted: \(granted)")
-            guard granted else { return }
-            self?.getNotificationSettings()
-        }
-        UIApplication.shared.registerForRemoteNotifications()
-    }
-
-    func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            print("Notification settings: \(settings)")
-            guard #available(iOS 12.0, *), settings.authorizationStatus == .provisional ||
-            settings.authorizationStatus == .authorized else {
-                return
-            }
-
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-        }
-    }
-
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("Reaching Did register for remote notifications")
-        // handle your own device token handling here
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print("Reaching Did receive notification response")
-        // handle how your app reacts to receiving a push notification while it is running in foreground
-    }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        print("Reaching Will present notification")
-        // handle how you want your notification to be presented while the app is running in foreground
-    }
-}
+```js
+import messaging from '@react-native-firebase/messaging';
+// ...
+await messaging().requestPermission({
+  sound: true,
+  badge: true,
+  alert: true,
+});
 ```
 
 The Ometria SDK will automatically source all the required tokens and provide them to the backend.
 
 This way your app will start receiving notifications from Ometria. Handling those notifications while the app is running in the foreground is up to you.
+
+#### Android
+
+On Android you have to forward the Push Notification token, e.g.:
+```js
+import messaging from '@react-native-firebase/messaging';
+// ...
+messaging().onTokenRefresh((pushToken) => {
+  Ometria.onNewToken(pushToken);
+});
+```
+
+and next you must pass the remote message to Ometria SDK, e.g.:
+
+```js
+messaging().onMessage((remoteMessage) => {
+  Ometria.onMessageReceived(remoteMessage);
+});
+```
+
+For a complete example and use case please consult the sample app.
+
 
 ### Handling interaction with notifications that contain URLs
 
@@ -448,34 +423,18 @@ By default, the Ometria SDK automatically handles any interaction with push noti
 
 However, it enables developers to handle those URLs as they see fit (e.g. take the user to a specific screen in the app).
 
-To get access to those interactions and the URLs, implement the `OmetriaNotificationInteractionDelegate`.
+There is only one method that is required to get access to these interactions, and it will be triggered every time the user taps on a notification that has a deepLink action URL.
 
-There is only one method that is required, and it will be triggered every time the user taps on a notification that has a deepLink action URL.
 This is what it would look like in code:
 
-```swift
-import UserNotifications
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate,  OmetriaNotificationInteractionDelegate {
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Ometria.initialize(apiToken: "OMETRIA_API_TOKEN")
-        Ometria.sharedInstance().notificationInteractionDelegate = self
-
-        return true
-    }
-
-    // This method will be called each time the user interacts with a notification from Ometria
-    // which contains a deepLinkURL. Write your own custom code in order to
-    // properly redirect the app to the screen that should be displayed.
-    func handleDeepLinkInteraction(_ deepLink: URL) {
-        print("url: \(deepLink)")
-    }
-}
+```js
+// Deep linking interaction from push notifications
+Ometria.onDeepLinkInteracted().then((notificationURL) => {
+  console.log('Notification URL interacted: ', notificationURL);
+});
 ```
 
-### Enabling rich content notifications
+### Enabling rich content notifications (iOS only)
 For **iOS** you have to integrate the rich content notification support directly in the Xcode project.
 
 Starting with iOS 12.0, Apple enabled regular applications to receive and display notifications that contain media content such as images.
