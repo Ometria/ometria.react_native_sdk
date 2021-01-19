@@ -8,7 +8,7 @@ import {
   View,
   TextInput,
   SafeAreaView,
-  Platform, Alert,
+  Platform,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
 import firebase from '@react-native-firebase/app';
@@ -50,7 +50,11 @@ const Home = () => {
   const [email, setEmail] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
-    const authorizationStatus = await messaging().requestPermission();
+    const authorizationStatus = await messaging().requestPermission({
+      sound: true,
+      badge: true,
+      alert: true,
+    });
     if (authorizationStatus) {
       console.log('Permission status:', authorizationStatus);
       messaging()
@@ -62,11 +66,7 @@ const Home = () => {
   React.useEffect(() => {
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        Alert.alert(
-          'A new FCM message arrived!',
-          JSON.stringify(remoteMessage)
-        );
-        // Ometria.onMessageReceived(remoteMessage);
+        Ometria.onMessageReceived(remoteMessage);
       });
 
       // If using other push notification providers (ie Amazon SNS, etc)
@@ -75,13 +75,12 @@ const Home = () => {
         // Get Android device token
         messaging()
           .getToken()
-          .then((pushToken) => Ometria.onNewToken(pushToken));
+          .then((pushToken) => {
+            console.log('pushToken', pushToken);
+            Ometria.onNewToken(pushToken);
+          });
       } else {
-        requestUserPermission({
-          sound: true,
-          badge: true,
-          alert: true,
-        });
+        requestUserPermission();
         // Get iOS APN token
         messaging()
           .getAPNSToken()
@@ -263,7 +262,6 @@ const Events = () => {
         contentContainerStyle={styles.container}
       >
         <View>
-          <Text style={styles.title}>EVENTS</Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => Ometria.isLoggingEnabled(true)}
