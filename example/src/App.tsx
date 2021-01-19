@@ -50,23 +50,20 @@ const Home = () => {
   const [email, setEmail] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
-    const authorizationStatus = await messaging().requestPermission({
+    await messaging().requestPermission({
       sound: true,
       badge: true,
       alert: true,
     });
-    if (authorizationStatus) {
-      console.log('Permission status:', authorizationStatus);
-      messaging()
-        .getAPNSToken()
-        .then((pushToken) => console.log('pushToken', pushToken));
-    }
   }, []);
 
   React.useEffect(() => {
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        Ometria.onMessageReceived(remoteMessage);
+        // only for Android
+        if (Platform.OS === 'android') {
+          Ometria.onMessageReceived(remoteMessage);
+        }
       });
 
       // If using other push notification providers (ie Amazon SNS, etc)
@@ -75,27 +72,19 @@ const Home = () => {
         // Get Android device token
         messaging()
           .getToken()
-          .then((pushToken) => {
-            console.log('pushToken', pushToken);
-            Ometria.onNewToken(pushToken);
-          });
+          .then((pushToken) => Ometria.onNewToken(pushToken));
       } else {
+        // Request permission for iOS notifications
         requestUserPermission();
-        // Get iOS APN token
-        messaging()
-          .getAPNSToken()
-          .then((pushToken) => console.log('pushToken', pushToken));
       }
 
       return () => {
         unsubscribe;
         // Listen to whether the token changes
         messaging().onTokenRefresh((pushToken) => {
-          messaging()
-            .getAPNSToken()
-            .then((token) => console.log('APNS token: ', token));
-          console.log('OnTokenRefresh:', pushToken);
-          Ometria.onNewToken(pushToken);
+          if (Platform.OS === 'android') {
+            Ometria.onNewToken(pushToken);
+          }
         });
       };
     }
@@ -107,6 +96,8 @@ const Home = () => {
 
     // Ometria init
     await Ometria.initializeWithApiToken(apiToken);
+
+    // Deep linking interaction from push notifications
     Ometria.onDeepLinkInteracted()
       .then((notificationURL) => {
         console.log('Notification URL interacted: ', notificationURL);
@@ -115,7 +106,9 @@ const Home = () => {
         console.warn('Error: ', error);
       });
 
+    // enabled Ometria logging
     await Ometria.isLoggingEnabled(true);
+
     setIsReady(true);
     setAuthenticated(true);
     setLoading('');
