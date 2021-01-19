@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
-import firebase from '@react-native-firebase/app';
+// import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
@@ -120,22 +120,22 @@ const Home = () => {
     setLoading('');
   }, [email]);
 
-  React.useEffect(() => {
-    if (Platform.OS === 'ios' && apiToken !== '') {
-      // Firebase init only on iOS
-      // Android is done automatically
-      firebase.initializeApp({
-        apiKey: 'AIzaSyBLFHD7AhLul1jU5OyrjKa_SQ_jQPYJ4bo',
-        authDomain: 'ometriasdk-internal.firebaseapp.com',
-        databaseURL: 'https://ometriasdk-internal.firebaseio.com',
-        projectId: 'ometriasdk-internal',
-        storageBucket: 'ometriasdk-internal.appspot.com',
-        messagingSenderId: '921921093359',
-        appId: '1:921921093359:web:04a08c0c35aab77ddfa51a',
-        measurementId: 'G-B0VV1142L6',
-      });
-    }
-  }, [apiToken]);
+  // React.useEffect(() => {
+  //   if (Platform.OS === 'ios' && apiToken !== '') {
+  //     // Firebase init only on iOS
+  //     // Android is done automatically
+  //     firebase.initializeApp({
+  //       apiKey: 'AIzaSyBLFHD7AhLul1jU5OyrjKa_SQ_jQPYJ4bo',
+  //       authDomain: 'ometriasdk-internal.firebaseapp.com',
+  //       databaseURL: 'https://ometriasdk-internal.firebaseio.com',
+  //       projectId: 'ometriasdk-internal',
+  //       storageBucket: 'ometriasdk-internal.appspot.com',
+  //       messagingSenderId: '921921093359',
+  //       appId: '1:921921093359:web:04a08c0c35aab77ddfa51a',
+  //       measurementId: 'G-B0VV1142L6',
+  //     });
+  //   }
+  // }, [apiToken]);
 
   return (
     <View style={styles.container}>
