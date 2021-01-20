@@ -6,6 +6,10 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     
     var deeplinkInteractionResolver: RCTPromiseResolveBlock?
     var deeplinkInteractionRejecter: RCTPromiseRejectBlock?
+
+    @objc static func requiresMainQueueSetup() -> Bool {
+        return true
+    }
     
     @objc(initializeWithApiToken:resolver:rejecter:)
     func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {

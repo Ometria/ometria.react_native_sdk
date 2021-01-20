@@ -14,7 +14,7 @@ export type OmetriaBasket = {
 };
 
 type OmetriaReactNativeSdkType = {
-  initializeWithApiToken(token: string): () => void;
+  initializeWithApiToken(token: string): Promise<void>;
   trackProfileIdentifiedByCustomerIdEvent(customerId: string): () => void;
   trackProfileIdentifiedByEmailEvent(email: string): () => void;
   trackProfileDeidentifiedEvent(): () => void;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -43,9 +42,6 @@ const EventType = {
 
 const Home = () => {
   const navigation = useNavigation();
-  const [loading, setLoading] = React.useState<string>('');
-  const [authenticated, setAuthenticated] = React.useState(false);
-  const [apiToken, setApiToken] = React.useState('');
   const [isReady, setIsReady] = React.useState(false);
   const [email, setEmail] = React.useState('');
 
@@ -54,6 +50,25 @@ const Home = () => {
       sound: true,
       badge: true,
       alert: true,
+    });
+  }, []);
+
+  React.useEffect(() => {
+    // Ometria init
+    Ometria.initializeWithApiToken('OMETRIA_API_TOKEN').then(() => {
+      setIsReady(true);
+
+      // enabled Ometria logging
+      Ometria.isLoggingEnabled(true);
+
+      // Deep linking interaction from push notifications
+      Ometria.onDeepLinkInteracted()
+        .then((notificationURL) => {
+          console.log('Notification URL interacted: ', notificationURL);
+        })
+        .catch((error: any) => {
+          console.warn('Error: ', error);
+        });
     });
   }, []);
 
@@ -75,11 +90,13 @@ const Home = () => {
           .then((pushToken) => Ometria.onNewToken(pushToken));
       } else {
         // Request permission for iOS notifications
-        requestUserPermission();
+        requestUserPermission().then((status) => {
+          console.log('Permission status: ', status);
+        });
       }
 
       return () => {
-        unsubscribe;
+        unsubscribe();
         // Listen to whether the token changes
         messaging().onTokenRefresh((pushToken) => {
           if (Platform.OS === 'android') {
@@ -91,76 +108,26 @@ const Home = () => {
     return;
   }, [isReady, requestUserPermission]);
 
-  const handleInitialize = React.useCallback(async () => {
-    setLoading('token');
-
-    // Ometria init
-    await Ometria.initializeWithApiToken(apiToken);
-
-    // Deep linking interaction from push notifications
-    Ometria.onDeepLinkInteracted()
-      .then((notificationURL) => {
-        console.log('Notification URL interacted: ', notificationURL);
-      })
-      .catch((error: any) => {
-        console.warn('Error: ', error);
-      });
-
-    // enabled Ometria logging
-    await Ometria.isLoggingEnabled(true);
-
-    setIsReady(true);
-    setAuthenticated(true);
-    setLoading('');
-  }, [apiToken]);
-
   const handleLogin = React.useCallback(async () => {
-    setLoading('email');
     await Ometria.trackProfileIdentifiedByEmailEvent(email);
-    setLoading('');
   }, [email]);
 
   return (
     <View style={styles.container}>
-      <View>
-        <TextInput
-          style={styles.input}
-          onChangeText={(value) => setApiToken(value)}
-          placeholder="API TOKEN"
-        />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => handleInitialize()}
-        >
-          {loading === 'token' ? (
-            <ActivityIndicator />
-          ) : (
-            <Text>INITIALIZE</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-      {authenticated && (
-        <View>
-          <TextInput
-            style={styles.input}
-            onChangeText={(value) => setEmail(value)}
-            placeholder="Email"
-          />
-          <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-            {loading === 'email' ? (
-              <ActivityIndicator />
-            ) : (
-              <Text>LOGIN WITH EMAIL</Text>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Events')}
-          >
-            <Text>Go to Events</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <TextInput
+        style={styles.input}
+        onChangeText={(value) => setEmail(value)}
+        placeholder="Email"
+      />
+      <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
+        <Text>LOGIN WITH EMAIL</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Events')}
+      >
+        <Text>Go to Events</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -351,7 +318,6 @@ const Events = () => {
 };
 
 export default function App() {
-  // apiToken = 'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP',
   return (
     <NavigationContainer>
       <Stack.Navigator>
