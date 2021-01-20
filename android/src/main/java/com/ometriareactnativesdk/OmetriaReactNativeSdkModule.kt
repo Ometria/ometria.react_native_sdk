@@ -76,8 +76,8 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackOrderCompletedEvent(orderId: String, basket: ReadableMap) {
-    Ometria.instance().trackOrderCompletedEvent(orderId, basket.basketFromReadableMap())
+  fun trackOrderCompletedEvent(orderId: String, basket: ReadableMap? = null) {
+    Ometria.instance().trackOrderCompletedEvent(orderId, basket?.basketFromReadableMap())
   }
 
   @ReactMethod
@@ -91,13 +91,13 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap) {
-    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo.toHashMap())
+  fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap? = null) {
+    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo?.toHashMap())
   }
 
   @ReactMethod
-  fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap) {
-    Ometria.instance().trackCustomEvent(customEventType, additionalInfo.toHashMap())
+  fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap? = null) {
+    Ometria.instance().trackCustomEvent(customEventType, additionalInfo?.toHashMap())
   }
 
   @ReactMethod
