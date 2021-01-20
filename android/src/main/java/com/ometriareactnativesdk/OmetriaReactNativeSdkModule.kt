@@ -1,10 +1,7 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
-import android.util.Log
 import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.core.event.OmetriaBasket
-import com.android.ometriasdk.core.event.OmetriaBasketItem
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -92,12 +89,12 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo?.toHashMap())
+    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo?.toHashMap() ?: mutableMapOf())
   }
 
   @ReactMethod
   fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackCustomEvent(customEventType, additionalInfo?.toHashMap())
+    Ometria.instance().trackCustomEvent(customEventType, additionalInfo?.toHashMap() ?: mutableMapOf())
   }
 
   @ReactMethod
