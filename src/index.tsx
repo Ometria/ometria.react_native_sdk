@@ -31,7 +31,7 @@ type OmetriaReactNativeSdkType = {
   trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;
   flush(): () => void;
   clear(): () => void;
-  isLoggingEnabled(enabled: Boolean): () => void;
+  isLoggingEnabled(enabled: Boolean): Promise<void>;
   // Android only
   onMessageReceived(remoteMessage: String): () => void;
   onNewToken(token: String): () => void;
