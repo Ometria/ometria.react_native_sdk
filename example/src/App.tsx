@@ -53,24 +53,27 @@ const Home = () => {
     });
   }, []);
 
-  React.useEffect(() => {
+  const handleInit = React.useCallback(async () => {
     // Ometria init
-    Ometria.initializeWithApiToken('OMETRIA_API_TOKEN').then(() => {
-      setIsReady(true);
+    await Ometria.initializeWithApiToken('OMETRIA_API_KEY');
+    setIsReady(true);
 
-      // enabled Ometria logging
-      Ometria.isLoggingEnabled(true);
+    // enabled Ometria logging
+    await Ometria.isLoggingEnabled(true);
 
-      // Deep linking interaction from push notifications
-      Ometria.onDeepLinkInteracted()
-        .then((notificationURL) => {
-          console.log('Notification URL interacted: ', notificationURL);
-        })
-        .catch((error: any) => {
-          console.warn('Error: ', error);
-        });
-    });
-  }, []);
+    // Deep linking interaction from push notifications
+    await Ometria.onDeepLinkInteracted()
+      .then((notificationURL) => {
+        console.log('Notification URL interacted: ', notificationURL);
+      })
+      .catch((error: any) => {
+        console.warn('Error: ', error);
+      });
+  }, [setIsReady]);
+
+  React.useEffect(() => {
+    handleInit();
+  });
 
   React.useEffect(() => {
     if (isReady) {
