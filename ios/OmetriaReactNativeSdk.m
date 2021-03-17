@@ -43,11 +43,14 @@ RCT_EXTERN_METHOD(trackBasketUpdatedEvent:(NSDictionary *)basket
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(trackCheckoutStartedEvent:(NSString *)orderId
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(trackOrderCompletedEvent:(NSString *)orderId
                   basket:(NSDictionary *)basket
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
-
 
 RCT_EXTERN_METHOD(trackDeepLinkOpenedEvent:(NSString *)link
                   screenName:(NSString *)screenName

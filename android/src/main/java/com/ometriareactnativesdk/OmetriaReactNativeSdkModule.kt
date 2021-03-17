@@ -73,6 +73,11 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
+  fun trackCheckoutStartedEvent(orderId: String? = null) {
+    Ometria.instance().trackCheckoutStartedEvent(orderId)
+  }
+
+  @ReactMethod
   fun trackOrderCompletedEvent(orderId: String, basket: ReadableMap? = null) {
     Ometria.instance().trackOrderCompletedEvent(orderId, basket?.basketFromReadableMap())
   }

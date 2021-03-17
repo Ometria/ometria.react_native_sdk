@@ -14,6 +14,7 @@ export type OmetriaBasket = {
 };
 
 type OmetriaReactNativeSdkType = {
+  // iOS & Android
   initializeWithApiToken(token: string): Promise<void>;
   trackProfileIdentifiedByCustomerIdEvent(customerId: string): () => void;
   trackProfileIdentifiedByEmailEvent(email: string): () => void;
@@ -24,6 +25,7 @@ type OmetriaReactNativeSdkType = {
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
   trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
+  trackCheckoutStartedEvent(orderId?: String): () => void;
   trackOrderCompletedEvent(orderId: String, basket?: OmetriaBasket): () => void;
   trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
   trackHomeScreenViewedEvent(): () => void;
@@ -32,6 +34,7 @@ type OmetriaReactNativeSdkType = {
   flush(): () => void;
   clear(): () => void;
   isLoggingEnabled(enabled: Boolean): Promise<void>;
+
   // Android only
   onMessageReceived(remoteMessage: String): () => void;
   onNewToken(token: String): () => void;

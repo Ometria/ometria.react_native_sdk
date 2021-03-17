@@ -33,6 +33,7 @@ const EventType = {
   WISHLIST_REMOVED_FROM: 'WISHLIST_REMOVED_FROM',
   BASKET_VIEWED: 'BASKET_VIEWED',
   BASKET_UPDATED: 'BASKET_UPDATED',
+  CHECKOUT_STARTED: 'CHECKOUT_STARTED',
   ORDER_COMPLETED: 'ORDER_COMPLETED',
   HOME_SCREEN_VIEWED: 'HOME_SCREEN_VIEWED',
   CUSTOM: 'CUSTOM',
@@ -119,17 +120,18 @@ const Home = () => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        onChangeText={(value) => setEmail(value)}
         placeholder="Email"
+        placeholderTextColor="#000"
+        onChangeText={(value) => setEmail(value)}
       />
       <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-        <Text>LOGIN WITH EMAIL</Text>
+        <Text style={styles.text}>LOGIN WITH EMAIL</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Events')}
       >
-        <Text>Go to Events</Text>
+        <Text style={styles.text}>Go to Events</Text>
       </TouchableOpacity>
     </View>
   );
@@ -187,6 +189,9 @@ const Events = () => {
         items,
       });
     }
+    if (eventType === EventType.CHECKOUT_STARTED) {
+      Ometria.trackCheckoutStartedEvent('orderId-1');
+    }
     if (eventType === EventType.ORDER_COMPLETED) {
       Ometria.trackOrderCompletedEvent('order-1', {
         totalPrice: 12.0,
@@ -212,14 +217,16 @@ const Events = () => {
             style={styles.button}
             onPress={() => Ometria.isLoggingEnabled(true)}
           >
-            <Text>ENABLE LOGGING</Text>
+            <Text style={styles.text}>ENABLE LOGGING</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.PROFILE_IDENTIFIED_BY_EMAIL)}
           >
-            <Text>{EventType.PROFILE_IDENTIFIED_BY_EMAIL}</Text>
+            <Text style={styles.text}>
+              {EventType.PROFILE_IDENTIFIED_BY_EMAIL}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -228,91 +235,100 @@ const Events = () => {
               sendEvent(EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID)
             }
           >
-            <Text>{EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID}</Text>
+            <Text style={styles.text}>
+              {EventType.PROFILE_IDENTIFIED_BY_CUSTOMER_ID}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.PROFILE_DEIDENTIFIED)}
           >
-            <Text>{EventType.PROFILE_DEIDENTIFIED}</Text>
+            <Text style={styles.text}>{EventType.PROFILE_DEIDENTIFIED}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.PRODUCT_VIEWED)}
           >
-            <Text>{EventType.PRODUCT_VIEWED}</Text>
+            <Text style={styles.text}>{EventType.PRODUCT_VIEWED}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.WISH_LIST_ADDED_TO)}
           >
-            <Text>{EventType.WISH_LIST_ADDED_TO}</Text>
+            <Text style={styles.text}>{EventType.WISH_LIST_ADDED_TO}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.WISHLIST_REMOVED_FROM)}
           >
-            <Text>{EventType.WISHLIST_REMOVED_FROM}</Text>
+            <Text style={styles.text}>{EventType.WISHLIST_REMOVED_FROM}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.BASKET_VIEWED)}
           >
-            <Text>{EventType.BASKET_VIEWED}</Text>
+            <Text style={styles.text}>{EventType.BASKET_VIEWED}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.BASKET_UPDATED)}
           >
-            <Text>{EventType.BASKET_UPDATED}</Text>
+            <Text style={styles.text}>{EventType.BASKET_UPDATED}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.CHECKOUT_STARTED)}
+          >
+            <Text style={styles.text}>{EventType.CHECKOUT_STARTED}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.ORDER_COMPLETED)}
           >
-            <Text>{EventType.ORDER_COMPLETED}</Text>
+            <Text style={styles.text}>{EventType.ORDER_COMPLETED}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.DEEPLINK_OPENED_EVENT)}
           >
-            <Text>{EventType.DEEPLINK_OPENED_EVENT}</Text>
+            <Text style={styles.text}>{EventType.DEEPLINK_OPENED_EVENT}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.SCREEN_VIEWED)}
           >
-            <Text>{EventType.SCREEN_VIEWED}</Text>
+            <Text style={styles.text}>{EventType.SCREEN_VIEWED}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.HOME_SCREEN_VIEWED)}
           >
-            <Text>{EventType.HOME_SCREEN_VIEWED}</Text>
+            <Text style={styles.text}>{EventType.HOME_SCREEN_VIEWED}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.CUSTOM)}
           >
-            <Text>{EventType.CUSTOM}</Text>
+            <Text style={styles.text}>{EventType.CUSTOM}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.FLUSH)}
           >
-            <Text>FLUSH EVENTS</Text>
+            <Text style={styles.text}>FLUSH EVENTS</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.CLEAR)}
           >
-            <Text>CLEAR EVENTS</Text>
+            <Text style={styles.text}>CLEAR EVENTS</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -334,19 +350,19 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { margin: 10 },
   title: { fontSize: 18, marginTop: 20, marginBottom: 10, textAlign: 'center' },
+  text: { color: '#FFF' },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#33323A',
     padding: 12,
+    color: '#000',
   },
   button: {
     color: '#FFF',
-    borderColor: '#33323A',
-    backgroundColor: '#E53062',
-    borderWidth: StyleSheet.hairlineWidth,
     padding: 12,
     marginVertical: 12,
     alignItems: 'center',
+    backgroundColor: '#323499',
   },
   gray: { backgroundColor: '#33323A' },
 });

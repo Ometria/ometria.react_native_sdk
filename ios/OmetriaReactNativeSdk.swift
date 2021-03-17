@@ -82,6 +82,13 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         }
     }
     
+    
+    @objc(trackCheckoutStartedEvent:resolver:rejecter:)
+    func trackCheckoutStartedEvent(orderId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().trackCheckoutStartedEvent(orderId: orderId)
+        resolve(nil)
+    }
+    
     @objc(trackOrderCompletedEvent:basket:resolver:rejecter:)
     func trackOrderCompletedEvent(orderId: String, basketDictionary: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         guard let basketDictionary = basketDictionary else {
