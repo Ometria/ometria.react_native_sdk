@@ -203,6 +203,14 @@ This event takes the full current basket as a parameter - not just the updated p
 
 This helps recover from lost or out of sync basket events: the latest update is always authoritative.
 
+#### Checkout started
+
+Track when the user has started the checkout process:
+
+```js
+Ometria.trackCheckoutStartedEvent('order_id');
+```
+
 #### Order completed
 
 The order has been completed and paid for:
