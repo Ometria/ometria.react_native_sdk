@@ -91,7 +91,7 @@ const Home = () => {
         // Get Android device token
         messaging()
           .getToken()
-          .then((pushToken) => Ometria.onNewToken(pushToken));
+          .then((pushToken: string) => Ometria.onNewToken(pushToken));
       } else {
         // Request permission for iOS notifications
         requestUserPermission().then((status) => {
@@ -102,7 +102,7 @@ const Home = () => {
       return () => {
         unsubscribe();
         // Listen to whether the token changes
-        messaging().onTokenRefresh((pushToken) => {
+        messaging().onTokenRefresh((pushToken: string) => {
           if (Platform.OS === 'android') {
             Ometria.onNewToken(pushToken);
           }

@@ -1,13 +1,11 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
+import android.os.Handler
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.*
+
 
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), OmetriaNotificationInteractionHandler {
@@ -18,13 +16,20 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     return "OmetriaReactNativeSdk"
   }
 
+  // Get a handler that can be used to post to the main thread
+  val mainThreadHandler = Handler(reactContext.mainLooper)
+
   @ReactMethod
   fun initializeWithApiToken(apiToken: String) {
-    Ometria.initialize(
-      reactContext.applicationContext as Application,
-      apiToken,
-      reactContext.applicationInfo.icon
-    )
+    // run on main thread
+    val runOnMainThreadTask = Runnable {
+      Ometria.initialize(
+        reactContext.applicationContext as Application,
+        apiToken,
+        reactContext.applicationInfo.icon
+      )
+    }
+    mainThreadHandler.post(runOnMainThreadTask)
   }
 
   @ReactMethod
@@ -73,7 +78,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackCheckoutStartedEvent(orderId: String? = null) {
+  fun trackCheckoutStartedEvent(orderId: String) {
     Ometria.instance().trackCheckoutStartedEvent(orderId)
   }
 
@@ -94,12 +99,14 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo?.toHashMap() ?: mutableMapOf())
+    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo?.toHashMap()
+      ?: mutableMapOf())
   }
 
   @ReactMethod
   fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackCustomEvent(customEventType, additionalInfo?.toHashMap() ?: mutableMapOf())
+    Ometria.instance().trackCustomEvent(customEventType, additionalInfo?.toHashMap()
+      ?: mutableMapOf())
   }
 
   @ReactMethod

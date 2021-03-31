@@ -38,6 +38,7 @@ type OmetriaReactNativeSdkType = {
   // Android only
   onMessageReceived(remoteMessage: String): () => void;
   onNewToken(token: String): () => void;
+  onPushTokenRefreshed(token: String): () => void;
 
   // iOS only
   onDeepLinkInteracted(): Promise<string>;
