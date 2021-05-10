@@ -39,7 +39,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun trackProfileIdentifiedByEmailEvent(email: String) {
-    Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(email)
+    Ometria.instance().trackProfileIdentifiedByEmailEvent(email)
   }
 
   @ReactMethod

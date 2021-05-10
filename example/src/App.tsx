@@ -56,20 +56,21 @@ const Home = () => {
 
   const handleInit = React.useCallback(async () => {
     // Ometria init
-    await Ometria.initializeWithApiToken('OMETRIA_API_KEY');
-    setIsReady(true);
+    Ometria.initializeWithApiToken('OMETRIA_API_KEY').then(() => {
+      setIsReady(true);
 
-    // enabled Ometria logging
-    await Ometria.isLoggingEnabled(true);
+      // enabled Ometria logging
+      Ometria.isLoggingEnabled(false);
 
-    // Deep linking interaction from push notifications
-    await Ometria.onDeepLinkInteracted()
-      .then((notificationURL) => {
-        console.log('Notification URL interacted: ', notificationURL);
-      })
-      .catch((error: any) => {
-        console.warn('Error: ', error);
-      });
+      // Deep linking interaction from push notifications
+      Ometria.onDeepLinkInteracted()
+        .then((notificationURL) => {
+          console.log('Notification URL interacted: ', notificationURL);
+        })
+        .catch((error: any) => {
+          console.warn('Error: ', error);
+        });
+    });
   }, [setIsReady]);
 
   React.useEffect(() => {
@@ -252,6 +253,13 @@ const Events = () => {
             onPress={() => sendEvent(EventType.PRODUCT_VIEWED)}
           >
             <Text style={styles.text}>{EventType.PRODUCT_VIEWED}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.PRODUCT_LISTING_VIEWED)}
+          >
+            <Text style={styles.text}>{EventType.PRODUCT_LISTING_VIEWED}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
