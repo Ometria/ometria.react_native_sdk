@@ -188,7 +188,7 @@ const Events = () => {
         totalPrice: 12.0,
         currency: 'USD',
         items,
-        link: 'www.google.com',
+        link: 'link_eg',
       });
     }
     if (eventType === EventType.CHECKOUT_STARTED) {
@@ -199,7 +199,7 @@ const Events = () => {
         totalPrice: 12.0,
         currency: 'USD',
         items: [],
-        link: 'www.google.com',
+        link: 'link_eg',
       });
     }
     if (eventType === EventType.CUSTOM)
