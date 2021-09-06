@@ -32,5 +32,7 @@
     "babel-plugin-module-resolver": "^4.1.0",
     "metro-config": "^0.65.2",
     "metro-react-native-babel-preset": "^0.65.2"
-  }
+  },
+  "main": "index.js",
+  "license": "MIT"
 }

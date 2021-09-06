@@ -11,6 +11,7 @@ export type OmetriaBasket = {
   currency: string;
   totalPrice: number;
   items: OmetriaBasketItem[];
+  link: string;
 };
 
 type OmetriaReactNativeSdkType = {

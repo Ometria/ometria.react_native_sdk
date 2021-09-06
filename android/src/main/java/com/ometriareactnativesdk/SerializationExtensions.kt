@@ -17,6 +17,7 @@ private const val KEY_TTL = "ttl"
 private const val ITEMS = "items"
 private const val TOTAL_PRICE = "totalPrice"
 private const val CURRENCY = "currency"
+private const val LINK = "link"
 
 fun ReadableMap.remoteMessageFromReadableMap(): RemoteMessage {
   val builder = RemoteMessage.Builder(KEY_REMOTE_MESSAGE)
@@ -62,5 +63,5 @@ fun ReadableMap.basketFromReadableMap(): OmetriaBasket {
     basketItems.add(jsonArray[i].toString().toOmetriaBasketItem())
   }
 
-  return OmetriaBasket(getDouble(TOTAL_PRICE).toFloat(), getString(CURRENCY).orEmpty(), basketItems)
+  return OmetriaBasket(getDouble(TOTAL_PRICE).toFloat(), getString(CURRENCY).orEmpty(), basketItems, getString(LINK).orEmpty())
 }
