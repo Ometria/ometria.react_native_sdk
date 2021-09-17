@@ -59,11 +59,8 @@ const Home = () => {
   const handleInit = React.useCallback(() => {
     // Ometria init
     try {
-      Ometria.initializeWithApiToken(
-        'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP'
-      ).then(
+      Ometria.initializeWithApiToken('OMETRIA_API_KEY').then(
         () => {
-          console.log('INITIALIZED');
           // enabled Ometria logging
           Ometria.isLoggingEnabled(false);
 
@@ -90,12 +87,10 @@ const Home = () => {
   }, [setIsReady]);
 
   React.useEffect(() => {
-    console.log('INITIALIZE');
     handleInit();
   });
 
   React.useEffect(() => {
-    console.log('Is Ready: ', isReady);
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
         // only for Android
