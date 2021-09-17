@@ -547,6 +547,44 @@ See also [Linking push notifications to app screens](https://support.ometria.com
 
 If you are dealing with normal URLs pointing to your website, you can decompose it into different path components and parameters. This will allow you to source the required information to navigate through to the correct screen in your app.
 
+In order for React-Native to identify that an url is opening the app you need to adjust AppDelegate.m file from ios folder
+add the following code to AppDelegate.m from ./ios/ProjectName
+
+```objective-c
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+  return [RCTLinkingManager application:application openURL:url
+                      sourceApplication:sourceApplication annotation:annotation];
+}
+
+// Only if your app is using [Universal Links](https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
+}
+```
+
+For Android please add the following:
+
+```xml
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+
+    <data
+        android:host="clickom.omdemo.net"
+        android:scheme="https" />
+</intent-filter>
+```
+
+to /android/app/src/main/AndroidManifest.xml
+
 However, Ometria emails contain obfuscated tracking URLs, and these need to be converted back to the original URL, pointing to your website, before you can map the URL to an app screen. To do this, the SDK provides a method called `processUniversalLink`:
 
   ```javascript
