@@ -8,6 +8,7 @@ import {
   TextInput,
   SafeAreaView,
   Platform,
+  Linking,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
 // import firebase from '@react-native-firebase/app';
@@ -39,6 +40,7 @@ const EventType = {
   CUSTOM: 'CUSTOM',
   FLUSH: 'FLUSH',
   CLEAR: 'CLEAR',
+  PROCESS_UNIVERSAL_LINK: 'PROCESS_UNIVERSAL_LINK',
 };
 
 const Home = () => {
@@ -54,30 +56,46 @@ const Home = () => {
     });
   }, []);
 
-  const handleInit = React.useCallback(async () => {
+  const handleInit = React.useCallback(() => {
     // Ometria init
-    Ometria.initializeWithApiToken('OMETRIA_API_KEY').then(() => {
-      setIsReady(true);
+    try {
+      Ometria.initializeWithApiToken(
+        'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP'
+      ).then(
+        () => {
+          console.log('INITIALIZED');
+          // enabled Ometria logging
+          Ometria.isLoggingEnabled(false);
 
-      // enabled Ometria logging
-      Ometria.isLoggingEnabled(false);
+          // Deep linking interaction from push notifications
+          Ometria.onDeepLinkInteracted()
+            .then((notificationURL) => {
+              console.log('Notification URL interacted: ', notificationURL);
+              //Open in browser
+              Linking.openURL(notificationURL);
+            })
+            .catch((error: any) => {
+              console.warn('Error: ', error);
+            });
 
-      // Deep linking interaction from push notifications
-      Ometria.onDeepLinkInteracted()
-        .then((notificationURL) => {
-          console.log('Notification URL interacted: ', notificationURL);
-        })
-        .catch((error: any) => {
-          console.warn('Error: ', error);
-        });
-    });
+          setIsReady(true);
+        },
+        (error) => {
+          throw error;
+        }
+      );
+    } catch (error) {
+      console.error('Error: ', error);
+    }
   }, [setIsReady]);
 
   React.useEffect(() => {
+    console.log('INITIALIZE');
     handleInit();
   });
 
   React.useEffect(() => {
+    console.log('Is Ready: ', isReady);
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
         // only for Android
@@ -92,7 +110,10 @@ const Home = () => {
         // Get Android device token
         messaging()
           .getToken()
-          .then((pushToken: string) => Ometria.onNewToken(pushToken));
+          .then((pushToken: string) => {
+            console.log('TOKEN: ', pushToken);
+            Ometria.onNewToken(pushToken);
+          });
       } else {
         // Request permission for iOS notifications
         requestUserPermission().then((status) => {
@@ -130,7 +151,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Events')}
+        onPress={() => navigation.navigate({ key: 'Events' })}
       >
         <Text style={styles.text}>Go to Events</Text>
       </TouchableOpacity>
@@ -206,6 +227,17 @@ const Events = () => {
       Ometria.trackCustomEvent('my_custom_type', {});
     if (eventType === EventType.FLUSH) Ometria.flush();
     if (eventType === EventType.CLEAR) Ometria.clear();
+    if (eventType === EventType.PROCESS_UNIVERSAL_LINK)
+      Ometria.processUniversalLink(
+        'https://clickom.omdemo.net/f/a/0CVMAp9OAVf-nkN8d6Np1Q~~/AAAAAQA~/RgRio1hIP0TDaHR0cHM6Ly9vbWV0cmlhLXRlc3RpbmctYXJlYS5teXNob3BpZnkuY29tL2NvbGxlY3Rpb25zL2FscGhhLW1vb3NlLz9vbV9jYW1wYWlnbj1vbXRlX2RlZmF1bHQmb21fc2VuZD1jMzI2YmFkYWIxYWQ0NDVmOWNkYWExYmM4YTAzNjIxZiZ1dG1fY2FtcGFpZ249b210ZV9kZWZhdWx0JnV0bV9tZWRpdW09ZW1haWwmdXRtX3NvdXJjZT1vbWV0cmlhVwdvbWV0cmlhQgpgvkjTwGA2PqhWUhlwZXRlci5ob3J2YXRoQG9tZXRyaWEuY29tWAQAAAEb'
+      ).then(
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   };
 
   return (
@@ -339,6 +371,12 @@ const Events = () => {
             onPress={() => sendEvent(EventType.CLEAR)}
           >
             <Text style={styles.text}>CLEAR EVENTS</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => sendEvent(EventType.PROCESS_UNIVERSAL_LINK)}
+          >
+            <Text style={styles.text}>PROCESS_UNIVERSAL_LINK</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

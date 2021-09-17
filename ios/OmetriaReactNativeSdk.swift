@@ -162,6 +162,17 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         self.deeplinkInteractionRejecter = reject
     }
     
+    @objc(processUniversalLink:resolver:rejecter:)
+    func processUniversalLink(url: URL, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().processUniversalLink(url) { (url, error) in
+            if let url = url {
+                resolve(url.absoluteString)
+            } else {
+                reject("0", "Invalid universal link", error)
+            }
+        }
+    }
+
     // MARK: - OmetriaNotificationInteractionDelegate
     
     func handleDeepLinkInteraction(_ deepLink: URL) {

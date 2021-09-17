@@ -3,6 +3,7 @@ package com.ometriareactnativesdk
 import android.app.Application
 import android.os.Handler
 import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.facebook.react.bridge.*
 
@@ -20,7 +21,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   val mainThreadHandler = Handler(reactContext.mainLooper)
 
   @ReactMethod
-  fun initializeWithApiToken(apiToken: String) {
+  fun initializeWithApiToken(apiToken: String, resolver: Promise) {
     // run on main thread
     val runOnMainThreadTask = Runnable {
       Ometria.initialize(
@@ -28,6 +29,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
         apiToken,
         reactContext.applicationInfo.icon
       )
+      resolver.resolve(null)
     }
     mainThreadHandler.post(runOnMainThreadTask)
   }
@@ -146,4 +148,17 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   override fun onDeepLinkInteraction(deepLink: String) {
     deeplinkInteractionPromise?.resolve(deepLink)
   }
+
+  @ReactMethod
+  fun processUniversalLink(url: String, resolver: Promise) {
+    Ometria.instance().processAppLink(url,object : ProcessAppLinkListener{
+      override fun onProcessFailed(error: String) {
+        resolver.reject(Throwable(error))
+      }
+      override fun onProcessResult(url: String) {
+        resolver.resolve(url)
+      }
+    })
+  }
+
 }

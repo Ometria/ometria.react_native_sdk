@@ -36,13 +36,14 @@ type OmetriaReactNativeSdkType = {
   clear(): () => void;
   isLoggingEnabled(enabled: Boolean): Promise<void>;
 
+  onDeepLinkInteracted(): Promise<string>;
+
+  processUniversalLink(url: string): Promise<string>;
+
   // Android only
   onMessageReceived(remoteMessage: String): () => void;
   onNewToken(token: String): () => void;
   onPushTokenRefreshed(token: String): () => void;
-
-  // iOS only
-  onDeepLinkInteracted(): Promise<string>;
 };
 
 export const { OmetriaReactNativeSdk } = NativeModules;
