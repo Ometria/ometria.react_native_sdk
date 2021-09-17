@@ -9,18 +9,35 @@ import {
   SafeAreaView,
   Platform,
   Linking,
+  Alert,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
 // import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-
 // import { createStackNavigator } from '@react-navigation/stack';
 import { enableScreens } from 'react-native-screens';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from 'react-native-screens/native-stack';
 
 enableScreens();
-const Stack = createNativeStackNavigator();
+
+type StackParamList = {
+  Events: undefined;
+  Home: undefined;
+};
+
+const Stack = createNativeStackNavigator<StackParamList>();
+export type EventsScreenNavigationProp = NativeStackNavigationProp<
+  StackParamList,
+  'Events'
+>;
+export type HomeScreenNavigationProp = NativeStackNavigationProp<
+  StackParamList,
+  'Home'
+>;
 
 const EventType = {
   SCREEN_VIEWED: 'SCREEN_VIEWED',
@@ -40,11 +57,10 @@ const EventType = {
   CUSTOM: 'CUSTOM',
   FLUSH: 'FLUSH',
   CLEAR: 'CLEAR',
-  PROCESS_UNIVERSAL_LINK: 'PROCESS_UNIVERSAL_LINK',
 };
 
 const Home = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<EventsScreenNavigationProp>();
   const [isReady, setIsReady] = React.useState(false);
   const [email, setEmail] = React.useState('');
 
@@ -55,6 +71,23 @@ const Home = () => {
       alert: true,
     });
   }, []);
+
+  //Handle Deeplink
+  const handleUrl = ({ url }: any) => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) {
+        Ometria.processUniversalLink(url).then(
+          (response) => {
+            Alert.alert('URL processed:', response);
+          },
+          (error) => {
+            console.log(error);
+            Alert.alert('Unable to process: ' + url);
+          }
+        );
+      }
+    });
+  };
 
   const handleInit = React.useCallback(() => {
     // Ometria init
@@ -88,6 +121,10 @@ const Home = () => {
 
   React.useEffect(() => {
     handleInit();
+    Linking.addEventListener('url', handleUrl);
+    return () => {
+      Linking.removeEventListener('url', handleUrl);
+    };
   });
 
   React.useEffect(() => {
@@ -146,7 +183,7 @@ const Home = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate({ key: 'Events' })}
+        onPress={() => navigation.navigate('Events')}
       >
         <Text style={styles.text}>Go to Events</Text>
       </TouchableOpacity>
@@ -222,17 +259,6 @@ const Events = () => {
       Ometria.trackCustomEvent('my_custom_type', {});
     if (eventType === EventType.FLUSH) Ometria.flush();
     if (eventType === EventType.CLEAR) Ometria.clear();
-    if (eventType === EventType.PROCESS_UNIVERSAL_LINK)
-      Ometria.processUniversalLink(
-        'https://clickom.omdemo.net/f/a/0CVMAp9OAVf-nkN8d6Np1Q~~/AAAAAQA~/RgRio1hIP0TDaHR0cHM6Ly9vbWV0cmlhLXRlc3RpbmctYXJlYS5teXNob3BpZnkuY29tL2NvbGxlY3Rpb25zL2FscGhhLW1vb3NlLz9vbV9jYW1wYWlnbj1vbXRlX2RlZmF1bHQmb21fc2VuZD1jMzI2YmFkYWIxYWQ0NDVmOWNkYWExYmM4YTAzNjIxZiZ1dG1fY2FtcGFpZ249b210ZV9kZWZhdWx0JnV0bV9tZWRpdW09ZW1haWwmdXRtX3NvdXJjZT1vbWV0cmlhVwdvbWV0cmlhQgpgvkjTwGA2PqhWUhlwZXRlci5ob3J2YXRoQG9tZXRyaWEuY29tWAQAAAEb'
-      ).then(
-        (response) => {
-          console.log(response);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
   };
 
   return (
@@ -366,12 +392,6 @@ const Events = () => {
             onPress={() => sendEvent(EventType.CLEAR)}
           >
             <Text style={styles.text}>CLEAR EVENTS</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => sendEvent(EventType.PROCESS_UNIVERSAL_LINK)}
-          >
-            <Text style={styles.text}>PROCESS_UNIVERSAL_LINK</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
