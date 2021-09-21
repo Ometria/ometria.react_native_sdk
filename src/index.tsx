@@ -21,7 +21,10 @@ type OmetriaReactNativeSdkType = {
   trackProfileIdentifiedByEmailEvent(email: string): () => void;
   trackProfileDeidentifiedEvent(): () => void;
   trackProductViewedEvent(productId: string): () => void;
-  trackProductListingViewedEvent(): () => void;
+  trackProductListingViewedEvent(
+    listingType: string,
+    listingAttributes: any
+  ): () => void;
   trackWishlistAddedToEvent(productId: string): () => void;
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;

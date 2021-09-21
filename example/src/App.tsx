@@ -101,6 +101,7 @@ const Home = () => {
           Ometria.onDeepLinkInteracted()
             .then((notificationURL) => {
               console.log('Notification URL interacted: ', notificationURL);
+              Ometria.trackDeepLinkOpenedEvent(notificationURL, 'Browser');
               //Open in browser
               Linking.openURL(notificationURL);
             })
@@ -208,7 +209,7 @@ const Events = () => {
     if (eventType === EventType.PRODUCT_VIEWED)
       Ometria.trackProductViewedEvent('product_1');
     if (eventType === EventType.PRODUCT_LISTING_VIEWED)
-      Ometria.trackProductListingViewedEvent();
+      Ometria.trackProductListingViewedEvent('product_list', {});
     if (eventType === EventType.WISH_LIST_ADDED_TO)
       Ometria.trackWishlistAddedToEvent('product_1');
     if (eventType === EventType.WISHLIST_REMOVED_FROM)

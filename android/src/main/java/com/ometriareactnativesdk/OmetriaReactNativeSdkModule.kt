@@ -55,8 +55,9 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackProductListingViewedEvent() {
-    Ometria.instance().trackProductListingViewedEvent()
+  fun trackProductListingViewedEvent(listingType: String? = null,
+                                     listingAttributes: ReadableMap? = null) {
+    Ometria.instance().trackProductListingViewedEvent(listingType, listingAttributes?.toHashMap().orEmpty() )
   }
 
   @ReactMethod
