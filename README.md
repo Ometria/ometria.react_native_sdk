@@ -587,7 +587,8 @@ to /android/app/src/main/AndroidManifest.xml
 
 However, Ometria emails contain obfuscated tracking URLs, and these need to be converted back to the original URL, pointing to your website, before you can map the URL to an app screen. To do this, the SDK provides a method called `processUniversalLink`:
 
-  ```javascript
-  processUniversalLink(url: string): Promise<string>```
+```javascript
+  processUniversalLink(url: string): Promise<string>
+```
 
 If you have done everything correctly, the app should now be able to open app links and allow you to handle them inside the app.
