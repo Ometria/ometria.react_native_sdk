@@ -1,11 +1,14 @@
 import Ometria
 import Foundation
+import UserNotifications
 
 @objc(OmetriaReactNativeSdk)
 class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     
     var deeplinkInteractionResolver: RCTPromiseResolveBlock?
     var deeplinkInteractionRejecter: RCTPromiseRejectBlock?
+    var notificationInteractionResolver: RCTPromiseResolveBlock?
+    var notificationInteractionRejecter: RCTPromiseRejectBlock?
 
     @objc static func requiresMainQueueSetup() -> Bool {
         return true
@@ -172,10 +175,36 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
             }
         }
     }
-
+    
+    @objc(onOmetriaNotificationInteracted:resolver:rejecter:)
+    func onOmetriaNotificationInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().notificationInteractionDelegate = self
+        self.notificationInteractionResolver = resolve
+        self.notificationInteractionRejecter = reject
+    }
+    
+    @objc(parseNotification:resolver:rejecter:)
+    func parseNotification(content: [String: Any], resolve:RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> [String: Any] {
+        let notificationContent = UNNotificationContent(content)
+        Ometria.sharedInstance().parseNotification(notificationContent)
+        resolve(nil)
+    }
+    
+    
+    
     // MARK: - OmetriaNotificationInteractionDelegate
     
     func handleDeepLinkInteraction(_ deepLink: URL) {
         deeplinkInteractionResolver?(deepLink.absoluteString)
+    }
+    
+    func handleOmetriaNotificationInteraction(_ notification: OmetriaNotification) -> Void {
+        let ometriaNotificationObject: [String: Any] = ["deepLinkActionUrl": notification.deepLinkActionUrl,
+                                                        "imageUrl": notification.imageUrl,
+                                                        "externalCustomerId": notification.externalCustomerId,
+                                                        "campaignType": notification.campaignType,
+                                                        "sendId": notification.sendId,
+                                                        "tracking": notification.tracking]
+        notificationInteractionResolver?(ometriaNotificationObject)
     }
 }

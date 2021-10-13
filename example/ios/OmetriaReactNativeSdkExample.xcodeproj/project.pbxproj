@@ -313,7 +313,7 @@
 				CODE_SIGN_ENTITLEMENTS = OmetriaReactNativeSdkExample/OmetriaReactNativeSdkExample.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = G7T599BH7B;
 				INFOPLIST_FILE = OmetriaReactNativeSdkExample/Info.plist;
@@ -348,7 +348,7 @@
 				CODE_SIGN_ENTITLEMENTS = OmetriaReactNativeSdkExample/OmetriaReactNativeSdkExample.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = G7T599BH7B;
 				INFOPLIST_FILE = OmetriaReactNativeSdkExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

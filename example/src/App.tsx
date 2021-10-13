@@ -92,7 +92,9 @@ const Home = () => {
   const handleInit = React.useCallback(() => {
     // Ometria init
     try {
-      Ometria.initializeWithApiToken('OMETRIA_API_KEY').then(
+      Ometria.initializeWithApiToken(
+        'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP'
+      ).then(
         () => {
           // enabled Ometria logging
           Ometria.isLoggingEnabled(false);
