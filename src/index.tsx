@@ -40,6 +40,7 @@ type OmetriaReactNativeSdkType = {
   isLoggingEnabled(enabled: Boolean): Promise<void>;
 
   onDeepLinkInteracted(): Promise<string>;
+  onNotificationInteracted(): Promise<any>;
 
   processUniversalLink(url: string): Promise<string>;
 

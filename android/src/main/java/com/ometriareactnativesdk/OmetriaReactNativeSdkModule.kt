@@ -2,16 +2,21 @@ package com.ometriareactnativesdk
 
 import android.app.Application
 import android.os.Handler
+import android.util.Log
 import com.android.ometriasdk.core.Ometria
+import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.facebook.react.bridge.*
+import org.json.JSONObject
+import java.lang.Error
 
 
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), OmetriaNotificationInteractionHandler {
 
   var deeplinkInteractionPromise: Promise? = null
+  var notificationInteractionPromise: Promise? = null
 
   override fun getName(): String {
     return "OmetriaReactNativeSdk"
@@ -148,6 +153,16 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   override fun onDeepLinkInteraction(deepLink: String) {
     deeplinkInteractionPromise?.resolve(deepLink)
+  }
+
+  @ReactMethod
+  fun onNotificationInteracted(resolver: Promise) {
+    notificationInteractionPromise = resolver
+    Ometria.instance().notificationInteractionHandler = this
+  }
+
+  override fun onNotificationInteraction(ometriaNotification: OmetriaNotification){
+      notificationInteractionPromise?.resolve(ometriaNotification.toJSON())
   }
 
   @ReactMethod

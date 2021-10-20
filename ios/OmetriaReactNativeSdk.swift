@@ -176,20 +176,12 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         }
     }
     
-    @objc(onOmetriaNotificationInteracted:resolver:rejecter:)
-    func onOmetriaNotificationInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(onNotificationInteracted:rejecter:)
+    func onNotificationInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().notificationInteractionDelegate = self
         self.notificationInteractionResolver = resolve
         self.notificationInteractionRejecter = reject
     }
-    
-    @objc(parseNotification:resolver:rejecter:)
-    func parseNotification(content: [String: Any], resolve:RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> [String: Any] {
-        let notificationContent = UNNotificationContent(content)
-        Ometria.sharedInstance().parseNotification(notificationContent)
-        resolve(nil)
-    }
-    
     
     
     // MARK: - OmetriaNotificationInteractionDelegate
