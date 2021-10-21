@@ -24,6 +24,14 @@ See [Setting up your mobile app with Firebase credentials](https://support.ometr
 The easiest way to get Ometria into your React-Native project is by using `npm install` or `yarn add`.
 
 1. Install Ometria React-Native package from `Ometria/ometria.react_native_sdk` using `npm install Ometria/ometria.react_native_sdk` or `yarn add react-native-ometria@Ometria/ometria.react_native_sdk`
+note: If you have issues with installing the library, please consider excluding the example from typescript config
+eg:
+```
+{
+  ...,
+  "exclude": ["example"]
+} 
+```
 2. For `iOS` you need to install Pods `pod install` to create a local CocoaPods spec mirror.
 
 4\. Initialise the library

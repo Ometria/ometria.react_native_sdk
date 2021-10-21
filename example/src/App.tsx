@@ -120,6 +120,7 @@ const Home = () => {
   React.useEffect(() => {
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        console.log("ON MESSAGE: ", remoteMessage);
         if (Platform.OS === 'android') {
           Ometria.onMessageReceived(remoteMessage);
         }
