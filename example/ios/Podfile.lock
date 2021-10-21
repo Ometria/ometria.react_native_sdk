@@ -39,7 +39,7 @@ PODS:
     - nanopb (~> 2.30908.0)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleDataTransport (9.1.0):
+  - GoogleDataTransport (9.1.2):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
@@ -524,7 +524,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: 419b5c9d84f294a753c6501d8cfb9ced1ce37304
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 5337263514dd6f09803962437687240c5dc39aa4
-  GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
+  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 8de2a97a17e15b6b98e38e8770e2d129a57c0040
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   Ometria: a1a70ecab824e5ef1ef02e7d0c02220c992d0123

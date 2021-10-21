@@ -19,11 +19,6 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import PushNotification from 'react-native-push-notification';
-// import PushNotification, {
-//   PushNotificationObject,
-// } from 'react-native-push-notification';
 
 enableScreens();
 
@@ -69,11 +64,11 @@ const Home = () => {
   const [notificationContent, setNotificationContent] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
-    // await messaging().requestPermission({
-    //   sound: true,
-    //   badge: true,
-    //   alert: true,
-    // });
+    await messaging().requestPermission({
+      sound: true,
+      badge: true,
+      alert: true,
+    });
   }, []);
 
   //Handle Deeplink
@@ -123,68 +118,39 @@ const Home = () => {
   });
 
   React.useEffect(() => {
-    // PushNotificationIOS.addEventListener('notification', onRemoteNotification);
-    // PushNotificationIOS.addEventListener('register', onRemoteNotification);
-    // PushNotificationIOS.addEventListener(
-    //   'localNotification',
-    //   onRemoteNotification
-    // );
-  });
-  // const onRemoteNotification = (notification: any) => {
-  //   const isClicked = notification.getData().userInteraction === 1;
-  //   console.log('NOTIFICATION');
-  //   if (isClicked) {
-  //     console.log(notification);
-  //     Ometria.onNotificationInteracted().then((response) => {
-  //       console.log('RESPONSE: ', response);
-  //     });
-  //   }
-  // };
-
-  React.useEffect(() => {
     if (isReady) {
-      // const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-      //   console.log('MESSAGE RECEIVED: ', remoteMessage);
-      //   if (Platform.OS === 'android') {
-      //     Ometria.onMessageReceived(remoteMessage);
-      //   }
-      //   Ometria.onNotificationInteracted()
-      //     .then((response) => {
-      //       console.log('RESPONSE: ', response);
-      //       setNotificationContent(JSON.stringify(response));
-      //       if (response.deepLinkActionUrl) {
-      //         Linking.openURL(response.deepLinkActionUrl);
-      //       }
-      //       console.log('RESPONSE: ', response);
-      //     })
-      //     .catch((error: any) => {
-      //       console.warn('Error: ', error);
-      //     });
-      // });
+      const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        if (Platform.OS === 'android') {
+          Ometria.onMessageReceived(remoteMessage);
+        }
+        Ometria.onNotificationInteracted()
+          .then((response) => {
+            setNotificationContent(JSON.stringify(response));
+            if (response.deepLinkActionUrl) {
+              Linking.openURL(response.deepLinkActionUrl);
+            }
+          })
+          .catch((error: any) => {
+            console.warn('Error: ', error);
+          });
+      });
 
       // If using other push notification providers (ie Amazon SNS, etc)
       // you may need to get the APNs token instead for iOS:
-      if (Platform.OS === 'android') {
-        // Get Android device token
-        messaging()
-          .getToken()
-          .then((pushToken: string) => {
-            console.log('TOKEN: ', pushToken);
-            Ometria.onNewToken(pushToken);
-          });
-      } else {
+      if (Platform.OS === 'ios') {
         // Request permission for iOS notifications
-        // requestUserPermission().then((status) => {
-        //   console.log('Permission status: ', status);
-        // });
-        // messaging()
-        //   .getToken()
-        //   .then((pushToken: string) => {
-        //     console.log('TOKEN:', pushToken);
-        //   });
+        requestUserPermission().then((status) => {
+          console.log('Permission status: ', status);
+        });
       }
+      messaging()
+        .getToken()
+        .then((pushToken: string) => {
+          console.log('TOKEN:', pushToken);
+        });
+
       return () => {
-        // unsubscribe();
+        unsubscribe();
         // Listen to whether the token changes
         messaging().onTokenRefresh((pushToken: string) => {
           if (Platform.OS === 'android') {
@@ -218,6 +184,7 @@ const Home = () => {
         <Text style={styles.text}>Go to Events</Text>
       </TouchableOpacity>
       <View>
+        <Text>NOTIFICATION CONTENT: </Text>
         <Text>{notificationContent}</Text>
       </View>
     </View>

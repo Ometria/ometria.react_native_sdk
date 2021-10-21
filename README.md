@@ -23,7 +23,7 @@ See [Setting up your mobile app with Firebase credentials](https://support.ometr
 
 The easiest way to get Ometria into your React-Native project is by using `npm install` or `yarn add`.
 
-1. Install Ometria React-Native package from `Ometria/ometria.react_native_sdk` using `npm install Ometria/ometria.react_native_sdk` or `yarn add Ometria/ometria.react_native_sdk`
+1. Install Ometria React-Native package from `Ometria/ometria.react_native_sdk` using `npm install Ometria/ometria.react_native_sdk` or `yarn add react-native-ometria@Ometria/ometria.react_native_sdk`
 2. For `iOS` you need to install Pods `pod install` to create a local CocoaPods spec mirror.
 
 4\. Initialise the library
@@ -437,21 +437,34 @@ For a complete example and use case please consult the sample app.
 
 ### Handling interaction with notifications that contain URLs
 
-Ometria allows you to send URLs alongside your push notifications and allows you to handle them on the device.
+Ometria allows you to send URLs and tracking info alongside your push notifications and allows you to handle them on the device.
 
 By default, the Ometria SDK automatically handles any interaction with push notifications that contain URLs by opening them in a browser.
 
 However, it enables developers to handle those URLs as they see fit (e.g. take the user to a specific screen in the app).
 
-There is only one method that is required to get access to these interactions, and it will be triggered every time the user taps on a notification that has a deepLink action URL.
+To get access to those interactions and the URLs, implement the ``` Ometria.onNotificationInteracted() ```
 
-This is what it would look like in code:
+Eg:
 
-```js
-// Deep linking interaction from push notifications
-Ometria.onDeepLinkInteracted().then((notificationURL) => {
-  console.log('Notification URL interacted: ', notificationURL);
-});
+``` js
+const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        if (Platform.OS === 'android') {
+          //For android you need to call Ometria.onMessageReceived when you get the notification from firebase
+          Ometria.onMessageReceived(remoteMessage);
+        }
+        Ometria.onNotificationInteracted()
+          .then((response) => {
+            //Handle ometria notification response
+            // eg: 
+            if (response.deepLinkActionUrl) {
+              Linking.openURL(response.deepLinkActionUrl);
+            }
+          })
+          .catch((error: any) => {
+            console.warn('Error: ', error);
+          });
+      });
 ```
 
 ### Enabling rich content notifications (iOS only)
