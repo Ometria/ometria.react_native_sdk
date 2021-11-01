@@ -128,6 +128,10 @@ const Home = () => {
           .then((response) => {
             setNotificationContent(JSON.stringify(response));
             if (response.deepLinkActionUrl) {
+              Ometria.trackDeepLinkOpenedEvent(
+                response.deepLinkActionUrl,
+                'Browser'
+              );
               Linking.openURL(response.deepLinkActionUrl);
             }
           })

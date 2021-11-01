@@ -453,6 +453,25 @@ However, it enables developers to handle those URLs as they see fit (e.g. take t
 
 To get access to those interactions and the URLs, implement the ``` Ometria.onNotificationInteracted() ```
 
+The response structure object example:
+{
+  "imageUrl": "https://...imageURL.png",
+  "deepLinkActionUrl": "https://...website",
+  "ext_customer_id": "123Test",
+  "context": {
+    "account_id": 352,
+    "om_customer_id": 1,
+    "send_id": "61dae09c4fc04640aa4f92bc769112e5",
+    "ts": "01/11/2021 - 09:57:20",
+    "campaign_type": "trigger",
+    "tracking": {
+      "addtional_tracking_data": "value 1",
+      "utm_source": "source 1"
+      ...
+    }
+  }
+}
+
 Eg:
 
 ``` js
