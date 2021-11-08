@@ -36,7 +36,8 @@ eg:
 2. For `iOS` you need to install Pods `pod install` to create a local CocoaPods spec mirror.
 
 3. If you encounter ```The Swift pod 'Ometria' depends upon 'FirebaseMessaging'``` error when running pod install, please consider adding ```use_frameworks! :linkage => :static```.
-4\. Initialise the library
+
+4. Initialise the library
 --------------------------
 
 To initialise Ometria, you need to enter the API key from **2. Before you begin**.
