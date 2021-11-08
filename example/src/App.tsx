@@ -57,6 +57,11 @@ const EventType = {
   CLEAR: 'CLEAR',
 };
 
+// Register background handler
+messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  console.log('Message handled in the background!', remoteMessage);
+});
+
 const Home = () => {
   const navigation = useNavigation<EventsScreenNavigationProp>();
   const [isReady, setIsReady] = React.useState(false);
@@ -91,9 +96,7 @@ const Home = () => {
   const handleInit = React.useCallback(() => {
     // Ometria init
     try {
-      Ometria.initializeWithApiToken(
-        'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP'
-      ).then(
+      Ometria.initializeWithApiToken('API_KEY').then(
         () => {
           // enabled Ometria logging
           Ometria.isLoggingEnabled(true);
@@ -120,7 +123,6 @@ const Home = () => {
   React.useEffect(() => {
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        console.log("ON MESSAGE: ", remoteMessage);
         if (Platform.OS === 'android') {
           Ometria.onMessageReceived(remoteMessage);
         }
