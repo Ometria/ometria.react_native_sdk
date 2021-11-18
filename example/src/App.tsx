@@ -19,6 +19,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 enableScreens();
 
@@ -68,6 +69,9 @@ const Home = () => {
   const [email, setEmail] = React.useState('');
   const [notificationContent, setNotificationContent] = React.useState('');
 
+  const [ometriaToken, setOmetriaToken] = React.useState('YOUR OMETRIA TOKEN');
+  const [customerId, setCustomerId] = React.useState('');
+
   const requestUserPermission = React.useCallback(async () => {
     await messaging().requestPermission({
       sound: true,
@@ -93,11 +97,20 @@ const Home = () => {
     });
   };
 
-  const handleInit = React.useCallback(() => {
+  const handleInit = React.useCallback(async () => {
+    //GET API TOKEN
+    const apiToken = await AsyncStorage.getItem('token');
+    if (apiToken !== null) {
+      setOmetriaToken(apiToken);
+    }
+    console.log('OMETRIA API TOKEN: ', apiToken);
     // Ometria init
     try {
-      Ometria.initializeWithApiToken('API_KEY').then(
+      Ometria.initializeWithApiToken(
+        apiToken ? apiToken : 'YOUR API TOKEN'
+      ).then(
         () => {
+          console.log('OMETRIA INITIALIZED');
           // enabled Ometria logging
           Ometria.isLoggingEnabled(true);
 
@@ -113,12 +126,15 @@ const Home = () => {
   }, [setIsReady]);
 
   React.useEffect(() => {
-    handleInit();
     Linking.addEventListener('url', handleUrl);
     return () => {
       Linking.removeEventListener('url', handleUrl);
     };
   });
+
+  React.useEffect(() => {
+    handleInit();
+  }, []);
 
   React.useEffect(() => {
     if (isReady) {
@@ -173,17 +189,59 @@ const Home = () => {
     await Ometria.trackProfileIdentifiedByEmailEvent(email);
   }, [email]);
 
+  const handleLoginCustomerId = React.useCallback(async () => {
+    await Ometria.trackProfileIdentifiedByCustomerIdEvent(customerId);
+  }, [customerId]);
+
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#000"
-        onChangeText={(value) => setEmail(value)}
-      />
-      <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-        <Text style={styles.text}>LOGIN WITH EMAIL</Text>
-      </TouchableOpacity>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Ometria API TOKEN"
+          placeholderTextColor="#000"
+          value={ometriaToken}
+          onChangeText={(text) => {
+            setOmetriaToken(text);
+          }}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            AsyncStorage.setItem('token', ometriaToken);
+            handleInit();
+          }}
+        >
+          <Text style={styles.text}>SAVE TOKEN</Text>
+        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          value={customerId}
+          placeholder="Customer Id"
+          placeholderTextColor="#000"
+          onChangeText={(text) => {
+            setCustomerId(text);
+          }}
+        />
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            handleLoginCustomerId();
+          }}
+        >
+          <Text style={styles.text}>LOGIN WITH CUSTOMER ID</Text>
+        </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#000"
+          onChangeText={(value) => setEmail(value)}
+        />
+        <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
+          <Text style={styles.text}>LOGIN WITH EMAIL</Text>
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Events')}

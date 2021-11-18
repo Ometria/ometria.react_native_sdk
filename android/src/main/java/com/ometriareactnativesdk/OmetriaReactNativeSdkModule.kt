@@ -32,7 +32,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
       Ometria.initialize(
         reactContext.applicationContext as Application,
         apiToken,
-        reactContext.applicationInfo.icon
+        reactContext.applicationInfo.icon,
       )
       resolver.resolve(null)
     }
