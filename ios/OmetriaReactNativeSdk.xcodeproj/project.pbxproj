@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6B18304D2767580A00292EC5 /* OmetriaStorageKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B18304C2767580A00292EC5 /* OmetriaStorageKeys.swift */; };
 		C214260A22E8F678B0DCFAFB /* Pods_OmetriaReactNativeSdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20E21402D1C130C699EF4BE5 /* Pods_OmetriaReactNativeSdk.framework */; };
 		F4FF95D7245B92E800C19C63 /* OmetriaReactNativeSdk.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* OmetriaReactNativeSdk.swift */; };
 /* End PBXBuildFile section */
@@ -28,6 +29,7 @@
 		20E21402D1C130C699EF4BE5 /* Pods_OmetriaReactNativeSdk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OmetriaReactNativeSdk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2331BE6A65170C434B8A126F /* Pods-OmetriaReactNativeSdk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmetriaReactNativeSdk.release.xcconfig"; path = "Target Support Files/Pods-OmetriaReactNativeSdk/Pods-OmetriaReactNativeSdk.release.xcconfig"; sourceTree = "<group>"; };
 		3D1C9D08057635A079CD344A /* Pods-OmetriaReactNativeSdk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OmetriaReactNativeSdk.debug.xcconfig"; path = "Target Support Files/Pods-OmetriaReactNativeSdk/Pods-OmetriaReactNativeSdk.debug.xcconfig"; sourceTree = "<group>"; };
+		6B18304C2767580A00292EC5 /* OmetriaStorageKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmetriaStorageKeys.swift; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* OmetriaReactNativeSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OmetriaReactNativeSdk.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* OmetriaReactNativeSdk-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OmetriaReactNativeSdk-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* OmetriaReactNativeSdk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OmetriaReactNativeSdk.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				6B18304C2767580A00292EC5 /* OmetriaStorageKeys.swift */,
 				F4FF95D6245B92E800C19C63 /* OmetriaReactNativeSdk.swift */,
 				B3E7B5891CC2AC0600A0062D /* OmetriaReactNativeSdk.m */,
 				F4FF95D5245B92E700C19C63 /* OmetriaReactNativeSdk-Bridging-Header.h */,
@@ -166,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4FF95D7245B92E800C19C63 /* OmetriaReactNativeSdk.swift in Sources */,
+				6B18304D2767580A00292EC5 /* OmetriaStorageKeys.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

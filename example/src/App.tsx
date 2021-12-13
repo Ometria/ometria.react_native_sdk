@@ -10,9 +10,10 @@ import {
   Platform,
   Linking,
   Alert,
+  Modal,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
-import messaging from '@react-native-firebase/messaging';
+import messaging, { firebase } from '@react-native-firebase/messaging';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { enableScreens } from 'react-native-screens';
 import {
@@ -69,7 +70,7 @@ const Home = () => {
   const [email, setEmail] = React.useState('');
   const [notificationContent, setNotificationContent] = React.useState('');
 
-  const [ometriaToken, setOmetriaToken] = React.useState('YOUR OMETRIA TOKEN');
+  const [ometriaToken, setOmetriaToken] = React.useState('pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP');
   const [customerId, setCustomerId] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
@@ -98,20 +99,19 @@ const Home = () => {
   };
 
   const handleInit = React.useCallback(async () => {
-    //GET API TOKEN
-    const apiToken = await AsyncStorage.getItem('token');
-    if (apiToken !== null) {
-      setOmetriaToken(apiToken);
-    }
-    console.log('OMETRIA API TOKEN: ', apiToken);
-    // Ometria init
     try {
-      Ometria.initializeWithApiToken(
-        apiToken ? apiToken : 'YOUR API TOKEN'
-      ).then(
+      console.log(ometriaToken);
+      Ometria.initializeWithApiToken(ometriaToken).then(
         () => {
           console.log('OMETRIA INITIALIZED');
+          setModalVisible(false);
           // enabled Ometria logging
+          // firebase.initializeApp({appId: });
+          messaging()
+            .getToken()
+            .then((pushToken: string) => {
+              console.log('TOKEN:', pushToken);
+            });
           Ometria.isLoggingEnabled(true);
 
           setIsReady(true);
@@ -139,6 +139,7 @@ const Home = () => {
   React.useEffect(() => {
     if (isReady) {
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        console.log('On message received');
         if (Platform.OS === 'android') {
           Ometria.onMessageReceived(remoteMessage);
         }
@@ -166,11 +167,6 @@ const Home = () => {
           console.log('Permission status: ', status);
         });
       }
-      messaging()
-        .getToken()
-        .then((pushToken: string) => {
-          console.log('TOKEN:', pushToken);
-        });
 
       return () => {
         unsubscribe();
@@ -193,55 +189,72 @@ const Home = () => {
     await Ometria.trackProfileIdentifiedByCustomerIdEvent(customerId);
   }, [customerId]);
 
+  const [modalVisible, setModalVisible] = React.useState(true);
+
   return (
     <View style={styles.container}>
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Ometria API TOKEN"
-          placeholderTextColor="#000"
-          value={ometriaToken}
-          onChangeText={(text) => {
-            setOmetriaToken(text);
-          }}
-        />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            AsyncStorage.setItem('token', ometriaToken);
-            handleInit();
-          }}
-        >
-          <Text style={styles.text}>SAVE TOKEN</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          value={customerId}
-          placeholder="Customer Id"
-          placeholderTextColor="#000"
-          onChangeText={(text) => {
-            setCustomerId(text);
-          }}
-        />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            handleLoginCustomerId();
-          }}
-        >
-          <Text style={styles.text}>LOGIN WITH CUSTOMER ID</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#000"
-          onChangeText={(value) => setEmail(value)}
-        />
-        <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-          <Text style={styles.text}>LOGIN WITH EMAIL</Text>
-        </TouchableOpacity>
-      </View>
-
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <SafeAreaView style={[styles.container, { backgroundColor: '#fff' }]}>
+          <TextInput
+            style={[styles.input, { marginTop: 30 }]}
+            placeholder="Ometria API TOKEN"
+            placeholderTextColor="#000"
+            value={ometriaToken}
+            onChangeText={(text) => {
+              setOmetriaToken(text);
+            }}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              AsyncStorage.setItem('token', ometriaToken);
+              handleInit();
+            }}
+          >
+            <Text style={styles.text}>SAVE TOKEN</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            value={customerId}
+            placeholder="Customer Id"
+            placeholderTextColor="#000"
+            onChangeText={(text) => {
+              setCustomerId(text);
+            }}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              handleLoginCustomerId();
+            }}
+          >
+            <Text style={styles.text}>LOGIN WITH CUSTOMER ID</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#000"
+            onChangeText={(value) => setEmail(value)}
+          />
+          <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
+            <Text style={styles.text}>LOGIN WITH EMAIL</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </Modal>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.text}>Change Login info</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Events')}

@@ -54,7 +54,9 @@ repositories {
   mavenCentral()
   jcenter()
   google()
-
+  flatDir {
+    dirs 'libs'
+  }
   def found = false
   def defaultDir = null
   def androidSourcesName = 'React Native sources'
@@ -124,8 +126,14 @@ repositories {
 def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
+  implementation fileTree(dir: "libs", include: ["*.aar"])
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.ometria:android-sdk:1.2.1'
+//  implementation 'com.ometria:android-sdk:1.2.1'
+  implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
+  implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
+  implementation 'com.google.firebase:firebase-messaging:23.0.0'
+//  implementation 'com.android.ometriasdk:OmetriaSDK-debug:@aar'
+  debugImplementation files('libs/OmetriaSDK-debug.aar')
 }
