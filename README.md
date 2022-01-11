@@ -569,6 +569,11 @@ Ometria sends personalised emails with URLs that point back to your website. In 
 First, make sure you have an SSL-enabled Ometria tracking domain set up for your account. You may already have this for
 your email campaigns, but if not ask your Ometria contact to set one up, and they should provide you with the domain.
 
+### Enable the Associated Domains entitlement for your application
+
+Please follow the [ios documentation for associated domains](https://github.com/Ometria/ometria.ios_sdk/blob/master/README.md#enable-the-associated-domains-entitlement-for-your-application),
+then [create an apple-app-site-association file and send it to your Ometria contact](https://github.com/Ometria/ometria.ios_sdk/blob/master/README.md#create-an-apple-app-site-association-file-and-send-it-to-your-ometria-contact).
+
 ### Handle App Links inside your application
 
 In order to handle the links inside your application you need to use
