@@ -389,6 +389,10 @@ To do this, call the following method:
 Ometria.clear()
 ```
 
+### Debugging events
+To see what events were captured, you can check the logs coming from the Ometria SDK, if logging is enabled. You can filter for the word "Ometria".
+The SDK logs all events as they happen, and also logs the flushing i.e. when they are sent to the Ometria mobile events API. Any potential errors with the sending (API issues or event validation issues) would be visible here too.
+
 6\. Push notifications guide for React-Native apps
 ----------------------------
 
