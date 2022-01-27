@@ -366,15 +366,18 @@ Linking and initialising the SDK is enough to take advantage of these; no furthe
 
 In order to reduce power and bandwidth consumption, the Ometria library doesn’t send the events one by one unless you request it to do so.
 
-Instead, it composes batches of events that are periodically sent to the backend during application runtime.
+Instead, it composes batches of events that are sent to the backend during application runtime when the one of the following happened:
+* it has collected 10 events or
+* there was a firebase token refresh (`pushtokenRefreshed` event)
+* a `notificationReceived` event
+* an `appForegrounded` event
+* an `appBackgrounded` event
 
 You can request the library to send all remaining events to the backend whenever you want by calling:
 
 ```js
 Ometria.flush()
 ```
-
-The library will automatically call this method every time the application is brought to foreground or sent to background.
 
 ### Clear tracked events
 
@@ -385,6 +388,10 @@ To do this, call the following method:
 ```js
 Ometria.clear()
 ```
+
+### Debugging events
+To see what events were captured, you can check the logs coming from the Ometria SDK, if logging is enabled. You can filter for the word "Ometria".
+The SDK logs all events as they happen, and also logs the flushing i.e. when they are sent to the Ometria mobile events API. Any potential errors with the sending (API issues or event validation issues) would be visible here too.
 
 6\. Push notifications guide for React-Native apps
 ----------------------------
