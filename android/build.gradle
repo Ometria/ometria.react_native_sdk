@@ -8,7 +8,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.2.0'
+    classpath 'com.android.tools.build:gradle:4.2.2'
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -127,6 +127,7 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
   implementation fileTree(dir: "libs", include: ["*.aar"])
+  compileOnly files('libs/OmetriaSDK-debug.aar')
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

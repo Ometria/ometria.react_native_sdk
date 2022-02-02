@@ -16,7 +16,7 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     
     @objc(initializeWithApiToken:resolver:rejecter:)
     func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
-        OmetriaStorageKeys.rnVersion = "1.2.1"
+        OmetriaStorageKeys.rnVersion = "1.2.2"
         DispatchQueue.main.async {
             let ometriaInit = Ometria.initialize(apiToken: apiToken)
             resolve(ometriaInit)

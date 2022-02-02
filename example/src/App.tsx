@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import {
   StyleSheet,
@@ -13,7 +14,7 @@ import {
   Modal,
 } from 'react-native';
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
-import messaging, { firebase } from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { enableScreens } from 'react-native-screens';
 import {
@@ -70,7 +71,9 @@ const Home = () => {
   const [email, setEmail] = React.useState('');
   const [notificationContent, setNotificationContent] = React.useState('');
 
-  const [ometriaToken, setOmetriaToken] = React.useState('pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP');
+  const [ometriaToken, setOmetriaToken] = React.useState(
+    'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP'
+  );
   const [customerId, setCustomerId] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
@@ -98,9 +101,9 @@ const Home = () => {
     });
   };
 
-  const handleInit = React.useCallback(async () => {
+  const handleInit = async () => {
     try {
-      console.log(ometriaToken);
+      console.log('Ometria Token: ', ometriaToken);
       Ometria.initializeWithApiToken(ometriaToken).then(
         () => {
           console.log('OMETRIA INITIALIZED');
@@ -123,17 +126,29 @@ const Home = () => {
     } catch (error) {
       console.error('Error: ', error);
     }
-  }, [setIsReady]);
+  };
+
+  // const handleInit = React.useCallback(async () => {
+
+  // }, [setIsReady]);
 
   React.useEffect(() => {
-    Linking.addEventListener('url', handleUrl);
-    return () => {
-      Linking.removeEventListener('url', handleUrl);
-    };
+    const subscription = Linking.addEventListener('url', handleUrl);
+    return subscription;
   });
 
+  const getSavedToken = async () => {
+    const savedToken = await AsyncStorage.getItem('token');
+    if (savedToken !== null) {
+      setOmetriaToken(savedToken);
+    }
+  };
+
   React.useEffect(() => {
-    handleInit();
+    getSavedToken().then(() => {
+      handleInit();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -209,6 +224,7 @@ const Home = () => {
             placeholderTextColor="#000"
             value={ometriaToken}
             onChangeText={(text) => {
+              console.log('Text changed: ', text);
               setOmetriaToken(text);
             }}
           />

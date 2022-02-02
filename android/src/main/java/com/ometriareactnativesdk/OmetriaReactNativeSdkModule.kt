@@ -19,7 +19,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   var notificationInteractionPromise: Promise? = null
 
   init {
-    StorageController(reactContext.applicationContext).saveSdkVersionRN("1.2.1")
+    StorageController(reactContext.applicationContext).saveSdkVersionRN("1.2.2")
   }
 
   override fun getName(): String {

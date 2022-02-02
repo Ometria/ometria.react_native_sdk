@@ -12,11 +12,11 @@ struct OmetriaStorageKeys {
     
     static var rnVersion: String? {
         get{
-            let value = UserDefaults.standard.object(forKey: "com.ometria.sdkVersionRN") as? String
+            let value = UserDefaults.standard.object(forKey: "sdkVersionRN") as? String
             return value ?? nil
         }
         set{
-            UserDefaults.standard.set(newValue, forKey: "com.ometria.sdkVersionRN")
+            UserDefaults.standard.set(newValue, forKey: "sdkVersionRN")
             UserDefaults.standard.synchronize()
         }
     }
