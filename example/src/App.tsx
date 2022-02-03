@@ -114,6 +114,9 @@ const Home = () => {
             .getToken()
             .then((pushToken: string) => {
               console.log('TOKEN:', pushToken);
+              if (Platform.OS === 'android') {
+                Ometria.onNewToken(pushToken);
+              }
             });
           Ometria.isLoggingEnabled(true);
 
