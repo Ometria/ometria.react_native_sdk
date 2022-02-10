@@ -71,7 +71,7 @@ Ometria.isLoggingEnabled(true);
 ```
 
 <h4>
-  <a href="firebase_issue_ios">Firebase 8.0-8.10 issue IOS</a>
+  <a name="firebase_issue_ios" href="firebase_issue_ios">Firebase 8.0-8.10 issue IOS</a>
 </h4>
 
 :warning: (IOS ONLY) If using firebase version [8.0 - 8.10] consider updating to firebase 8.11 in order for push notifications to work.
