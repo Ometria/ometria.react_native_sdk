@@ -70,6 +70,17 @@ You can enable advanced logging if you want more information on what’s happeni
 Ometria.isLoggingEnabled(true);
 ```
 
+<a name="firebase_issue_ios">Firebase 8.0-8.10 issue IOS</a>
+
+:warning: (IOS ONLY) If using firebase version [8.0 - 8.10] consider updating to firebase 8.11 in order for push notifications to work.
+If you have a hard dependency on firebase [8.0 - 8.10] make sure to add the following snippet in your AppDelegate file:
+```objc
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  [FIRMessaging.messaging setAPNSToken:deviceToken];
+}
+``` 
+
+
 5\. Event tracking guide
 ------------------------
 
