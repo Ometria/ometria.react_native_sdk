@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>921921093359-3hftl2ug184opmotvq10gte5s2qtmkct.apps.googleusercontent.com</string>
+	<string>921921093359-ne6sfsercs5e51kcmveoh2dvjm7uu0vc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.921921093359-3hftl2ug184opmotvq10gte5s2qtmkct</string>
+	<string>com.googleusercontent.apps.921921093359-ne6sfsercs5e51kcmveoh2dvjm7uu0vc</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>921921093359-32mq2bkdnqsdiuh79b365ocji8sakh3a.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.ometria.Sample</string>
+	<string>com.ometria.SampleRN</string>
 	<key>PROJECT_ID</key>
 	<string>ometriasdk-internal</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:921921093359:ios:cd0223c7cc01040cdfa51a</string>
+	<string>1:921921093359:ios:e8efce3d321e71a1dfa51a</string>
 	<key>DATABASE_URL</key>
 	<string>https://ometriasdk-internal.firebaseio.com</string>
 </dict>

@@ -77,7 +77,7 @@ const Home = () => {
   const [customerId, setCustomerId] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
-    await messaging().requestPermission({
+    return await messaging().requestPermission({
       sound: true,
       badge: true,
       alert: true,
@@ -108,8 +108,6 @@ const Home = () => {
         () => {
           console.log('OMETRIA INITIALIZED');
           setModalVisible(false);
-          // enabled Ometria logging
-          // firebase.initializeApp({appId: });
           messaging()
             .getToken()
             .then((pushToken: string) => {
@@ -121,6 +119,9 @@ const Home = () => {
           Ometria.isLoggingEnabled(true);
 
           setIsReady(true);
+          requestUserPermission().then((status) => {
+            console.log('Permission status: ', status);
+          });
         },
         (error) => {
           throw error;
@@ -181,9 +182,9 @@ const Home = () => {
       // you may need to get the APNs token instead for iOS:
       if (Platform.OS === 'ios') {
         // Request permission for iOS notifications
-        requestUserPermission().then((status) => {
-          console.log('Permission status: ', status);
-        });
+        // requestUserPermission().then((status) => {
+        //   console.log('Permission status: ', status);
+        // });
       }
 
       return () => {
@@ -197,7 +198,7 @@ const Home = () => {
       };
     }
     return;
-  }, [isReady, requestUserPermission]);
+  }, [isReady /*, requestUserPermission*/]);
 
   const handleLogin = React.useCallback(async () => {
     await Ometria.trackProfileIdentifiedByEmailEvent(email);
