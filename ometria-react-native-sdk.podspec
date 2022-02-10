@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
   
 
   s.dependency "React"
-  s.dependency "Ometria", '~> 1.2.1'
+  s.dependency "Ometria", '~> 1.2.2'
 end
