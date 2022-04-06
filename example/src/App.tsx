@@ -116,6 +116,22 @@ const Home = () => {
             });
           Ometria.isLoggingEnabled(true);
 
+          Ometria.onNotificationInteracted()
+            .then((response) => {
+              console.log(response);
+              setNotificationContent(JSON.stringify(response));
+              if (response.deepLinkActionUrl) {
+                Ometria.trackDeepLinkOpenedEvent(
+                  response.deepLinkActionUrl,
+                  'Browser'
+                );
+                Linking.openURL(response.deepLinkActionUrl);
+              }
+            })
+            .catch((error: any) => {
+              console.warn('Error: ', error);
+            });
+
           setIsReady(true);
           requestUserPermission().then((status) => {
             console.log('Permission status: ', status);
@@ -160,20 +176,6 @@ const Home = () => {
         if (Platform.OS === 'android') {
           Ometria.onMessageReceived(remoteMessage);
         }
-        Ometria.onNotificationInteracted()
-          .then((response) => {
-            setNotificationContent(JSON.stringify(response));
-            if (response.deepLinkActionUrl) {
-              Ometria.trackDeepLinkOpenedEvent(
-                response.deepLinkActionUrl,
-                'Browser'
-              );
-              Linking.openURL(response.deepLinkActionUrl);
-            }
-          })
-          .catch((error: any) => {
-            console.warn('Error: ', error);
-          });
       });
 
       // If using other push notification providers (ie Amazon SNS, etc)
