@@ -71,9 +71,7 @@ const Home = () => {
   const [email, setEmail] = React.useState('');
   const [notificationContent, setNotificationContent] = React.useState('');
 
-  const [ometriaToken, setOmetriaToken] = React.useState(
-    'pk_test_IY2XfgrRsIlRGBP0rH2ks9dAbG1Ov24BsdggNTqP'
-  );
+  const [ometriaToken, setOmetriaToken] = React.useState('OMETRIA_API_TOKEN');
   const [customerId, setCustomerId] = React.useState('');
 
   const requestUserPermission = React.useCallback(async () => {
