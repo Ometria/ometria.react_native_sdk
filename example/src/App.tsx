@@ -73,6 +73,7 @@ const Home = () => {
 
   const [ometriaToken, setOmetriaToken] = React.useState('OMETRIA_API_TOKEN');
   const [customerId, setCustomerId] = React.useState('');
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const requestUserPermission = React.useCallback(async () => {
     return await messaging().requestPermission({
@@ -99,10 +100,9 @@ const Home = () => {
     });
   };
 
-  const handleInit = async () => {
+  const handleInit = async (token: string) => {
     try {
-      console.log('Ometria Token: ', ometriaToken);
-      Ometria.initializeWithApiToken(ometriaToken).then(
+      Ometria.initializeWithApiToken(token).then(
         () => {
           console.log('OMETRIA INITIALIZED');
           setModalVisible(false);
@@ -146,10 +146,6 @@ const Home = () => {
     }
   };
 
-  // const handleInit = React.useCallback(async () => {
-
-  // }, [setIsReady]);
-
   React.useEffect(() => {
     const subscription = Linking.addEventListener('url', handleUrl);
     return subscription;
@@ -159,12 +155,29 @@ const Home = () => {
     const savedToken = await AsyncStorage.getItem('token');
     if (savedToken !== null) {
       setOmetriaToken(savedToken);
+    } else {
+      setModalVisible(true);
+    }
+    return savedToken;
+  };
+
+  // Ometria cannot be re-initialized with a different token in the same app cycle
+  const saveNewToken = async () => {
+    const savedToken = await AsyncStorage.getItem('token');
+    AsyncStorage.setItem('token', ometriaToken);
+    if (savedToken) {
+      Alert.alert(
+        'New token',
+        'Please kill the app in order to have the app use the new token'
+      );
+    } else {
+      handleInit(ometriaToken);
     }
   };
 
   React.useEffect(() => {
-    getSavedToken().then(() => {
-      handleInit();
+    getSavedToken().then((savedToken) => {
+      savedToken && handleInit(savedToken);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -202,13 +215,12 @@ const Home = () => {
 
   const handleLogin = React.useCallback(async () => {
     await Ometria.trackProfileIdentifiedByEmailEvent(email);
+    setModalVisible(false);
   }, [email]);
 
   const handleLoginCustomerId = React.useCallback(async () => {
     await Ometria.trackProfileIdentifiedByCustomerIdEvent(customerId);
   }, [customerId]);
-
-  const [modalVisible, setModalVisible] = React.useState(true);
 
   return (
     <View style={styles.container}>
@@ -232,13 +244,7 @@ const Home = () => {
               setOmetriaToken(text);
             }}
           />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              AsyncStorage.setItem('token', ometriaToken);
-              handleInit();
-            }}
-          >
+          <TouchableOpacity style={styles.button} onPress={saveNewToken}>
             <Text style={styles.text}>SAVE TOKEN</Text>
           </TouchableOpacity>
           <TextInput
@@ -254,6 +260,7 @@ const Home = () => {
             style={styles.button}
             onPress={() => {
               handleLoginCustomerId();
+              setModalVisible(false);
             }}
           >
             <Text style={styles.text}>LOGIN WITH CUSTOMER ID</Text>
