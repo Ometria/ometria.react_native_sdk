@@ -1,8 +1,9 @@
 #import <React/RCTBridgeModule.h>
+#import <React/RCTEventEmitter.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface RCT_EXTERN_MODULE(OmetriaReactNativeSdk, NSObject)
+@interface RCT_EXTERN_MODULE(OmetriaReactNativeSdk, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(initializeWithApiToken:(NSString *)apiToken
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -84,17 +85,9 @@ RCT_EXTERN_METHOD(onNewToken:(NSString *)pushToken
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(onDeepLinkInteracted:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(onNotificationInteracted:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(
     processUniversalLink: (NSURL *)url 
     resolver: (RCTPromiseResolveBlock)resolve
     rejecter: (RCTPromiseRejectBlock)reject)
-
-
 
 @end

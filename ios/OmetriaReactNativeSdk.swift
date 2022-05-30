@@ -3,15 +3,21 @@ import Foundation
 import UserNotifications
 
 @objc(OmetriaReactNativeSdk)
-class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
+class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDelegate {
     
-    var deeplinkInteractionResolver: RCTPromiseResolveBlock?
-    var deeplinkInteractionRejecter: RCTPromiseRejectBlock?
-    var notificationInteractionResolver: RCTPromiseResolveBlock?
-    var notificationInteractionRejecter: RCTPromiseRejectBlock?
-
-    @objc static func requiresMainQueueSetup() -> Bool {
+    static let RNOmetriaRCTEventNameOnNotificationInteracted = "onNotificationInteracted"
+    static let RNOmetriaRCTEventNameOnDeepLinkInteracted = "onDeepLinkInteracted"
+    
+    override static func requiresMainQueueSetup() -> Bool {
         return true
+    }
+    
+    override func supportedEvents() -> [String]! {
+        return [Self.RNOmetriaRCTEventNameOnNotificationInteracted, Self.RNOmetriaRCTEventNameOnDeepLinkInteracted]
+    }
+    
+    override func constantsToExport() -> [AnyHashable : Any]! {
+        return [:]
     }
     
     @objc(initializeWithApiToken:resolver:rejecter:)
@@ -20,6 +26,7 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         DispatchQueue.main.async {
             let ometriaInit = Ometria.initialize(apiToken: apiToken)
             resolve(ometriaInit)
+            Ometria.sharedInstance().notificationInteractionDelegate = self
         }
     }
     
@@ -159,13 +166,6 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         resolve(nil)
     }
     
-    @objc(onDeepLinkInteracted:rejecter:)
-    func onDeepLinkInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().notificationInteractionDelegate = self
-        self.deeplinkInteractionResolver = resolve
-        self.deeplinkInteractionRejecter = reject
-    }
-    
     @objc(processUniversalLink:resolver:rejecter:)
     func processUniversalLink(url: URL, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().processUniversalLink(url) { (url, error) in
@@ -177,18 +177,11 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         }
     }
     
-    @objc(onNotificationInteracted:rejecter:)
-    func onNotificationInteracted(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().notificationInteractionDelegate = self
-        self.notificationInteractionResolver = resolve
-        self.notificationInteractionRejecter = reject
-    }
-    
     
     // MARK: - OmetriaNotificationInteractionDelegate
     
     func handleDeepLinkInteraction(_ deepLink: URL) {
-        deeplinkInteractionResolver?(deepLink.absoluteString)
+        sendEvent(withName: Self.RNOmetriaRCTEventNameOnDeepLinkInteracted, body: deepLink.absoluteString)
     }
     
     func handleOmetriaNotificationInteraction(_ notification: OmetriaNotification) -> Void {
@@ -198,6 +191,6 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
                                                         "campaignType": notification.campaignType,
                                                         "sendId": notification.sendId,
                                                         "tracking": notification.tracking]
-        notificationInteractionResolver?(ometriaNotificationObject)
+        sendEvent(withName: Self.RNOmetriaRCTEventNameOnNotificationInteracted, body: ometriaNotificationObject)
     }
 }
