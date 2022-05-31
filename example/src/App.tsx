@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import * as React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -63,22 +64,19 @@ const EventType = {
   CLEAR: 'CLEAR',
 };
 
-// Register background handler
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  console.log('Message handled in the background!', remoteMessage);
-});
+const DEBUG_MODE = true; // used for internal testings
 
 const Home = () => {
   const navigation = useNavigation<EventsScreenNavigationProp>();
-  const [isReady, setIsReady] = React.useState(false);
-  const [email, setEmail] = React.useState('');
-  const [notificationContent, setNotificationContent] = React.useState('');
+  const [isReady, setIsReady] = useState(false); // initialization status
+  const [email, setEmail] = useState('');
+  const [notificationContent, setNotificationContent] = useState('');
 
-  const [ometriaToken, setOmetriaToken] = React.useState('OMETRIA_API_TOKEN');
-  const [customerId, setCustomerId] = React.useState('');
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
+  const [customerId, setCustomerId] = useState('');
+  const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
-  const requestUserPermission = React.useCallback(async () => {
+  const requestUserPermission = useCallback(async () => {
     return await messaging().requestPermission({
       sound: true,
       badge: true,
@@ -86,7 +84,80 @@ const Home = () => {
     });
   }, []);
 
-  //Handle Deeplink
+  // Initialization
+  const handleInit = async (token: string) => {
+    try {
+      Ometria.initializeWithApiToken(token).then(
+        () => {
+          console.log('Ometria initialized');
+          Ometria.isLoggingEnabled(true);
+
+          requestUserPermission().then((status) => {
+            console.log('Permission status: ', status);
+          });
+
+          Ometria.onNotificationInteracted(
+            (response: OmetriaNotificationData) => {
+              console.log(response);
+              setNotificationContent(JSON.stringify(response));
+              if (response.deepLinkActionUrl) {
+                Ometria.trackDeepLinkOpenedEvent(
+                  response.deepLinkActionUrl,
+                  'Browser'
+                );
+                Linking.openURL(response.deepLinkActionUrl);
+              }
+            }
+          );
+          setIsReady(true);
+          setIsSettingsModalVisible(false);
+        },
+        (error) => {
+          throw error;
+        }
+      );
+    } catch (error) {
+      console.error('Error: ', error);
+    }
+  };
+
+  /* Push Notifications
+   * On iOS the SDK manages Firebase PN
+   * If using other push notification providers (ie Amazon SNS, etc)
+   * you may need to get the APNs token instead for iOS */
+  useEffect(() => {
+    if (!isReady || Platform.OS !== 'android') {
+      return;
+    }
+    // First time push token
+    messaging()
+      .getToken()
+      .then((pushToken: string) => {
+        console.log('TOKEN:', pushToken);
+        Ometria.onNewToken(pushToken);
+      });
+
+    // Subscribe to foreground PN
+    const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+      console.log('Foreground message received:', remoteMessage);
+      Ometria.onMessageReceived(remoteMessage);
+    });
+
+    // Subscribe to background PN
+    messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
+      console.log('Background message received:', remoteMessage);
+      Ometria.onMessageReceived(remoteMessage);
+    });
+
+    // On token refresh
+    messaging().onTokenRefresh((pushToken: string) =>
+      Ometria.onNewToken(pushToken)
+    );
+
+    return () => unsubscribe();
+  }, [isReady]);
+
+  // Handle Deeplink
   const handleUrl = ({ url }: any) => {
     Linking.canOpenURL(url).then((supported) => {
       if (supported) {
@@ -102,67 +173,34 @@ const Home = () => {
       }
     });
   };
-
-  const handleInit = async (token: string) => {
-    try {
-      Ometria.initializeWithApiToken(token).then(
-        () => {
-          console.log('OMETRIA INITIALIZED');
-          setModalVisible(false);
-          messaging()
-            .getToken()
-            .then((pushToken: string) => {
-              console.log('TOKEN:', pushToken);
-              if (Platform.OS === 'android') {
-                Ometria.onNewToken(pushToken);
-              }
-            });
-          Ometria.isLoggingEnabled(true);
-
-          Ometria.onNotificationInteracted(
-            (response: OmetriaNotificationData) => {
-              console.log(response);
-              setNotificationContent(JSON.stringify(response));
-              if (response.deepLinkActionUrl) {
-                Ometria.trackDeepLinkOpenedEvent(
-                  response.deepLinkActionUrl,
-                  'Browser'
-                );
-                Linking.openURL(response.deepLinkActionUrl);
-              }
-            }
-          );
-
-          setIsReady(true);
-          requestUserPermission().then((status) => {
-            console.log('Permission status: ', status);
-          });
-        },
-        (error) => {
-          throw error;
-        }
-      );
-    } catch (error) {
-      console.error('Error: ', error);
-    }
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     const subscription = Linking.addEventListener('url', handleUrl);
     return subscription;
-  });
+  }, []);
 
+  // Settings to change email / ID
+  const handleLogin = React.useCallback(async () => {
+    await Ometria.trackProfileIdentifiedByEmailEvent(email);
+    setIsSettingsModalVisible(false);
+  }, [email]);
+
+  const handleLoginCustomerId = React.useCallback(async () => {
+    await Ometria.trackProfileIdentifiedByCustomerIdEvent(customerId);
+    setIsSettingsModalVisible(false);
+  }, [customerId]);
+
+  /* Debug settings to change Ometria token - not for production
+   * Ometria cannot be re-initialized with a different token in the same app cycle */
   const getSavedToken = async () => {
     const savedToken = await AsyncStorage.getItem('token');
     if (savedToken !== null) {
       setOmetriaToken(savedToken);
     } else {
-      setModalVisible(true);
+      setIsSettingsModalVisible(true);
     }
     return savedToken;
   };
 
-  // Ometria cannot be re-initialized with a different token in the same app cycle
   const saveNewToken = async () => {
     const savedToken = await AsyncStorage.getItem('token');
     AsyncStorage.setItem('token', ometriaToken);
@@ -176,62 +214,26 @@ const Home = () => {
     }
   };
 
-  React.useEffect(() => {
-    getSavedToken().then((savedToken) => {
-      savedToken && handleInit(savedToken);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  React.useEffect(() => {
-    if (isReady) {
-      const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        console.log('On message received');
-        if (Platform.OS === 'android') {
-          Ometria.onMessageReceived(remoteMessage);
-        }
+  // Call init
+  useEffect(() => {
+    if (DEBUG_MODE) {
+      getSavedToken().then((savedToken) => {
+        savedToken && handleInit(savedToken);
       });
-
-      // If using other push notification providers (ie Amazon SNS, etc)
-      // you may need to get the APNs token instead for iOS:
-      if (Platform.OS === 'ios') {
-        // Request permission for iOS notifications
-        // requestUserPermission().then((status) => {
-        //   console.log('Permission status: ', status);
-        // });
-      }
-
-      return () => {
-        unsubscribe();
-        // Listen to whether the token changes
-        messaging().onTokenRefresh((pushToken: string) => {
-          if (Platform.OS === 'android') {
-            Ometria.onNewToken(pushToken);
-          }
-        });
-      };
+    } else {
+      ometriaToken !== '' && handleInit(ometriaToken);
     }
-    return;
-  }, [isReady /*, requestUserPermission*/]);
-
-  const handleLogin = React.useCallback(async () => {
-    await Ometria.trackProfileIdentifiedByEmailEvent(email);
-    setModalVisible(false);
-  }, [email]);
-
-  const handleLoginCustomerId = React.useCallback(async () => {
-    await Ometria.trackProfileIdentifiedByCustomerIdEvent(customerId);
-  }, [customerId]);
+  }, []);
 
   return (
     <View style={styles.container}>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={isSettingsModalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
+          setIsSettingsModalVisible(!isSettingsModalVisible);
         }}
       >
         <SafeAreaView style={[styles.container, { backgroundColor: '#fff' }]}>
@@ -261,7 +263,7 @@ const Home = () => {
             style={styles.button}
             onPress={() => {
               handleLoginCustomerId();
-              setModalVisible(false);
+              setIsSettingsModalVisible(false);
             }}
           >
             <Text style={styles.text}>LOGIN WITH CUSTOMER ID</Text>
@@ -279,7 +281,7 @@ const Home = () => {
       </Modal>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setIsSettingsModalVisible(true)}
       >
         <Text style={styles.text}>Change Login info</Text>
       </TouchableOpacity>
