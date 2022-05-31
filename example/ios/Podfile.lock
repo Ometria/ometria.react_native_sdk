@@ -18,12 +18,12 @@ PODS:
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
-  - FirebaseCoreDiagnostics (8.14.0):
+  - FirebaseCoreDiagnostics (8.15.0):
     - GoogleDataTransport (~> 9.1)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
-  - FirebaseInstallations (8.14.0):
+  - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
@@ -39,9 +39,9 @@ PODS:
     - nanopb (~> 2.30908.0)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleDataTransport (9.1.2):
-    - GoogleUtilities/Environment (~> 7.2)
-    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (9.1.4):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
@@ -67,10 +67,10 @@ PODS:
   - nanopb/encode (2.30908.0)
   - Ometria (1.2.2):
     - FirebaseMessaging
-  - ometria-react-native-sdk (1.2.2):
+  - ometria-react-native-sdk (1.2.3):
     - Ometria (~> 1.2.2)
     - React
-  - PromisesObjC (2.0.0)
+  - PromisesObjC (2.1.0)
   - RCT-Folly (2021.04.26.00):
     - boost-for-react-native
     - DoubleConversion
@@ -383,7 +383,7 @@ DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
-  - FirebaseMessaging (~> 8.14.0)
+  - FirebaseMessaging
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - ometria-react-native-sdk (from `../..`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -522,17 +522,17 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: fe46c577739a1b11991fd671109bf1d7380cafd0
   Firebase: 7e8fe528c161b9271d365217a74c16aaf834578e
   FirebaseCore: b84a44ee7ba999e0f9f76d198a9c7f60a797b848
-  FirebaseCoreDiagnostics: fd0c8490f34287229c1d6c103d3a55f81ec85712
-  FirebaseInstallations: 7d1d967a307c12f1aadd76844fc321cef699b1ce
+  FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
+  FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebaseMessaging: 5ebc42d281567658a2cb72b9ef3506e4a1a1a6e4
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 5337263514dd6f09803962437687240c5dc39aa4
-  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
+  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   Ometria: f174f6e81d4a5eda876f120476ce0298e63a0f02
-  ometria-react-native-sdk: 48a6b9e234d29b30ec8de87560d00cf06774cc4e
-  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  ometria-react-native-sdk: ffd340f745f0d249c135408854d0b10605839fdd
+  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   RCT-Folly: 0dd9e1eb86348ecab5ba76f910b56f4b5fef3c46
   RCTRequired: 1b65ab453de585b0f939824780bd26cdf6fb07f8
   RCTTypeSafety: 31f76e2d6734fe3c8084ac9d39201c4a1a3c5b42
@@ -567,6 +567,6 @@ SPEC CHECKSUMS:
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   Yoga: e6db7a0be0e80eeb70c04663605e4f6a050ab013
 
-PODFILE CHECKSUM: d6899f5b9491410c0e75cf5300669a751e1f3914
+PODFILE CHECKSUM: 8dabf660f3f95c750772b9b8dcbca0fd75bbd006
 
 COCOAPODS: 1.11.3
