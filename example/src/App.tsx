@@ -13,7 +13,10 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
+import Ometria, {
+  OmetriaBasketItem,
+  OmetriaNotificationData,
+} from 'react-native-ometria';
 import messaging from '@react-native-firebase/messaging';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { enableScreens } from 'react-native-screens';
@@ -116,8 +119,8 @@ const Home = () => {
             });
           Ometria.isLoggingEnabled(true);
 
-          Ometria.onNotificationInteracted()
-            .then((response) => {
+          Ometria.onNotificationInteracted(
+            (response: OmetriaNotificationData) => {
               console.log(response);
               setNotificationContent(JSON.stringify(response));
               if (response.deepLinkActionUrl) {
@@ -127,10 +130,8 @@ const Home = () => {
                 );
                 Linking.openURL(response.deepLinkActionUrl);
               }
-            })
-            .catch((error: any) => {
-              console.warn('Error: ', error);
-            });
+            }
+          );
 
           setIsReady(true);
           requestUserPermission().then((status) => {

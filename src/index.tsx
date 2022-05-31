@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 
 export type OmetriaBasketItem = {
   productId: string;
@@ -12,6 +12,15 @@ export type OmetriaBasket = {
   totalPrice: number;
   items: OmetriaBasketItem[];
   link: string;
+};
+
+export type OmetriaNotificationData = {
+  campaignType: string;
+  deepLinkActionUrl: string;
+  externalCustomerId: string;
+  imageUrl: string;
+  sendId: string;
+  tracking: any;
 };
 
 type OmetriaReactNativeSdkType = {
@@ -40,7 +49,9 @@ type OmetriaReactNativeSdkType = {
   isLoggingEnabled(enabled: Boolean): Promise<void>;
 
   onDeepLinkInteracted(): Promise<string>;
-  onNotificationInteracted(): Promise<any>;
+  onNotificationInteracted(
+    handler: (response: OmetriaNotificationData) => void
+  ): () => void;
 
   processUniversalLink(url: string): Promise<string>;
 
@@ -50,6 +61,20 @@ type OmetriaReactNativeSdkType = {
   onPushTokenRefreshed(token: String): () => void;
 };
 
-export const { OmetriaReactNativeSdk } = NativeModules;
+const { OmetriaReactNativeSdk } = NativeModules;
+const OmetriaEvent = new NativeEventEmitter(OmetriaReactNativeSdk);
+
+OmetriaReactNativeSdk.onNotificationInteracted = (
+  handler: (response: OmetriaNotificationData) => void
+) => {
+  // Needs updates on Android native
+  // Only works on iOS at the moment
+  OmetriaEvent.addListener(
+    'onNotificationInteracted',
+    (response: OmetriaNotificationData) => {
+      handler(response);
+    }
+  );
+};
 
 export default OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
