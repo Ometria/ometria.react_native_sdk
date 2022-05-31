@@ -131,10 +131,9 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//  implementation 'com.ometria:android-sdk:1.2.1' uncomment in prod with 1.2.3v
+  // implementation 'com.ometria:android-sdk:1.2.1' uncomment in prod with 1.2.3v
   implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
   implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
   implementation 'com.google.firebase:firebase-messaging:23.0.0'
-//  implementation 'com.android.ometriasdk:OmetriaSDK-debug:@aar'
   debugImplementation files('libs/OmetriaSDK-debug.aar')
 }
