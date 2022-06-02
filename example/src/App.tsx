@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-native/no-inline-styles */
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   StyleSheet,
@@ -25,7 +24,10 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+
+/* <testing> */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+/* </testing> */
 
 enableScreens();
 
@@ -64,7 +66,9 @@ const EventType = {
   CLEAR: 'CLEAR',
 };
 
+/* <testing> */
 const DEBUG_MODE = true; // used for internal testings
+/* </testing> */
 
 const Home = () => {
   const navigation = useNavigation<EventsScreenNavigationProp>();
@@ -72,7 +76,12 @@ const Home = () => {
   const [email, setEmail] = useState('');
   const [notificationContent, setNotificationContent] = useState('');
 
+  /* <testing> */
   const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
+  /* </testing> */
+  /* <production> */
+  //const ometriaToken = ''; // OMETRIA_API_TOKEN
+  /* </production */
   const [customerId, setCustomerId] = useState('');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
@@ -189,6 +198,15 @@ const Home = () => {
     setIsSettingsModalVisible(false);
   }, [customerId]);
 
+  /* <production> */
+  /* Initialize Ometria.
+   * Ometria cannot be re-initialized multiple times in the same app cycle */
+  // useEffect(() => {
+  //   handleInit(ometriaToken);
+  // }, []);
+  /* </production> */
+
+  /* <testing> */
   /* Debug settings to change Ometria token - not for production
    * Ometria cannot be re-initialized with a different token in the same app cycle */
   const getSavedToken = async () => {
@@ -224,6 +242,7 @@ const Home = () => {
       ometriaToken !== '' && handleInit(ometriaToken);
     }
   }, []);
+  /* </testing> */
 
   return (
     <View style={styles.container}>
@@ -237,6 +256,7 @@ const Home = () => {
         }}
       >
         <SafeAreaView style={[styles.container, { backgroundColor: '#fff' }]}>
+          {/* <testing> */}
           <TextInput
             style={[styles.input, { marginTop: 30 }]}
             placeholder="Ometria API TOKEN"
@@ -250,6 +270,7 @@ const Home = () => {
           <TouchableOpacity style={styles.button} onPress={saveNewToken}>
             <Text style={styles.text}>SAVE TOKEN</Text>
           </TouchableOpacity>
+          {/* </testing> */}
           <TextInput
             style={styles.input}
             value={customerId}
@@ -276,6 +297,12 @@ const Home = () => {
           />
           <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
             <Text style={styles.text}>LOGIN WITH EMAIL</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setIsSettingsModalVisible(false)}
+          >
+            <Text style={styles.text}>CLOSE</Text>
           </TouchableOpacity>
         </SafeAreaView>
       </Modal>
@@ -537,3 +564,9 @@ const styles = StyleSheet.create({
   },
   gray: { backgroundColor: '#33323A' },
 });
+
+/* <testing> */
+/* Use <production> snippets for the public example code
+ * Use <testing> snippets for the internal sample app
+ */
+/* </testing> */
