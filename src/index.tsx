@@ -1,4 +1,9 @@
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import {
+  DeviceEventEmitter,
+  NativeEventEmitter,
+  NativeModules,
+  Platform,
+} from 'react-native';
 
 export type OmetriaBasketItem = {
   productId: string;
@@ -15,12 +20,18 @@ export type OmetriaBasket = {
 };
 
 export type OmetriaNotificationData = {
-  campaignType: string;
-  deepLinkActionUrl: string;
-  externalCustomerId: string;
-  imageUrl: string;
-  sendId: string;
-  tracking: any;
+  campaignType?: string;
+  deepLinkActionUrl?: string;
+  externalCustomerId?: string;
+  imageUrl?: string;
+  sendId?: string;
+  tracking: {
+    utm_medium?: string;
+    utm_source: string;
+    utm_campaign: string;
+    om_campagin: string;
+    [key: string]: string | undefined;
+  };
 };
 
 type OmetriaReactNativeSdkType = {
@@ -62,19 +73,21 @@ type OmetriaReactNativeSdkType = {
 };
 
 const { OmetriaReactNativeSdk } = NativeModules;
-const OmetriaEvent = new NativeEventEmitter(OmetriaReactNativeSdk);
+const OmetriaEventEmitter = Platform.select({
+  ios: new NativeEventEmitter(OmetriaReactNativeSdk),
+  android: DeviceEventEmitter,
+});
 
 OmetriaReactNativeSdk.onNotificationInteracted = (
   handler: (response: OmetriaNotificationData) => void
 ) => {
-  // Needs updates on Android native
-  // Only works on iOS at the moment
-  OmetriaEvent.addListener(
-    'onNotificationInteracted',
-    (response: OmetriaNotificationData) => {
-      handler(response);
-    }
-  );
+  OmetriaEventEmitter &&
+    OmetriaEventEmitter.addListener(
+      'onNotificationInteracted',
+      (response: OmetriaNotificationData) => {
+        handler(response);
+      }
+    );
 };
 
 export default OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
