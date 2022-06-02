@@ -268,7 +268,7 @@ Based on the implementation status of interaction with notifications that contai
 
 The default implementation automatically logs a deep link opened event every time the user interacts with a notification that has a deep link. This is possible because we know that the default implementation will open the link in a browser.
 
-If you chose to handle deep links yourself (using the guide for [Handling interaction with notifications that contain URLs](#handling_interaction_with_notifications_that_contain_urls)), then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
+If you chose to handle deep links yourself (using the guide for [Handling interaction with notifications that contain URLs](#7-app-links-guide)), then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
 
 ```js
 Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
@@ -495,24 +495,23 @@ The response structure object example:
 Eg:
 
 ``` js
-const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        if (Platform.OS === 'android') {
-          //For android you need to call Ometria.onMessageReceived when you get the notification from firebase
-          Ometria.onMessageReceived(remoteMessage);
-        }
-        Ometria.onNotificationInteracted()
-          .then((response) => {
-            //Handle ometria notification response
-            // eg: 
-            if (response.deepLinkActionUrl) {
-              Linking.openURL(response.deepLinkActionUrl);
-            }
-          })
-          .catch((error: any) => {
-            console.warn('Error: ', error);
-          });
-      });
+  const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+    if (Platform.OS === 'android') {
+      // For Android you need to call Ometria.onMessageReceived when you get the notification from Firebase
+      Ometria.onMessageReceived(remoteMessage);
+    }
+  });
+
+  Ometria.onNotificationInteracted((response: OmetriaNotificationData) => {
+    // Handle Ometria notification interaction response (both iOS & Android). Eg:
+    if (response.deepLinkActionUrl) {
+      Linking.openURL(response.deepLinkActionUrl);
+    }
+  });
 ```
+
+**Note:** As of version 1.3 `Ometria.onNotificationInteracted` requires a callback function parameter that handles the interaction response. 
+Usage of `.then().catch()` no longer works! Please use a callback instead.
 
 ### Enabling rich content notifications (iOS only)
 
