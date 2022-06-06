@@ -10,13 +10,14 @@ import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.facebook.react.bridge.*
 import org.json.JSONObject
 import java.lang.Error
+import com.facebook.react.modules.core.DeviceEventManagerModule
 
 
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), OmetriaNotificationInteractionHandler {
 
   var deeplinkInteractionPromise: Promise? = null
-  var notificationInteractionPromise: Promise? = null
+
 
   init {
     StorageController(reactContext.applicationContext).saveSdkVersionRN("1.2.3")
@@ -159,14 +160,9 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     deeplinkInteractionPromise?.resolve(deepLink)
   }
 
-  @ReactMethod
-  fun onNotificationInteracted(resolver: Promise) {
-    notificationInteractionPromise = resolver
-    Ometria.instance().notificationInteractionHandler = this
-  }
-
   override fun onNotificationInteraction(ometriaNotification: OmetriaNotification){
-      notificationInteractionPromise?.resolve(ometriaNotification.toJSON())
+      this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+        .emit("onNotificationInteracted", ometriaNotification.toJSON())
   }
 
   @ReactMethod
