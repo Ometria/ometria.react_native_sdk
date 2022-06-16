@@ -118,11 +118,10 @@ const Home = () => {
   };
 
   /* Push Notifications
-   * On iOS the SDK manages Firebase PN
-   * If using other push notification providers (ie Amazon SNS, etc)
-   * you may need to get the APNs token instead for iOS */
+   * On iOS the SDK handles Firebase PN background messages
+   */
   useEffect(() => {
-    if (!isReady || Platform.OS !== 'android') {
+    if (!isReady) {
       return;
     }
     // First time push token
@@ -133,22 +132,26 @@ const Home = () => {
         Ometria.onNewToken(pushToken);
       });
 
-    // Subscribe to foreground PN
+    // On token refresh
+    messaging().onTokenRefresh((pushToken: string) =>
+      Ometria.onNewToken(pushToken)
+    );
+
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    // Subscribe to foreground PN only on Android
     const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
       console.log('Foreground message received:', remoteMessage);
       Ometria.onMessageReceived(remoteMessage);
     });
 
-    // Subscribe to background PN
+    // Subscribe to background PN only on Android
     messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
       console.log('Background message received:', remoteMessage);
       Ometria.onMessageReceived(remoteMessage);
     });
-
-    // On token refresh
-    messaging().onTokenRefresh((pushToken: string) =>
-      Ometria.onNewToken(pushToken)
-    );
 
     return () => unsubscribe();
   }, [isReady]);
