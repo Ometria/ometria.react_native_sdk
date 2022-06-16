@@ -25,10 +25,6 @@ import {
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
 
-/* <testing> */
-import AsyncStorage from '@react-native-async-storage/async-storage';
-/* </testing> */
-
 enableScreens();
 
 type StackParamList = {
@@ -66,22 +62,13 @@ const EventType = {
   CLEAR: 'CLEAR',
 };
 
-/* <testing> */
-const DEBUG_MODE = true; // used for internal testings
-/* </testing> */
-
 const Home = () => {
   const navigation = useNavigation<EventsScreenNavigationProp>();
   const [isReady, setIsReady] = useState(false); // initialization status
   const [email, setEmail] = useState('');
   const [notificationContent, setNotificationContent] = useState('');
 
-  /* <testing> */
-  const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
-  /* </testing> */
-  /* <production> */
-  //const ometriaToken = ''; // OMETRIA_API_TOKEN
-  /* </production */
+  const ometriaToken = ''; // OMETRIA_API_TOKEN
   const [customerId, setCustomerId] = useState('');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
@@ -131,11 +118,10 @@ const Home = () => {
   };
 
   /* Push Notifications
-   * On iOS the SDK manages Firebase PN
-   * If using other push notification providers (ie Amazon SNS, etc)
-   * you may need to get the APNs token instead for iOS */
+   * On iOS the SDK handles Firebase PN background messages
+   */
   useEffect(() => {
-    if (!isReady || Platform.OS !== 'android') {
+    if (!isReady) {
       return;
     }
     // First time push token
@@ -146,22 +132,26 @@ const Home = () => {
         Ometria.onNewToken(pushToken);
       });
 
-    // Subscribe to foreground PN
+    // On token refresh
+    messaging().onTokenRefresh((pushToken: string) =>
+      Ometria.onNewToken(pushToken)
+    );
+
+    if (Platform.OS !== 'android') {
+      return;
+    }
+
+    // Subscribe to foreground PN only on Android
     const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
       console.log('Foreground message received:', remoteMessage);
       Ometria.onMessageReceived(remoteMessage);
     });
 
-    // Subscribe to background PN
+    // Subscribe to background PN only on Android
     messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
       console.log('Background message received:', remoteMessage);
       Ometria.onMessageReceived(remoteMessage);
     });
-
-    // On token refresh
-    messaging().onTokenRefresh((pushToken: string) =>
-      Ometria.onNewToken(pushToken)
-    );
 
     return () => unsubscribe();
   }, [isReady]);
@@ -198,51 +188,11 @@ const Home = () => {
     setIsSettingsModalVisible(false);
   }, [customerId]);
 
-  /* <production> */
   /* Initialize Ometria.
    * Ometria cannot be re-initialized multiple times in the same app cycle */
-  // useEffect(() => {
-  //   handleInit(ometriaToken);
-  // }, []);
-  /* </production> */
-
-  /* <testing> */
-  /* Debug settings to change Ometria token - not for production
-   * Ometria cannot be re-initialized with a different token in the same app cycle */
-  const getSavedToken = async () => {
-    const savedToken = await AsyncStorage.getItem('token');
-    if (savedToken !== null) {
-      setOmetriaToken(savedToken);
-    } else {
-      setIsSettingsModalVisible(true);
-    }
-    return savedToken;
-  };
-
-  const saveNewToken = async () => {
-    const savedToken = await AsyncStorage.getItem('token');
-    AsyncStorage.setItem('token', ometriaToken);
-    if (savedToken) {
-      Alert.alert(
-        'New token',
-        'Please kill the app in order to have the app use the new token'
-      );
-    } else {
-      handleInit(ometriaToken);
-    }
-  };
-
-  // Call init
   useEffect(() => {
-    if (DEBUG_MODE) {
-      getSavedToken().then((savedToken) => {
-        savedToken && handleInit(savedToken);
-      });
-    } else {
-      ometriaToken !== '' && handleInit(ometriaToken);
-    }
+    handleInit(ometriaToken);
   }, []);
-  /* </testing> */
 
   return (
     <View style={styles.container}>
@@ -256,21 +206,6 @@ const Home = () => {
         }}
       >
         <SafeAreaView style={[styles.container, { backgroundColor: '#fff' }]}>
-          {/* <testing> */}
-          <TextInput
-            style={[styles.input, { marginTop: 30 }]}
-            placeholder="Ometria API TOKEN"
-            placeholderTextColor="#000"
-            value={ometriaToken}
-            onChangeText={(text) => {
-              console.log('Text changed: ', text);
-              setOmetriaToken(text);
-            }}
-          />
-          <TouchableOpacity style={styles.button} onPress={saveNewToken}>
-            <Text style={styles.text}>SAVE TOKEN</Text>
-          </TouchableOpacity>
-          {/* </testing> */}
           <TextInput
             style={styles.input}
             value={customerId}
@@ -564,9 +499,3 @@ const styles = StyleSheet.create({
   },
   gray: { backgroundColor: '#33323A' },
 });
-
-/* <testing> */
-/* Use <production> snippets for the public example code
- * Use <testing> snippets for the internal sample app
- */
-/* </testing> */

@@ -163,6 +163,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     
     @objc(onNewToken:resolver:rejecter:)
     func onNewToken(pushToken: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().handleFirebaseTokenChanged(token: pushToken)
         resolve(nil)
     }
     

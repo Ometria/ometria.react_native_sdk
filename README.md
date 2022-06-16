@@ -425,41 +425,41 @@ Before continuing, you must have already configured:
 * The Ometria SDK
 * Firebase
 
-#### iOS
-
-On iOS you have to request push notifications permissions using Firebase Messaging, e.g.:
+After Ometria initialization, you have to forward the Firebase Push Notification token, e.g.:
 
 ```js
 import messaging from '@react-native-firebase/messaging';
 // ...
+// Only after Ometria initialization...
+messaging()
+      .getToken()
+      .then(pushToken => Ometria.onNewToken(pushToken));
+
+messaging().onTokenRefresh(pushToken => Ometria.onNewToken(pushToken));
+```
+
+Then, you have to request push notifications permissions (for iOS) using Firebase Messaging, e.g.:
+```js
 await messaging().requestPermission({
   sound: true,
   badge: true,
   alert: true,
 });
 ```
+#### Handling remote messages on iOS
 
-The Ometria SDK will automatically source all the required tokens and provide them to the backend.
+The Ometria SDK will automatically handle remote background messages and provide them to the backend.
+This way your app will start receiving notifications from Ometria. 
+Handling those notifications while the app is running in the foreground or additional handling is up to you.
 
-This way your app will start receiving notifications from Ometria. Handling those notifications while the app is running in the foreground is up to you.
+#### Handling remote messages on Android
 
-#### Android
-
-On Android you have to forward the Push Notification token, e.g.:
-
+For Android you need to call Ometria.onMessageReceived when you get a message from Firebase, e.g.:
 ```js
-import messaging from '@react-native-firebase/messaging';
-// ...
-messaging().onTokenRefresh((pushToken) => {
-  Ometria.onNewToken(pushToken);
-});
-```
-
-and next you must pass the remote message to Ometria SDK, e.g.:
-
-```js
-messaging().onMessage((remoteMessage) => {
-  Ometria.onMessageReceived(remoteMessage);
+const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+    if (Platform.OS === "android") {
+      Ometria.onMessageReceived(remoteMessage);
+    }
 });
 ```
 
@@ -495,13 +495,6 @@ The response structure object example:
 Eg:
 
 ``` js
-  const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-    if (Platform.OS === 'android') {
-      // For Android you need to call Ometria.onMessageReceived when you get the notification from Firebase
-      Ometria.onMessageReceived(remoteMessage);
-    }
-  });
-
   Ometria.onNotificationInteracted((response: OmetriaNotificationData) => {
     // Handle Ometria notification interaction response (both iOS & Android). Eg:
     if (response.deepLinkActionUrl) {
