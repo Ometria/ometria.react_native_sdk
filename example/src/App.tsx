@@ -24,6 +24,9 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from 'react-native-screens/native-stack';
+/* <testing> */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+/* </testing> */
 
 enableScreens();
 
@@ -68,7 +71,13 @@ const Home = () => {
   const [email, setEmail] = useState('');
   const [notificationContent, setNotificationContent] = useState('');
 
-  const ometriaToken = ''; // OMETRIA_API_TOKEN
+  /* <testing> */
+  const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
+  /* </testing> */
+  /* <production> */
+  //const ometriaToken = 'pk_8fe9f6aa-4fe7-42c7-8966-b8cbd6c0fb0c'; // OMETRIA_API_TOKEN
+  /* </production */
+
   const [customerId, setCustomerId] = useState('');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
@@ -188,11 +197,52 @@ const Home = () => {
     setIsSettingsModalVisible(false);
   }, [customerId]);
 
+  /* <production> */
   /* Initialize Ometria.
    * Ometria cannot be re-initialized multiple times in the same app cycle */
+  // useEffect(() => {
+  //   handleInit(ometriaToken);
+  // }, []);
+  /* </production> */
+  /* <testing> */
+  /* Debug settings to change Ometria token - not for production
+   * Ometria cannot be re-initialized with a different token in the same app cycle */
+  const getSavedToken = async () => {
+    const savedToken = await AsyncStorage.getItem('token');
+    if (savedToken === null) {
+      setIsSettingsModalVisible(true);
+    } else {
+      setOmetriaToken(savedToken);
+    }
+    console.log('Heeeeee', savedToken);
+    return savedToken;
+  };
+
+  const saveNewToken = async () => {
+    if (ometriaToken === '') {
+      return;
+    }
+    const savedToken = await AsyncStorage.getItem('token');
+    AsyncStorage.setItem('token', ometriaToken);
+    if (savedToken) {
+      Alert.alert(
+        'New token',
+        'Please kill the app in order to have the app use the new token'
+      );
+    } else {
+      handleInit(ometriaToken);
+    }
+  };
+
+  // Call init
   useEffect(() => {
-    handleInit(ometriaToken);
+    const preInit = async () => {
+      const savedToken = await getSavedToken();
+      savedToken && handleInit(savedToken);
+    };
+    preInit();
   }, []);
+  /* </Testing> */
 
   return (
     <View style={styles.container}>
@@ -206,6 +256,22 @@ const Home = () => {
         }}
       >
         <SafeAreaView style={[styles.container, { backgroundColor: '#fff' }]}>
+          {/* <testing> */}
+          <TextInput
+            style={[styles.input, { marginTop: 30 }]}
+            placeholder="Ometria API TOKEN"
+            placeholderTextColor="#000"
+            value={ometriaToken}
+            onChangeText={(text) => {
+              console.log('Text changed: ', text);
+              setOmetriaToken(text);
+            }}
+          />
+          <TouchableOpacity style={styles.button} onPress={saveNewToken}>
+            <Text style={styles.text}>SAVE TOKEN</Text>
+          </TouchableOpacity>
+          {/* </testing> */}
+
           <TextInput
             style={styles.input}
             value={customerId}
