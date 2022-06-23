@@ -10,8 +10,10 @@ The app has two key objectives:
 
 For your mobile app, this means:
 
-1. Tracking customer behaviour through events - handled by Ometria.
+1. Tracking customer behaviour through events - a subset of events is automatically handled by the Ometria SDK, but you have to customize it to your needs, see [Creating an event tracking plan for your mobile app](https://support.ometria.com/hc/en-gb/articles/360018440917-Creating-an-event-tracking-plan-for-your-mobile-app).
 2. Sending and displaying push notifications - **requires the app developers**.
+
+App developers integrating with this SDK should follow the guide below. You can also look at the Sample app we have included for a reference implementation.
 
 2\. Before you begin
 ----------------------
@@ -40,7 +42,7 @@ eg:
 4\. Initialise the library
 --------------------------
 
-To initialise Ometria, you need to enter the API key from **2. Before you begin**.
+To initialise the Ometria SDK, you need to enter the API key from **2. Before you begin**.
 
 ```js
 import Ometria from 'Ometria/ometria.react_native_sdk'
@@ -48,7 +50,8 @@ import Ometria from 'Ometria/ometria.react_native_sdk'
 await Ometria.initializeWithApiToken('API_KEY');
 ```
 
-Once you've called this method once, you can access your instance throughout the rest of your application.
+Once you've called this method once, the SDK will be able to send events to Ometria.
+You can access your instance throughout the rest of your application.
 
 Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices.
 
@@ -62,7 +65,9 @@ import messaging from '@react-native-firebase/messaging';
 For **Android** follow the Firebase React-Native tutorial [Firebase for Android](https://rnfirebase.io/#2-android-setup)
 For **iOS** follow the Firebase React-Native tutorial [Firebase for iOS](https://rnfirebase.io/#3-ios-setup)
 
-Ometria logs any errors encountered during runtime by default.
+To use push notifications, you also need to follow the steps in [Configure push notifications in your application](#configure-push-notifications-in-your-application)
+
+Ometria logs any errors encountered during runtime by default, these logs are accessible in your development environment's console.
 
 You can enable advanced logging if you want more information on what’s happening in the background. Just add the following line after initialising the library:
 
@@ -91,9 +96,9 @@ Many of these methods have analogous events in a server-to-server API called the
 
 **Be aware:** If your business already integrates with Ometria in any way, it is very important that the values sent here correspond to those in other integrations.
 
-E.g., the customer identified event takes a customer ID - that ID must be the same here as it is in the data API.
+E.g., the customer identified event takes a customer ID or an email - these identifiers must be the same here as it is in the data API. If you specify both email and customer id, both need to match.
 
-The events are merged on Ometria's side into one big cross-channel view of your customer behaviour, which will otherwise get very messy.
+The events are merged on Ometria's side into one big cross-channel view of your customer behaviour. If you use inconsistent email/customer ids, this could result in duplicate profiles created or data loss.
 
 ### Manually tracked events
 
@@ -148,7 +153,7 @@ Ometria.trackProfileIdentifiedByEmailEvent('test@gmail.com');
 Having a **customerId** makes profile matching more robust.
 
 It’s not mutually exclusive with sending an email event; for optimal integration you should send either event as soon as you have the information.
-These two events are pivotal to the functioning of the SDK, so make sure you send them as early as possible.
+These two events are pivotal to the functioning of the SDK, so make sure you send them as early as possible. Reiterating here that these identifiers must be the same here as the ones you use in your e-commerce platform and you send to Ometria (via the data API or other ways). If you specify both email and customer id, both need to match. A typical error we see at integrations is that the app generates a new customer id on each login (that doesn't match the customer id stored in Ometria). To avoid this, generate these ids centrally on your servers and send consistent ones through the Ometria mobile SDK and the Ometria Data API. If it is impractical to generate consistent ids, we suggest only using email to identify contacts.
 
 #### Profile deidentified
 
@@ -159,6 +164,8 @@ Use this if a user logs out, or otherwise signals that this device is no longer 
 ```js
 Ometria.trackProfileDeidentifiedEvent();
 ```
+
+Currently this event clears the stored ids (email and/or customer id) from the phone's local storage. It has no other effect within Ometria.
 
 #### Product viewed
 
@@ -268,7 +275,7 @@ Based on the implementation status of interaction with notifications that contai
 
 The default implementation automatically logs a deep link opened event every time the user interacts with a notification that has a deep link. This is possible because we know that the default implementation will open the link in a browser.
 
-If you chose to handle deep links yourself (using the guide for [Handling interaction with notifications that contain URLs](#7-app-links-guide)), then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
+If you chose to handle deep links yourself (using the guide for [Handling interaction with notifications that contain URLs](#handling-interaction-with-notifications-that-contain-urls)), then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
 
 ```js
 Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
@@ -422,15 +429,18 @@ Follow these steps:
 
 Before continuing, you must have already configured:
 
-* The Ometria SDK
+* The Ometria SDK [4\. Initialise the library](4-initialise-the-library)
 * Firebase
 
-After Ometria initialization, you have to forward the Firebase Push Notification token, e.g.:
+After Ometria initialisation, you have to forward the Firebase Push Notification token, e.g.:
 
 ```js
+import Ometria from 'Ometria/ometria.react_native_sdk';
 import messaging from '@react-native-firebase/messaging';
 // ...
-// Only after Ometria initialization...
+// Initialize the Ometria SDK
+await Ometria.initializeWithApiToken('API_KEY');
+// ...
 messaging()
       .getToken()
       .then(pushToken => Ometria.onNewToken(pushToken));
@@ -463,7 +473,7 @@ const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
 });
 ```
 
-For a complete example and use case please consult the sample app.
+For a complete example and use case please consult the Sample app.
 
 ### Handling interaction with notifications that contain URLs
 
@@ -475,22 +485,24 @@ However, it enables developers to handle those URLs as they see fit (e.g. take t
 
 To get access to those interactions and the URLs, implement the ``` Ometria.onNotificationInteracted() ```
 
-The response structure object example:
+The response object will look like this:
+```json
 {
-  "imageUrl": "https://...imageURL.png",
-  "deepLinkActionUrl": "https://...website",
-  "campaignType": "trigger",
-  "externalCustomerId": "123Test",
-  "sendId": "61dae09c4fc04640aa4f92bc769112e5",
-  "tracking": {
+  "imageUrl": "https://...imageURL.png", # images are currently not supported, this is a placeholder
+  "deepLinkActionUrl": "https://...website", # the url configured in the push notifications node your automation campaign
+  "campaignType": "trigger", # this is always trigger, representing automation campaigns. Included as a placeholder
+  "externalCustomerId": "123Test", # the customer id in your database for this contact
+  "sendId": "61dae09c4fc04640aa4f92bc769112e5", # unique id for the notification
+  "tracking": { # these can be overridden / added in your automation campaign's settings / Tracking parameters field
     "utm_medium": "push", # default for push
     "utm_source": "transactional",
     "utm_campaign": "om_7b627d38b69a_my_campaign",  # generated by default from campaign hash and title
-    "om_campaign": "om_7b627d38b69a_2098_ebrao01q" # generated by default from campaign hash, version and node id
-    "additional_tracking_data": "value 1",
+    "om_campaign": "om_7b627d38b69a_2098_ebrao01q" # generated by default from campaign hash, campaign version and node id
+    "additional_tracking_data": "value 1", # you can add more in your automation campaign's settings / Tracking parameters field
     ...
   }
 }
+```
 
 Eg:
 
@@ -503,8 +515,8 @@ Eg:
   });
 ```
 
-**Note:** As of version 1.3 `Ometria.onNotificationInteracted` requires a callback function parameter that handles the interaction response. 
-Usage of `.then().catch()` no longer works! Please use a callback instead.
+**Note:** As of version 2.0.0 `Ometria.onNotificationInteracted` requires a callback function parameter that handles the interaction response. 
+Usage of `.then().catch()` that was used in 1.x.x no longer works! Please use a callback instead.
 
 ### Enabling rich content notifications (iOS only)
 
