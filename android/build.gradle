@@ -125,15 +125,15 @@ repositories {
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
 
+
 dependencies {
-  implementation fileTree(dir: "libs", include: ["*.aar"])
-  compileOnly files('libs/OmetriaSDK-debug.aar') // remove in prod!
-  // noinspection GradleDynamicVersion
+  // implementation fileTree(dir: "libs", include: ["*.aar"]) // debug
+  // compileOnly files('libs/OmetriaSDK-debug.aar') // debug
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  // implementation 'com.ometria:android-sdk:1.2.1' uncomment in prod with 1.2.3v
   implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
   implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
   implementation 'com.google.firebase:firebase-messaging:23.0.0'
-  debugImplementation files('libs/OmetriaSDK-debug.aar')
+  // debugImplementation files('libs/OmetriaSDK-debug.aar') // debug
+  implementation 'com.ometria:android-sdk:1.2.3' // production
 }
