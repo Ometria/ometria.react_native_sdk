@@ -20,7 +20,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
 
   init {
-    StorageController(reactContext.applicationContext).saveSdkVersionRN("1.2.3")
+    StorageController(reactContext.applicationContext).saveSdkVersionRN("2.0.0")
   }
 
   override fun getName(): String {
