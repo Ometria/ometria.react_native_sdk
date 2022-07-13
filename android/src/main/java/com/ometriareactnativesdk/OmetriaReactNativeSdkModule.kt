@@ -2,22 +2,17 @@ package com.ometriareactnativesdk
 
 import android.app.Application
 import android.os.Handler
-import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
 import com.facebook.react.bridge.*
-import org.json.JSONObject
-import java.lang.Error
 import com.facebook.react.modules.core.DeviceEventManagerModule
-
 
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext), OmetriaNotificationInteractionHandler {
 
   var deeplinkInteractionPromise: Promise? = null
-
 
   init {
     StorageController(reactContext.applicationContext).saveSdkVersionRN("2.0.0")
@@ -28,16 +23,17 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   // Get a handler that can be used to post to the main thread
-  val mainThreadHandler = Handler(reactContext.mainLooper)
+  private val mainThreadHandler = Handler(reactContext.mainLooper)
 
   @ReactMethod
-  fun initializeWithApiToken(apiToken: String, resolver: Promise) {
+  fun initializeWithApiToken(apiToken: String, options: ReadableMap ? = null, resolver: Promise) {
     // run on main thread
     val runOnMainThreadTask = Runnable {
       Ometria.initialize(
-        reactContext.applicationContext as Application,
-        apiToken,
-        reactContext.applicationInfo.icon,
+        application = reactContext.applicationContext as Application,
+        apiToken = apiToken,
+        notificationIcon =  reactContext.applicationInfo.icon,
+        notificationChannelName = options?.getString("notificationChannelName")?: " "
       )
       resolver.resolve(null)
     }

@@ -92,7 +92,9 @@ const Home = () => {
   // Initialization
   const handleInit = async (token: string) => {
     try {
-      Ometria.initializeWithApiToken(token).then(
+      Ometria.initializeWithApiToken(token, {
+        notificationChannelName: 'Example Channel Name',
+      }).then(
         () => {
           console.log('Ometria initialized');
           Ometria.isLoggingEnabled(true);
