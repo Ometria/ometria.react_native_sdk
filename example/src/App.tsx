@@ -216,7 +216,7 @@ const Home = () => {
     } else {
       setOmetriaToken(savedToken);
     }
-    console.log('Heeeeee', savedToken);
+    console.log('Saved token', savedToken);
     return savedToken;
   };
 
