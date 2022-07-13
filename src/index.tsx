@@ -12,6 +12,10 @@ export type OmetriaBasketItem = {
   price: number;
 };
 
+type OmetriaOptions = {
+  notificationChannelName?: string; // only for Android
+};
+
 export type OmetriaBasket = {
   currency: string;
   totalPrice: number;
@@ -36,7 +40,10 @@ export type OmetriaNotificationData = {
 
 type OmetriaReactNativeSdkType = {
   // iOS & Android
-  initializeWithApiToken(token: string): Promise<void>;
+  initializeWithApiToken(
+    token: string,
+    options?: OmetriaOptions
+  ): Promise<void>;
   trackProfileIdentifiedByCustomerIdEvent(customerId: string): () => void;
   trackProfileIdentifiedByEmailEvent(email: string): () => void;
   trackProfileDeidentifiedEvent(): () => void;
@@ -89,5 +96,15 @@ OmetriaReactNativeSdk.onNotificationInteracted = (
       }
     );
 };
+
+const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
+
+OmetriaReactNativeSdk.initializeWithApiToken = (
+  token: string,
+  options?: OmetriaOptions
+) =>
+  Platform.OS === 'android'
+    ? _initializeWithApi(token, options ?? {})
+    : _initializeWithApi(token);
 
 export default OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
