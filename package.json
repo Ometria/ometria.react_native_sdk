@@ -1,6 +1,6 @@
 {
   "name": "react-native-ometria",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "We help retailers create marketing experiences their customers will love",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
