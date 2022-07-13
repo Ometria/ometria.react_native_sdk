@@ -47,12 +47,15 @@ To initialise the Ometria SDK, you need to enter the API key from **2. Before yo
 ```js
 import Ometria from 'Ometria/ometria.react_native_sdk'
 // Ometria init
-await Ometria.initializeWithApiToken('API_KEY');
+await Ometria.initializeWithApiToken('API_KEY', {
+  notificationChannelName: 'Example Channel Name', // optional, only for Android
+});
 ```
 
 Once you've called this method once, the SDK will be able to send events to Ometria.
 You can access your instance throughout the rest of your application.
 
+You can specify a custom name of the Android notification channel in the second optional options parameter. Default channel name is ` `.
 Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices.
 
 You will therefore have to add ‘React-Native Firebase’ as a dependency of Ometria, using the following lines:
