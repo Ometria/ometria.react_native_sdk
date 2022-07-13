@@ -65,10 +65,10 @@ type OmetriaReactNativeSdkType = {
   ): () => void;
 
   processUniversalLink(url: string): Promise<string>;
+  onNewToken(token: String): () => void;
 
   // Android only
   onMessageReceived(remoteMessage: String): () => void;
-  onNewToken(token: String): () => void;
   onPushTokenRefreshed(token: String): () => void;
 };
 

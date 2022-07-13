@@ -65,12 +65,12 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - Ometria (1.2.2):
+  - Ometria (1.2.3):
     - FirebaseMessaging
-  - ometria-react-native-sdk (1.2.3):
-    - Ometria (~> 1.2.2)
+  - ometria-react-native-sdk (2.0.0):
+    - Ometria (~> 1.2.3)
     - React
-  - PromisesObjC (2.1.0)
+  - PromisesObjC (2.1.1)
   - RCT-Folly (2021.04.26.00):
     - boost-for-react-native
     - DoubleConversion
@@ -530,9 +530,9 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  Ometria: f174f6e81d4a5eda876f120476ce0298e63a0f02
-  ometria-react-native-sdk: ffd340f745f0d249c135408854d0b10605839fdd
-  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
+  Ometria: b15dd1736bbebc1f6ba96f25aa0b08100277333e
+  ometria-react-native-sdk: 0e77c27d89f07f7917839aa8926f43e01447b04f
+  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: 0dd9e1eb86348ecab5ba76f910b56f4b5fef3c46
   RCTRequired: 1b65ab453de585b0f939824780bd26cdf6fb07f8
   RCTTypeSafety: 31f76e2d6734fe3c8084ac9d39201c4a1a3c5b42
