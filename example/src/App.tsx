@@ -50,8 +50,6 @@ const EventType = {
   PROFILE_DEIDENTIFIED: 'PROFILE_DEIDENTIFIED',
   PRODUCT_VIEWED: 'PRODUCT_VIEWED',
   PRODUCT_LISTING_VIEWED: 'PRODUCT_LISTING_VIEWED',
-  WISH_LIST_ADDED_TO: 'WISH_LIST_ADDED_TO',
-  WISHLIST_REMOVED_FROM: 'WISHLIST_REMOVED_FROM',
   BASKET_VIEWED: 'BASKET_VIEWED',
   BASKET_UPDATED: 'BASKET_UPDATED',
   CHECKOUT_STARTED: 'CHECKOUT_STARTED',
@@ -281,10 +279,6 @@ const Events = () => {
       Ometria.trackProductViewedEvent('product_1');
     if (eventType === EventType.PRODUCT_LISTING_VIEWED)
       Ometria.trackProductListingViewedEvent('product_list', {});
-    if (eventType === EventType.WISH_LIST_ADDED_TO)
-      Ometria.trackWishlistAddedToEvent('product_1');
-    if (eventType === EventType.WISHLIST_REMOVED_FROM)
-      Ometria.trackWishlistRemovedFromEvent('product_1');
     if (eventType === EventType.BASKET_VIEWED) Ometria.trackBasketViewedEvent();
     if (eventType === EventType.BASKET_UPDATED) {
       // list of products
@@ -389,18 +383,6 @@ const Events = () => {
             <Text style={styles.text}>{EventType.PRODUCT_LISTING_VIEWED}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => sendEvent(EventType.WISH_LIST_ADDED_TO)}
-          >
-            <Text style={styles.text}>{EventType.WISH_LIST_ADDED_TO}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => sendEvent(EventType.WISHLIST_REMOVED_FROM)}
-          >
-            <Text style={styles.text}>{EventType.WISHLIST_REMOVED_FROM}</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => sendEvent(EventType.BASKET_VIEWED)}
