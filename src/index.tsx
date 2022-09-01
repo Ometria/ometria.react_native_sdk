@@ -12,7 +12,7 @@ export type OmetriaBasketItem = {
   price: number;
 };
 
-type OmetriaOptions = {
+export type OmetriaOptions = {
   notificationChannelName?: string; // only for Android
 };
 
@@ -52,7 +52,23 @@ type OmetriaReactNativeSdkType = {
     listingType: string,
     listingAttributes: any
   ): () => void;
+  /**
+   * @deprecated Deprecated since version 2.1.1.
+   *
+   * The event is no longer sent to the Ometria backend.
+   *
+   * Will be removed in the next major version.
+   *
+   */
   trackWishlistAddedToEvent(productId: string): () => void;
+  /**
+   * @deprecated Deprecated since version 2.1.1.
+   *
+   * The event is no longer sent to the Ometria backend.
+   *
+   * Will be removed in the next major version.
+   *
+   */
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
   trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
@@ -79,6 +95,10 @@ type OmetriaReactNativeSdkType = {
   onPushTokenRefreshed(token: String): () => void;
 };
 
+/**
+ *  ReactNative custom implementation for
+ * `.onNotificationInteracted()` EventListener
+ */
 const { OmetriaReactNativeSdk } = NativeModules;
 const OmetriaEventEmitter = Platform.select({
   ios: new NativeEventEmitter(OmetriaReactNativeSdk),
@@ -97,6 +117,10 @@ OmetriaReactNativeSdk.onNotificationInteracted = (
     );
 };
 
+/**
+ *  ReactNative custom implementation for
+ * `.initializeWithApiToken` method
+ */
 const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
 
 OmetriaReactNativeSdk.initializeWithApiToken = (
