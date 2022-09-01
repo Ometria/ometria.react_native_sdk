@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {
@@ -62,7 +63,7 @@ const demoBasketItems: OmetriaBasketItem[] = [
 const App = () => {
   const ometriaToken = ''; // OMETRIA_API_TOKEN
 
-  const [isInit, setIsInit] = useState(false); // Ometria Initialization Status
+  const [initPN, setInitPN] = useState(false); // isReady to initialize Push Notification
   const [notificationContent, setNotificationContent] = useState(
     'Interract with a notification to see its content here.'
   );
@@ -71,53 +72,26 @@ const App = () => {
   const [evtsModal, setEvtsModal] = useState(false);
 
   /**
-   * Initialize Ometria SDK
+   * Initialize Ometria with the API Token
+   *
+   * Additionally you can pass an options object to customize the SDK behavior,
+   * for example you can set the notification channel name for Android.
+   *
    * @param token String
    */
   const handleOmetriaInit = async (token: string) => {
     try {
-      // Initialize Ometria with the API Token
       Ometria.initializeWithApiToken(token, {
         notificationChannelName: 'Example Channel Name',
       }).then(
-        () => {
+        async () => {
           console.log('🎉 Ometria has been initialized!');
           Ometria.isLoggingEnabled(true);
-
-          // Request permission for push notifications
-          messaging()
-            .requestPermission({
-              sound: true,
-              badge: true,
-              alert: true,
-            })
-            .then((status) => {
-              if (
-                status === messaging.AuthorizationStatus.AUTHORIZED ||
-                status === messaging.AuthorizationStatus.PROVISIONAL
-              ) {
-                console.log('🔔 Push Notification permissions granted!');
-              }
-            });
-
-          // Set up a listener for user interaction with push notifications
-          Ometria.onNotificationInteracted(
-            (response: OmetriaNotificationData) => {
-              console.log('🔔 Notification Interacted', response);
-              setNotificationContent(JSON.stringify(response));
-
-              // Handle deep linking open URL action
-              if (response.deepLinkActionUrl) {
-                Ometria.trackDeepLinkOpenedEvent(
-                  response.deepLinkActionUrl,
-                  'Browser'
-                );
-                Linking.openURL(response.deepLinkActionUrl);
-              }
-            }
-          );
-          setIsInit(true);
           setAuthModal(false);
+
+          // Ready to initialize Push Notifications handler
+          await requestPNPermission();
+          setInitPN(true);
         },
         (error) => {
           throw error;
@@ -129,29 +103,78 @@ const App = () => {
   };
 
   /**
-   * Handle Push Notifications (both iOS & Android)
+   * Request Push Notifications permission
+   */
+  const requestPNPermission = async () => {
+    const status = await messaging().requestPermission({
+      sound: true,
+      badge: true,
+      alert: true,
+    });
+
+    if (
+      status === messaging.AuthorizationStatus.AUTHORIZED ||
+      status === messaging.AuthorizationStatus.PROVISIONAL
+    ) {
+      console.log('🔔 Push Notification permissions granted!');
+    }
+  };
+
+  /**
+   * Handle Push Notifications
+   *
+   * #### iOS & Android:
+   * - Provides Ometria SDK with the FCM token
+   * - Listen for new FCM tokens and provide them to the Ometria SDK
+   * - Set up a listener for user interaction with push notifications
+   *
+   * #### Android only
+   * - Subscribe to foreground PN messages
+   * - Subscribe to background PN messages
+   *
+   * (On iOS the SDK handles Firebase PN background messages.)
+   *
    * @returns unsubscribeFromMessages function
    */
   const handlePushNotifications = () => {
-    // First time push token
+    if (!initPN) return;
+
+    // Provides Ometria SDK with the FCM token
     messaging()
       .getToken()
       .then((pushToken: string) => {
-        console.log('🔑 Firebase token:', pushToken);
         Ometria.onNewToken(pushToken);
+        console.log('🔑 Firebase token:', pushToken);
       });
 
-    // On token refresh
+    // Listen for new FCM tokens and provide them to the Ometria SDK
     messaging().onTokenRefresh((pushToken: string) =>
       Ometria.onNewToken(pushToken)
     );
 
-    // On iOS the SDK handles Firebase PN background messages, so we don't need to do anything here.
-    if (Platform.OS !== 'android') {
-      return;
-    }
+    // Set up a listener for user interaction with push notifications
+    Ometria.onNotificationInteracted((response: OmetriaNotificationData) => {
+      console.log('🔔 Notification Interacted', response);
+      setNotificationContent(JSON.stringify(response));
 
-    // Subscribe to foreground PN only on Android
+      if (response.deepLinkActionUrl) {
+        // Handle deep linking open URL action
+        Ometria.trackDeepLinkOpenedEvent(response.deepLinkActionUrl, 'Browser');
+        Linking.openURL(response.deepLinkActionUrl);
+      }
+    });
+
+    /*
+     * Android only
+     *
+     * - Subscribe to foreground PN messages
+     * - Subscribe to background PN messages
+     *
+     * On iOS the SDK handles Firebase PN background messages.
+     * */
+
+    if (Platform.OS !== 'android') return;
+
     const unsubscribeFromMessages = messaging().onMessage(
       async (remoteMessage: any) => {
         console.log('📭 Foreground message received:', remoteMessage);
@@ -159,7 +182,6 @@ const App = () => {
       }
     );
 
-    // Subscribe to background PN only on Android
     messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
       console.log('📫 Background message received:', remoteMessage);
       Ometria.onMessageReceived(remoteMessage);
@@ -200,15 +222,21 @@ const App = () => {
     setAuthModal(false);
   };
 
-  // 1. Initialize Ometria handler. It CAN NOT be initialized multiple times.
+  /**
+   * Initialize with useEffect:
+   *
+   * 1. Ometria handler ONLY once
+   * 2. Push Notifications handler ONLY after Ometria initialization (initPN === true)
+   * 3. Deeplink handler
+   *
+   */
+
   useEffect(() => {
     handleOmetriaInit(ometriaToken);
   }, []);
 
-  // 2. Push Notifications handler, ONLY after Ometria initialization (isInit === true)
-  useEffect(() => (isInit ? handlePushNotifications() : undefined), [isInit]);
+  useEffect(handlePushNotifications, [initPN]);
 
-  // 2. Deeplinking handler
   useEffect(() => Linking.addEventListener('url', handleDeepLinking), []);
 
   return (
