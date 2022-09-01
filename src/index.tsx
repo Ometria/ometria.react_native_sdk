@@ -52,7 +52,23 @@ type OmetriaReactNativeSdkType = {
     listingType: string,
     listingAttributes: any
   ): () => void;
+  /**
+   * @deprecated Deprecated since version 2.1.1.
+   *
+   * The event is no longer sent to the Ometria backend.
+   *
+   * Will be removed in the next major version.
+   *
+   */
   trackWishlistAddedToEvent(productId: string): () => void;
+  /**
+   * @deprecated Deprecated since version 2.1.1.
+   *
+   * The event is no longer sent to the Ometria backend.
+   *
+   * Will be removed in the next major version.
+   *
+   */
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
   trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
