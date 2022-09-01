@@ -95,6 +95,10 @@ type OmetriaReactNativeSdkType = {
   onPushTokenRefreshed(token: String): () => void;
 };
 
+/**
+ *  ReactNative custom implementation for
+ * `.onNotificationInteracted()` EventListener
+ */
 const { OmetriaReactNativeSdk } = NativeModules;
 const OmetriaEventEmitter = Platform.select({
   ios: new NativeEventEmitter(OmetriaReactNativeSdk),
@@ -113,6 +117,10 @@ OmetriaReactNativeSdk.onNotificationInteracted = (
     );
 };
 
+/**
+ *  ReactNative custom implementation for
+ * `.initializeWithApiToken` method
+ */
 const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
 
 OmetriaReactNativeSdk.initializeWithApiToken = (
