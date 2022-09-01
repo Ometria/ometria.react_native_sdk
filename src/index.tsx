@@ -12,7 +12,7 @@ export type OmetriaBasketItem = {
   price: number;
 };
 
-type OmetriaOptions = {
+export type OmetriaOptions = {
   notificationChannelName?: string; // only for Android
 };
 
