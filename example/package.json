@@ -15,19 +15,11 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.11",
-    "@react-native-community/masked-view": "^0.1.11",
-    "@react-native-community/push-notification-ios": "^1.10.1",
     "@react-native-firebase/app": "^14.0.1",
     "@react-native-firebase/messaging": "^14.0.1",
-    "@react-navigation/native": "^6.0.2",
-    "@react-navigation/stack": "^6.0.7",
     "react": "^17.0.2",
     "react-native": "^0.65.1",
-    "react-native-gesture-handler": "^1.10.3",
-    "react-native-push-notification": "^8.1.1",
-    "react-native-reanimated": "^2.2.2",
-    "react-native-safe-area-context": "^3.3.2",
-    "react-native-screens": "^3.7.2"
+    "react-native-safe-area-context": "^3.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.13.14",
