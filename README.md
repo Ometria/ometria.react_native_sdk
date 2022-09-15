@@ -97,6 +97,17 @@ If you have a hard dependency on firebase [8.0 - 8.10] make sure to add the foll
 }
 ``` 
 
+4.2\. Using Firebase 9.x on iOS
+---------------------------------
+
+:warning: 
+If you are using Firebase 9.x on iOS, make sure you have the following lines in your `/ios/Podfile` file:
+```objc
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true 
+  pod 'FirebaseMessaging', :modular_headers => true
+``` 
+
 
 5\. Event tracking guide
 ------------------------
