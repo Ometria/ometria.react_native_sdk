@@ -25,7 +25,7 @@ See [Setting up your mobile app with Firebase credentials](https://support.ometr
 
 The easiest way to get Ometria into your React-Native project is by using `npm install` or `yarn add`.
 
-1. Install Ometria React-Native package from `Ometria/ometria.react_native_sdk` using `npm install Ometria/ometria.react_native_sdk` or `yarn add react-native-ometria@Ometria/ometria.react_native_sdk`
+1. Install Ometria React-Native package from `react-native-ometria` using `npm install react-native-ometria` or `yarn add react-native-ometria`
 
 note: If you have issues with installing the library, please consider excluding the example from typescript config
 eg:
@@ -45,7 +45,7 @@ eg:
 To initialise the Ometria SDK, you need to enter the API key from **2. Before you begin**.
 
 ```js
-import Ometria from 'Ometria/ometria.react_native_sdk'
+import Ometria from 'react-native-ometria'
 // Ometria init
 await Ometria.initializeWithApiToken('API_KEY', {
   notificationChannelName: 'Example Channel Name', // optional, only for Android
@@ -438,7 +438,7 @@ Before continuing, you must have already configured:
 After Ometria initialisation, you have to forward the Firebase Push Notification token, e.g.:
 
 ```js
-import Ometria from 'Ometria/ometria.react_native_sdk';
+import Ometria from 'react-native-ometria';
 import messaging from '@react-native-firebase/messaging';
 // ...
 // Initialize the Ometria SDK
