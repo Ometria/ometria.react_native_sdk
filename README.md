@@ -190,19 +190,6 @@ This event is about capturing interest from the visitor for this product.
 Ometria.trackProductViewedEvent('product_id');
 ```
 
-#### Wishlist events
-
-The visitor has added this product to their wishlist:
-
-```js
-Ometria.trackWishlistAddedToEvent('product_id');
-```
-
-... or removed it:
-
-```js
-Ometria.trackWishlistRemovedFromEvent('product_id');
-```
 
 #### Basket viewed
 
