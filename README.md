@@ -25,7 +25,7 @@ See [Setting up your mobile app with Firebase credentials](https://support.ometr
 
 The easiest way to get Ometria into your React-Native project is by using `npm install` or `yarn add`.
 
-1. Install Ometria React-Native package from `Ometria/ometria.react_native_sdk` using `npm install Ometria/ometria.react_native_sdk` or `yarn add react-native-ometria@Ometria/ometria.react_native_sdk`
+1. Install Ometria React-Native package from `react-native-ometria` using `npm install react-native-ometria` or `yarn add react-native-ometria`
 
 note: If you have issues with installing the library, please consider excluding the example from typescript config
 eg:
@@ -42,20 +42,24 @@ eg:
 4\. Initialise the library
 --------------------------
 
-To initialise the Ometria SDK, you need to enter the API key from **2. Before you begin**.
+To initialise the Ometria SDK, you need to enter the API key from **[2. Before you begin](#2-before-you-begin)**.
 
 ```js
-import Ometria from 'Ometria/ometria.react_native_sdk'
+import Ometria from 'react-native-ometria'
 // Ometria init
 await Ometria.initializeWithApiToken('API_KEY', {
   notificationChannelName: 'Example Channel Name', // optional, only for Android
 });
 ```
 
+Make sure you only call this method once in the app. Any other Ometria methods must be called **after** this method.
 Once you've called this method once, the SDK will be able to send events to Ometria.
-You can access your instance throughout the rest of your application.
+You can now access your instance throughout the rest of your application.
 
-You can specify a custom name of the Android notification channel in the second optional options parameter. Default channel name is ` `.
+You can specify a custom name of the Android notification channel in the second optional options parameter. Default channel name is `<blank>`.
+
+#### Notifications
+
 Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices.
 
 You will therefore have to add ‘React-Native Firebase’ as a dependency of Ometria, using the following lines:
@@ -69,6 +73,10 @@ For **Android** follow the Firebase React-Native tutorial [Firebase for Android]
 For **iOS** follow the Firebase React-Native tutorial [Firebase for iOS](https://rnfirebase.io/#3-ios-setup)
 
 To use push notifications, you also need to follow the steps in [Configure push notifications in your application](#configure-push-notifications-in-your-application)
+
+Read the full Ometria [Push notifications guide](#6-push-notifications-guide-for-react-native-apps)
+
+#### Debugging
 
 Ometria logs any errors encountered during runtime by default, these logs are accessible in your development environment's console.
 
@@ -182,19 +190,6 @@ This event is about capturing interest from the visitor for this product.
 Ometria.trackProductViewedEvent('product_id');
 ```
 
-#### Wishlist events
-
-The visitor has added this product to their wishlist:
-
-```js
-Ometria.trackWishlistAddedToEvent('product_id');
-```
-
-... or removed it:
-
-```js
-Ometria.trackWishlistRemovedFromEvent('product_id');
-```
 
 #### Basket viewed
 
@@ -428,17 +423,22 @@ Follow these steps:
 4. Configure push notifications in your application.
 5. Add a **Notification Service Extension** to your app in order to enable receiving rich content notifications.
 
-### Configure push notifications in your application
+### I. Configure push notifications in your application
 
 Before continuing, you must have already configured:
 
-* The Ometria SDK [4\. Initialise the library](4-initialise-the-library)
-* Firebase
+* The Ometria SDK must be initialised
+* Firebase must be configured and added to your project
 
-After Ometria initialisation, you have to forward the Firebase Push Notification token, e.g.:
+Read more about those steps in section [4\. Initialise the library](#4-initialise-the-library)
+
+#### - Forward the push token to Ometria
+After Ometria initialisation, you **must forward the Firebase Push Notification token** (both iOS and Android).
+
+You also have to forward the push notification token to Ometria every time it is refreshed.
 
 ```js
-import Ometria from 'Ometria/ometria.react_native_sdk';
+import Ometria from 'react-native-ometria';
 import messaging from '@react-native-firebase/messaging';
 // ...
 // Initialize the Ometria SDK
@@ -451,6 +451,7 @@ messaging()
 messaging().onTokenRefresh(pushToken => Ometria.onNewToken(pushToken));
 ```
 
+#### - Request permission to receive push notifications
 Then, you have to request push notifications permissions (for iOS) using Firebase Messaging, e.g.:
 ```js
 await messaging().requestPermission({
@@ -459,13 +460,13 @@ await messaging().requestPermission({
   alert: true,
 });
 ```
-#### Handling remote messages on iOS
+#### - Handling remote messages on iOS
 
 The Ometria SDK will automatically handle remote background messages and provide them to the backend.
 This way your app will start receiving notifications from Ometria. 
 Handling those notifications while the app is running in the foreground or additional handling is up to you.
 
-#### Handling remote messages on Android
+#### - Handling remote messages on Android
 
 For Android you need to call Ometria.onMessageReceived when you get a message from Firebase, e.g.:
 ```js
@@ -476,9 +477,9 @@ const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
 });
 ```
 
-For a complete example and use case please consult the Sample app.
+For a complete example and use case please consult the [Sample app](example/src/App.tsx).
 
-### Handling interaction with notifications that contain URLs
+### II. Handling interaction with notifications that contain URLs
 
 Ometria allows you to send URLs and tracking info alongside your push notifications and allows you to handle them on the device.
 
@@ -521,7 +522,7 @@ Eg:
 **Note:** As of version 2.0.0 `Ometria.onNotificationInteracted` requires a callback function parameter that handles the interaction response. 
 Usage of `.then().catch()` that was used in 1.x.x no longer works! Please use a callback instead.
 
-### Enabling rich content notifications (iOS only)
+### III. Enabling rich content notifications (iOS only)
 
 For **iOS** you have to integrate the rich content notification support directly in the Xcode project.
 
