@@ -6,6 +6,8 @@ platform :ios, '11.0'
 target 'OmetriaReactNativeSdkExample' do
   config = use_native_modules!
 
+  pod 'FirebaseCore', :modular_headers => true 
+  pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseMessaging', :modular_headers => true
   pod 'ometria-react-native-sdk', :path => '../..', :modular_headers => true
 

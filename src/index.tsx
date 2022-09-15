@@ -7,7 +7,7 @@ import {
 
 export type OmetriaBasketItem = {
   productId: string;
-  sku: string;
+  sku?: string;
   quantity: number;
   price: number;
 };
@@ -72,8 +72,8 @@ type OmetriaReactNativeSdkType = {
   trackWishlistRemovedFromEvent(productId: string): () => void;
   trackBasketViewedEvent(): () => void;
   trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
-  trackCheckoutStartedEvent(orderId?: String): () => void;
-  trackOrderCompletedEvent(orderId: String, basket?: OmetriaBasket): () => void;
+  trackCheckoutStartedEvent(orderId?: string): () => void;
+  trackOrderCompletedEvent(orderId: string, basket?: OmetriaBasket): () => void;
   trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
   trackHomeScreenViewedEvent(): () => void;
   trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
@@ -88,11 +88,11 @@ type OmetriaReactNativeSdkType = {
   ): () => void;
 
   processUniversalLink(url: string): Promise<string>;
-  onNewToken(token: String): () => void;
+  onNewToken(token: string): () => void;
 
   // Android only
-  onMessageReceived(remoteMessage: String): () => void;
-  onPushTokenRefreshed(token: String): () => void;
+  onMessageReceived(remoteMessage: string): () => void;
+  onPushTokenRefreshed(token: string): () => void;
 };
 
 /**
