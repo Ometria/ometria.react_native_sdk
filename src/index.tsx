@@ -10,6 +10,7 @@ export type OmetriaBasketItem = {
   sku?: string;
   quantity: number;
   price: number;
+  variantId?: string;
 };
 
 export type OmetriaOptions = {
@@ -17,6 +18,7 @@ export type OmetriaOptions = {
 };
 
 export type OmetriaBasket = {
+  id?: string;
   currency: string;
   totalPrice: number;
   items: OmetriaBasketItem[];
