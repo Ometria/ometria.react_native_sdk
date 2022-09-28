@@ -45,18 +45,21 @@ const demoBasketItems: OmetriaBasketItem[] = [
     sku: 'sku-product-1',
     quantity: 1,
     price: 12.0,
+    variantId: 'variant-1',
   },
   {
     productId: 'product-2',
     sku: 'sku-product-2',
     quantity: 2,
     price: 9.0,
+    variantId: 'variant-2',
   },
   {
     productId: 'product-3',
     sku: 'sku-product-3',
     quantity: 3,
     price: 20.0,
+    variantId: 'variant-3',
   },
 ];
 
@@ -305,6 +308,7 @@ const EventsModal: React.FC<{
       case Events.BASKET_UPDATED:
         Ometria.trackBasketUpdatedEvent({
           totalPrice: 12.0,
+          id: 'basket_id_eg',
           currency: 'USD',
           items: demoBasketItems,
           link: 'link_eg',
@@ -319,6 +323,7 @@ const EventsModal: React.FC<{
           currency: 'USD',
           items: demoBasketItems,
           link: 'link_eg',
+          id: 'basket_id_eg',
         });
         break;
       case Events.CUSTOM:
