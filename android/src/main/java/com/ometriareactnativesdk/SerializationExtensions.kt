@@ -18,6 +18,7 @@ private const val ITEMS = "items"
 private const val TOTAL_PRICE = "totalPrice"
 private const val CURRENCY = "currency"
 private const val LINK = "link"
+private const val ID = "id"
 
 fun ReadableMap.remoteMessageFromReadableMap(): RemoteMessage {
   val builder = RemoteMessage.Builder(KEY_REMOTE_MESSAGE)
@@ -52,7 +53,8 @@ fun String.toOmetriaBasketItem(): OmetriaBasketItem {
     jsonObject.getString("productId"),
     jsonObject.getString("sku"),
     jsonObject.getInt("quantity"),
-    jsonObject.getDouble("price").toFloat()
+    jsonObject.getDouble("price").toFloat(),
+    jsonObject.getString("variantId"),
   )
 }
 
@@ -62,6 +64,5 @@ fun ReadableMap.basketFromReadableMap(): OmetriaBasket {
   for (i in 0 until jsonArray.length()) {
     basketItems.add(jsonArray[i].toString().toOmetriaBasketItem())
   }
-
-  return OmetriaBasket(getDouble(TOTAL_PRICE).toFloat(), getString(CURRENCY).orEmpty(), basketItems, getString(LINK).orEmpty())
+  return OmetriaBasket(getString(ID), getDouble(TOTAL_PRICE).toFloat(), getString(CURRENCY).orEmpty(), basketItems, getString(LINK).orEmpty())
 }
