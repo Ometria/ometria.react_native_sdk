@@ -54,7 +54,7 @@ fun String.toOmetriaBasketItem(): OmetriaBasketItem {
     jsonObject.getString("sku"),
     jsonObject.getInt("quantity"),
     jsonObject.getDouble("price").toFloat(),
-    jsonObject.getString("variantId"),
+    jsonObject.getString("variantId")
   )
 }
 
