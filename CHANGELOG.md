@@ -1,3 +1,14 @@
+# 2.1.1
+
+2022-X-X
+
+- Added `id` property to OmetriaBasket object
+- Added `variantId` to OmetriaBasketItem object
+- Added library in-line method documentation
+- Deprecated wishlist events methods
+- Changed exaample to use Firebase 9.x
+- Fixed TypeScript `OmetriaBasketItem` model to match the SDK (`sku` is now optional)
+
 # 2.1.0
 
 2022-08-01
