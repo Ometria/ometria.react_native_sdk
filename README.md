@@ -133,23 +133,27 @@ const items: OmetriaBasketItem[] = [
     sku: 'sku-product-1',
     quantity: 1,
     price: 12.0,
+    variantId: 'variant-1',
   },
   {
     productId: 'product-2',
     sku: 'sku-product-2',
     quantity: 2,
     price: 9.0,
+    variantId: 'variant-2',
   },
   {
     productId: 'product-3',
     sku: 'sku-product-3',
     quantity: 3,
     price: 20.0,
+    variantId: 'variant-3',
   },
 ];
 
 Ometria.trackBasketUpdatedEvent({
   totalPrice: 12.0,
+  id: 'basket_id_eg',
   currency: 'USD',
   items,
   link: 'link_eg'
@@ -221,23 +225,27 @@ const items: OmetriaBasketItem[] = [
     sku: 'sku-product-1',
     quantity: 1,
     price: 12.0,
+    variantId: 'variant-1',
   },
   {
     productId: 'product-2',
     sku: 'sku-product-2',
     quantity: 2,
     price: 9.0,
+    variantId: 'variant-2',
   },
   {
     productId: 'product-3',
     sku: 'sku-product-3',
     quantity: 3,
     price: 20.0,
+    variantId: 'variant-3',
   },
 ];
 
 Ometria.trackBasketUpdatedEvent({
   totalPrice: 12.0,
+  id: 'basket_id_eg',
   currency: 'USD',
   items,
   link: 'link_eg'
@@ -272,6 +280,7 @@ const items: OmetriaBasketItem[] = [
 
 Ometria.trackOrderCompletedEvent('order_id', {
   totalPrice: 12.0,
+  id: 'basket_id_eg',
   currency: 'USD',
   items,
   link: 'link_eg'
@@ -352,8 +361,9 @@ An object that describes the contents of a shopping basket.
 
 #### Properties
 
+* `id`: (`String`, optional) - A unique identifier for this basket
 * `currency`: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`
-* `price`: (`float`, required) - A float value representing the pricing.
+* `totalPrice`: (`float`, required) - A float value representing the pricing.
 * `items`: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
 * `link`: (`String`) - A deeplink to the web or in-app page for this basket. Can be used in
  a notification sent to the user, e.g. "Forgot to check out? Here's
@@ -372,6 +382,7 @@ It can have its own price and quantity based on different rules and promotions t
 * `sku`: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
 * `quantity`: (`Int`, required) - The number of items that this entry represents.
 * `price`: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item
+* `variandId`: (`String`, optional) - An identifier for a variant product associated with this line item.
 
 ### Automatically tracked events
 
