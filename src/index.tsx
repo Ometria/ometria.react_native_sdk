@@ -55,7 +55,7 @@ type OmetriaReactNativeSdkType = {
     listingAttributes: any
   ): () => void;
   /**
-   * @deprecated Deprecated since version 2.1.1.
+   * @deprecated Deprecated since version 2.2.0.
    *
    * The event is no longer sent to the Ometria backend.
    *
@@ -64,7 +64,7 @@ type OmetriaReactNativeSdkType = {
    */
   trackWishlistAddedToEvent(productId: string): () => void;
   /**
-   * @deprecated Deprecated since version 2.1.1.
+   * @deprecated Deprecated since version 2.2.0.
    *
    * The event is no longer sent to the Ometria backend.
    *

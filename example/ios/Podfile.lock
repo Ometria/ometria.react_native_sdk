@@ -88,7 +88,7 @@ PODS:
   - nanopb/encode (2.30909.0)
   - Ometria (1.2.3):
     - FirebaseMessaging
-  - ometria-react-native-sdk (2.1.1):
+  - ometria-react-native-sdk (2.2.0):
     - Ometria (~> 1.2.3)
     - React
   - PromisesObjC (2.1.1)
@@ -508,7 +508,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   Ometria: b15dd1736bbebc1f6ba96f25aa0b08100277333e
-  ometria-react-native-sdk: 1be22e6d33670b9d2712e57785e89e01be2866b9
+  ometria-react-native-sdk: 834172ea82f593abd3ffde59a5c6c28f7be50ee3
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   RCT-Folly: 0dd9e1eb86348ecab5ba76f910b56f4b5fef3c46
   RCTRequired: 1b65ab453de585b0f939824780bd26cdf6fb07f8
