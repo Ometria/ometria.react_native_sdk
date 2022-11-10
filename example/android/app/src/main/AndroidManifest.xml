@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.ometriareactnativesdk">
+  package="com.example.ometriareactnativesdk"
+  xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -10,6 +11,8 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+      <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ometria_notification_icon" />
+      <meta-data tools:replace="android:resource" android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/brand" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
