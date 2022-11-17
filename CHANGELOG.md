@@ -1,6 +1,6 @@
 # 2.2.0
 
-2022-X-X
+2022-11-17
 
 - Added `id` property to OmetriaBasket object
 - Added `variantId` to OmetriaBasketItem object
