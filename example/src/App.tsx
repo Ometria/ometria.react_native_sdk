@@ -1,13 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/**
- * This is a testing version of the Ometria React Native SDK sample app.
- * It allows the tester to dynamically change the Ometria API token.
- * It is not intended to be used in production.
- *
- * Make sure you remove all <testing> content before pushing to a public repo.
- * Replace with <production> content where appropriate.
- *
- */
 import React, { useState, useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {
@@ -26,9 +17,6 @@ import Ometria, {
   OmetriaBasketItem,
   OmetriaNotificationData,
 } from 'react-native-ometria';
-/* <testing> */
-import AsyncStorage from '@react-native-async-storage/async-storage';
-/* </testing> */
 
 import { version } from '../../package.json';
 
@@ -76,13 +64,7 @@ const demoBasketItems: OmetriaBasketItem[] = [
 ];
 
 const App = () => {
-  /* <production> */
-  // const ometriaToken = ''; // OMETRIA_API_TOKEN
-  /* </production> */
-
-  /* <testing> */
-  const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
-  /* </testing> */
+  const ometriaToken = ''; // OMETRIA_API_TOKEN
 
   const [initPN, setInitPN] = useState(false); // isReady to initialize Push Notification
   const [notificationContent, setNotificationContent] = useState(
@@ -243,50 +225,6 @@ const App = () => {
     setAuthModal(false);
   };
 
-  /* <testing> */
-
-  /**
-   * [Test mode] Ometria SDK initialization
-   *
-   * - Initialize Ometria SDK with a token from Local Storage
-   * - Trigger Auth Modal if no token is found in Local Storage
-   *
-   *  Not for production use.
-   */
-  const _handleOmetriaInit = async () => {
-    const savedToken = await AsyncStorage.getItem('token');
-    if (savedToken === null) {
-      setAuthModal(true);
-      return;
-    }
-    setOmetriaToken(savedToken);
-    handleOmetriaInit(savedToken);
-    console.log('💾 Token from LocalStorage:', savedToken);
-  };
-
-  /**
-   * [Test mode] Saving Ometria API Token to Local Storage
-   *
-   * - Save token to Local Storage
-   * - Promt user to restart the app if a token is already saved (Omertia SDK can only be initialized once)
-   * - Initialize Ometria SDK with the token if it's not already initialized
-   *
-   * Not for production use.
-   */
-  const _saveNewToken = async () => {
-    if (ometriaToken === '') return;
-    const savedToken = await AsyncStorage.getItem('token');
-    AsyncStorage.setItem('token', ometriaToken);
-    savedToken
-      ? Alert.alert(
-          '💾 New token saved!',
-          'Please kill the app in order to have the app use the new token.'
-        )
-      : handleOmetriaInit(ometriaToken);
-  };
-
-  /* </testing> */
-
   /**
    * Initialize with useEffect:
    *
@@ -297,13 +235,7 @@ const App = () => {
    */
 
   useEffect(() => {
-    /* <production> */
-    // handleOmetriaInit(ometriaToken);
-    /* </production> */
-
-    /* <testing> */
-    _handleOmetriaInit();
-    /* </testing> */
+    handleOmetriaInit(ometriaToken);
   }, []);
 
   useEffect(handlePushNotifications, [initPN]);
@@ -330,9 +262,6 @@ const App = () => {
         isVisible={authModal}
         onClose={() => setAuthModal(false)}
         onLogin={handleLogin}
-        /* <testing> */
-        testing={{ setOmetriaToken, _saveNewToken, ometriaToken }}
-        /* </testing> */
       />
 
       <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
@@ -440,21 +369,7 @@ const AuthModal: React.FC<{
   isVisible: boolean;
   onClose: () => void;
   onLogin: (method: { userEmail?: string; userId?: string }) => void;
-  /* <testing> */
-  testing: {
-    setOmetriaToken: (token: string) => void;
-    ometriaToken: string;
-    _saveNewToken: () => void;
-  };
-  /* </testing> */
-}> = ({
-  isVisible,
-  onClose,
-  onLogin,
-  /* <testing> */
-  testing,
-  /* </testing> */
-}) => {
+}> = ({ isVisible, onClose, onLogin }) => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
@@ -467,18 +382,6 @@ const AuthModal: React.FC<{
     >
       <View style={styles.container}>
         <Text style={styles.title}>Change Login Info 🔐</Text>
-        {/* <testing> */}
-        <TextInput
-          style={styles.input}
-          placeholder="Ometria API TOKEN"
-          placeholderTextColor="#000"
-          value={testing.ometriaToken}
-          onChangeText={testing.setOmetriaToken}
-        />
-        <TouchableOpacity style={styles.btn} onPress={testing._saveNewToken}>
-          <Text style={styles.text}>Save Ometria pushToken</Text>
-        </TouchableOpacity>
-        {/* </testing> */}
         <TextInput
           style={styles.input}
           value={userId}
