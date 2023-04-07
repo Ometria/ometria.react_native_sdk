@@ -142,6 +142,22 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
+  fun onNotificationReceived(remoteMessage: ReadableMap) {
+    val message = remoteMessage.remoteMessageFromReadableMap()
+    message.let {
+      Ometria.instance().onNotificationReceived(message)
+    }
+  }
+
+  @ReactMethod
+  fun onNotificationInteracted(remoteMessage: ReadableMap) {
+    val message = remoteMessage.remoteMessageFromReadableMap()
+    message.let {
+      Ometria.instance().onNotificationInteracted(message)
+    }
+  }
+
+  @ReactMethod
   fun onNewToken(token: String) {
     Ometria.instance().onNewToken(token)
   }
