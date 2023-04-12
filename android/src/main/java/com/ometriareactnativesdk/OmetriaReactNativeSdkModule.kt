@@ -136,25 +136,27 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   @ReactMethod
   fun onMessageReceived(remoteMessage: ReadableMap) {
     val message = remoteMessage.remoteMessageFromReadableMap()
-    message.let {
-      Ometria.instance().onMessageReceived(message)
-    }
+    Ometria.instance().onMessageReceived(message)
   }
 
   @ReactMethod
   fun onNotificationReceived(remoteMessage: ReadableMap) {
     val message = remoteMessage.remoteMessageFromReadableMap()
-    message.let {
-      Ometria.instance().onNotificationReceived(message)
-    }
+    Ometria.instance().onNotificationReceived(message)
+
+  }
+
+  @ReactMethod
+  fun parseNotification(remoteMessage: ReadableMap, resolver: Promise) {
+    val message = remoteMessage.remoteMessageFromReadableMap()
+    val ometriaNotification = Ometria.instance().parseNotification(message)
+    resolver.resolve(ometriaNotification?.toJSON())
   }
 
   @ReactMethod
   fun onNotificationInteracted(remoteMessage: ReadableMap) {
     val message = remoteMessage.remoteMessageFromReadableMap()
-    message.let {
-      Ometria.instance().onNotificationInteracted(message)
-    }
+    Ometria.instance().onNotificationInteracted(message)
   }
 
   @ReactMethod
@@ -172,10 +174,6 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     deeplinkInteractionPromise?.resolve(deepLink)
   }
 
-  override fun onNotificationInteraction(ometriaNotification: OmetriaNotification){
-      this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-        .emit("onNotificationInteracted", ometriaNotification.toJSON())
-  }
 
   @ReactMethod
   fun processUniversalLink(url: String, resolver: Promise) {
