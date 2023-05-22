@@ -8,7 +8,7 @@
  * Replace with <production> content where appropriate.
  *
  */
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {
   Text,
@@ -30,7 +30,7 @@ import Ometria, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 /* </testing> */
 
-import { version } from '../../package.json';
+import {version} from '../../package.json';
 
 const Events = {
   ENABLE_LOGGING: 'ENABLE_LOGGING',
@@ -86,7 +86,7 @@ const App = () => {
 
   const [initPN, setInitPN] = useState(false); // isReady to initialize Push Notification
   const [notificationContent, setNotificationContent] = useState(
-    'Interract with a notification to see its content here.'
+    'Interract with a notification to see its content here.',
   );
 
   const [authModal, setAuthModal] = useState(false);
@@ -114,9 +114,9 @@ const App = () => {
           await requestPNPermission();
           setInitPN(true);
         },
-        (error) => {
+        error => {
           throw error;
-        }
+        },
       );
     } catch (error) {
       console.error('😕 Error: ', error);
@@ -158,7 +158,9 @@ const App = () => {
    * @returns unsubscribeFromMessages function
    */
   const handlePushNotifications = () => {
-    if (!initPN) return;
+    if (!initPN) {
+      return;
+    }
 
     // Provides Ometria SDK with the FCM token
     messaging()
@@ -170,7 +172,7 @@ const App = () => {
 
     // Listen for new FCM tokens and provide them to the Ometria SDK
     messaging().onTokenRefresh((pushToken: string) =>
-      Ometria.onNewToken(pushToken)
+      Ometria.onNewToken(pushToken),
     );
 
     // Set up a listener for user interaction with push notifications
@@ -194,13 +196,15 @@ const App = () => {
      * On iOS the SDK handles Firebase PN background messages.
      * */
 
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android') {
+      return;
+    }
 
     const unsubscribeFromMessages = messaging().onMessage(
       async (remoteMessage: any) => {
         console.log('📭 Foreground message received:', remoteMessage);
         Ometria.onMessageReceived(remoteMessage);
-      }
+      },
     );
 
     messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
@@ -215,17 +219,17 @@ const App = () => {
    * Handle Deeplinking
    * @param payload {url: String}
    */
-  const handleDeepLinking = ({ url }: any) => {
-    Linking.canOpenURL(url).then((supported) => {
+  const handleDeepLinking = ({url}: any) => {
+    Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Ometria.processUniversalLink(url).then(
-          (response) => {
+          response => {
             Alert.alert('🔗 URL processed:', response);
           },
-          (error) => {
+          error => {
             console.log(error);
             Alert.alert('🔗 Unable to process URL: ' + url);
-          }
+          },
         );
       }
     });
@@ -235,7 +239,7 @@ const App = () => {
    * Handle Login by Email or UserId
    * @param method {userEmail?: String, customerId?: String}
    */
-  const handleLogin = (method: { userEmail?: string; userId?: string }) => {
+  const handleLogin = (method: {userEmail?: string; userId?: string}) => {
     method.userEmail &&
       Ometria.trackProfileIdentifiedByEmailEvent(method.userEmail!);
     method.userId &&
@@ -274,13 +278,15 @@ const App = () => {
    * Not for production use.
    */
   const _saveNewToken = async () => {
-    if (ometriaToken === '') return;
+    if (ometriaToken === '') {
+      return;
+    }
     const savedToken = await AsyncStorage.getItem('token');
     AsyncStorage.setItem('token', ometriaToken);
     savedToken
       ? Alert.alert(
           '💾 New token saved!',
-          'Please kill the app in order to have the app use the new token.'
+          'Please kill the app in order to have the app use the new token.',
         )
       : handleOmetriaInit(ometriaToken);
   };
@@ -308,7 +314,10 @@ const App = () => {
 
   useEffect(handlePushNotifications, [initPN]);
 
-  useEffect(() => Linking.addEventListener('url', handleDeepLinking), []);
+  useEffect(() => {
+    const subscribe = Linking.addEventListener('url', handleDeepLinking);
+    return () => subscribe.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -331,7 +340,7 @@ const App = () => {
         onClose={() => setAuthModal(false)}
         onLogin={handleLogin}
         /* <testing> */
-        testing={{ setOmetriaToken, _saveNewToken, ometriaToken }}
+        testing={{setOmetriaToken, _saveNewToken, ometriaToken}}
         /* </testing> */
       />
 
@@ -343,7 +352,7 @@ const App = () => {
 const EventsModal: React.FC<{
   isVisible: boolean;
   onClose: () => void;
-}> = ({ isVisible, onClose }) => {
+}> = ({isVisible, onClose}) => {
   const sendEvent = (eventType: string) => {
     switch (eventType) {
       case Events.ENABLE_LOGGING:
@@ -353,7 +362,7 @@ const EventsModal: React.FC<{
         Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
         break;
       case Events.SCREEN_VIEWED:
-        Ometria.trackScreenViewedEvent('OnboardingScreen', { a: '1', b: '2' });
+        Ometria.trackScreenViewedEvent('OnboardingScreen', {a: '1', b: '2'});
         break;
       case Events.HOME_SCREEN_VIEWED:
         Ometria.trackHomeScreenViewedEvent();
@@ -413,20 +422,18 @@ const EventsModal: React.FC<{
       animationType="slide"
       transparent={true}
       visible={isVisible}
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <View style={styles.container}>
         <Text style={styles.title}>Events 📝</Text>
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
           <Text style={styles.text}>CLOSE EVENTS</Text>
         </TouchableOpacity>
         <ScrollView>
-          {Object.values(Events).map((eventValue) => (
+          {Object.values(Events).map(eventValue => (
             <TouchableOpacity
               key={eventValue}
               style={styles.btn}
-              onPress={() => sendEvent(eventValue)}
-            >
+              onPress={() => sendEvent(eventValue)}>
               <Text style={styles.text}>{eventValue}</Text>
             </TouchableOpacity>
           ))}
@@ -439,7 +446,7 @@ const EventsModal: React.FC<{
 const AuthModal: React.FC<{
   isVisible: boolean;
   onClose: () => void;
-  onLogin: (method: { userEmail?: string; userId?: string }) => void;
+  onLogin: (method: {userEmail?: string; userId?: string}) => void;
   /* <testing> */
   testing: {
     setOmetriaToken: (token: string) => void;
@@ -463,8 +470,7 @@ const AuthModal: React.FC<{
       animationType="slide"
       transparent={true}
       visible={isVisible}
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <View style={styles.container}>
         <Text style={styles.title}>Change Login Info 🔐</Text>
         {/* <testing> */}
@@ -489,9 +495,8 @@ const AuthModal: React.FC<{
         <TouchableOpacity
           style={styles.btn}
           onPress={() => {
-            onLogin({ userId });
-          }}
-        >
+            onLogin({userId});
+          }}>
           <Text style={styles.text}>Login with customer ID</Text>
         </TouchableOpacity>
         <TextInput
@@ -503,8 +508,7 @@ const AuthModal: React.FC<{
         />
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => onLogin({ userEmail })}
-        >
+          onPress={() => onLogin({userEmail})}>
           <Text style={styles.text}>Login with customer Email</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>

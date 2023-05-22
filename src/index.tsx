@@ -102,10 +102,10 @@ type OmetriaReactNativeSdkType = {
  * `.onNotificationInteracted()` EventListener
  */
 const { OmetriaReactNativeSdk } = NativeModules;
-const OmetriaEventEmitter = Platform.select({
-  ios: new NativeEventEmitter(OmetriaReactNativeSdk),
-  android: DeviceEventEmitter,
-});
+const OmetriaEventEmitter =
+  Platform.OS === 'ios'
+    ? new NativeEventEmitter(OmetriaReactNativeSdk)
+    : DeviceEventEmitter;
 
 OmetriaReactNativeSdk.onNotificationInteracted = (
   handler: (response: OmetriaNotificationData) => void
