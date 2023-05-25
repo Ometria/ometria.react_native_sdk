@@ -1,3 +1,9 @@
+# 2.2.1
+
+25.05.2023
+- Updated example to use the latest React Native and Firebase version
+- Fixed a warning regarding NativeEventEmitter
+
 # 2.2.0
 
 2022-11-17
