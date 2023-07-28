@@ -1,6 +1,6 @@
 # 2.2.2
 
-2023-07-12
+2023-07-28
 
 - Updated example and library to use the latest React Native library version
 
