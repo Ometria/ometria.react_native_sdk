@@ -142,5 +142,5 @@ dependencies {
   implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
   implementation 'com.google.firebase:firebase-messaging:23.0.0'
   // debugImplementation files('libs/OmetriaSDK-debug.aar') // debug
-  implementation 'com.ometria:android-sdk:1.4.0' // production
+  implementation 'com.ometria:android-sdk:1.5.1' // production
 }
