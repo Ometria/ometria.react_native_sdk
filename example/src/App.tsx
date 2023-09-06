@@ -1,4 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/**
+ * This is a testing version of the Ometria React Native SDK sample app.
+ * It allows the tester to dynamically change the Ometria API token.
+ * It is not intended to be used in production.
+ *
+ * Make sure you remove all <testing> content before pushing to a public repo.
+ * Replace with <production> content where appropriate.
+ *
+ */
+
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {
@@ -19,6 +30,14 @@ import Ometria, {
 } from 'react-native-ometria';
 
 import { version } from '../../package.json';
+/* <testing> */
+import type { ModalTestingProp } from './reinitalization/models';
+import {
+  handleOmetriaTestingInit,
+  _saveNewToken,
+} from './reinitalization/utils';
+import TestComponent from './reinitalization/components';
+/* </testing> */
 
 const Events = {
   ENABLE_LOGGING: 'ENABLE_LOGGING',
@@ -64,7 +83,12 @@ const demoBasketItems: OmetriaBasketItem[] = [
 ];
 
 const App = () => {
-  const ometriaToken = ''; // OMETRIA_API_TOKEN
+  /* <production> */
+  // const ometriaToken = ''; // OMETRIA_API_TOKEN
+  /* </production> */
+  /* <testing> */
+  const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
+  /* </testing> */
 
   const [initPN, setInitPN] = useState(false); // isReady to initialize Push Notification
   const [notificationContent, setNotificationContent] = useState(
@@ -239,7 +263,13 @@ const App = () => {
    */
 
   useEffect(() => {
-    handleOmetriaInit(ometriaToken);
+    /* <production> */
+    // handleOmetriaInit(ometriaToken);
+    /* </production> */
+
+    /* <testing> */
+    handleOmetriaTestingInit(setAuthModal, setOmetriaToken, handleOmetriaInit);
+    /* </testing> */
   }, []);
 
   useEffect(handlePushNotifications, [initPN]);
@@ -269,6 +299,14 @@ const App = () => {
         isVisible={authModal}
         onClose={() => setAuthModal(false)}
         onLogin={handleLogin}
+        /* <testing> */
+        testing={{
+          setToken: setOmetriaToken,
+          saveToken: _saveNewToken,
+          token: ometriaToken,
+          onSuccess: handleOmetriaInit,
+        }}
+        /* </testing> */
       />
 
       <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
@@ -376,7 +414,17 @@ const AuthModal: React.FC<{
   isVisible: boolean;
   onClose: () => void;
   onLogin: (method: { userEmail?: string; userId?: string }) => void;
-}> = ({ isVisible, onClose, onLogin }) => {
+  /* <testing> */
+  testing: ModalTestingProp;
+  /* </testing> */
+}> = ({
+  isVisible,
+  onClose,
+  onLogin,
+  /* <testing> */
+  testing,
+  /* </testing> */
+}) => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
@@ -389,6 +437,9 @@ const AuthModal: React.FC<{
     >
       <View style={styles.container}>
         <Text style={styles.title}>Change Login Info 🔐</Text>
+        {/* <testing> */}
+        <TestComponent {...testing} />
+        {/* </testing> */}
         <TextInput
           style={styles.input}
           value={userId}
