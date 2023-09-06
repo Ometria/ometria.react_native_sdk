@@ -1,17 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/**
- * This is a testing version of the Ometria React Native SDK sample app.
- * It allows the tester to dynamically change the Ometria API token.
- * It is not intended to be used in production.
- *
- * Make sure you remove all <testing> content before pushing to a public repo.
- * Replace with <production> content where appropriate.
- *
- */
-
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
-import messaging from '@react-native-firebase/messaging';
 import {
   Text,
   View,
@@ -24,71 +10,19 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import Ometria, {
-  OmetriaBasketItem,
-  OmetriaNotificationData,
-} from 'react-native-ometria';
+import React, { useState, useEffect } from 'react';
+import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ometria, { OmetriaNotificationData } from 'react-native-ometria';
 
 import { version } from '../../package.json';
-/* <testing> */
-import type { ModalTestingProp } from './reinitalization/models';
-import {
-  handleOmetriaTestingInit,
-  _saveNewToken,
-} from './reinitalization/utils';
-import TestComponent from './reinitalization/components';
-/* </testing> */
-
-const Events = {
-  ENABLE_LOGGING: 'ENABLE_LOGGING',
-  SCREEN_VIEWED: 'SCREEN_VIEWED',
-  DEEPLINK_OPENED_EVENT: 'DEEPLINK_OPENED_EVENT',
-  PROFILE_IDENTIFIED_BY_EMAIL: 'PROFILE_IDENTIFIED_BY_EMAIL',
-  PROFILE_IDENTIFIED_BY_CUSTOMER_ID: 'PROFILE_IDENTIFIED_BY_CUSTOMER_ID',
-  PROFILE_DEIDENTIFIED: 'PROFILE_DEIDENTIFIED',
-  PRODUCT_VIEWED: 'PRODUCT_VIEWED',
-  PRODUCT_LISTING_VIEWED: 'PRODUCT_LISTING_VIEWED',
-  BASKET_VIEWED: 'BASKET_VIEWED',
-  BASKET_UPDATED: 'BASKET_UPDATED',
-  CHECKOUT_STARTED: 'CHECKOUT_STARTED',
-  ORDER_COMPLETED: 'ORDER_COMPLETED',
-  HOME_SCREEN_VIEWED: 'HOME_SCREEN_VIEWED',
-  CUSTOM: 'CUSTOM',
-  FLUSH: 'FLUSH EVENTS',
-  CLEAR: 'CLEAR EVENTS',
-};
-
-const demoBasketItems: OmetriaBasketItem[] = [
-  {
-    productId: 'product-1',
-    sku: 'sku-product-1',
-    quantity: 1,
-    price: 12.0,
-    variantId: 'variant-1',
-  },
-  {
-    productId: 'product-2',
-    sku: 'sku-product-2',
-    quantity: 2,
-    price: 9.0,
-    variantId: 'variant-2',
-  },
-  {
-    productId: 'product-3',
-    sku: 'sku-product-3',
-    quantity: 3,
-    price: 20.0,
-    variantId: 'variant-3',
-  },
-];
+import { Events, demoBasketItems } from './data';
+import { ModalReinitializationProps } from './models';
 
 const App = () => {
-  /* <production> */
-  // const ometriaToken = ''; // OMETRIA_API_TOKEN
-  /* </production> */
-  /* <testing> */
+  // If you want to use the reinitialization feature, you need to set the token as a state
+  // If not you can set the token as a constant
   const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
-  /* </testing> */
 
   const [initPN, setInitPN] = useState(false); // isReady to initialize Push Notification
   const [notificationContent, setNotificationContent] = useState(
@@ -97,6 +31,8 @@ const App = () => {
 
   const [authModal, setAuthModal] = useState(false);
   const [evtsModal, setEvtsModal] = useState(false);
+
+  // METHODS
 
   /**
    * Initialize Ometria with the API Token
@@ -254,22 +190,51 @@ const App = () => {
   };
 
   /**
+   * Saving Ometria API Token to Local Storage
+   *
+   * - Save token to Local Storage
+   * - Initialize Ometria SDK
+   *
+   * (Optional: You could use a static token instead of Local Storage)
+   */
+  const saveNewOmetriaToken = async (
+    newToken: string,
+    initializeWithNewToken: (token: string) => Promise<void>
+  ) => {
+    if (newToken === '') {
+      return;
+    }
+    AsyncStorage.setItem('token', newToken);
+    console.log('🔐 New Token. Ometria will reinitialize');
+    initializeWithNewToken(newToken);
+  };
+
+  const handleOmetriaInitWithReinitialization = async () => {
+    const savedToken = await AsyncStorage.getItem('token');
+    if (savedToken === null) {
+      setAuthModal(true);
+      return;
+    }
+    setOmetriaToken(savedToken);
+    handleOmetriaInit(savedToken);
+    console.log('💾 Token from LocalStorage:', savedToken);
+  };
+
+  // EFFECTS
+
+  /**
    * Initialize with useEffect:
    *
-   * 1. Ometria handler ONLY once
+   * 1. Ometria init handler with or without reinitialization
    * 2. Push Notifications handler ONLY after Ometria initialization (initPN === true)
    * 3. Deeplink handler
    *
    */
 
   useEffect(() => {
-    /* <production> */
-    // handleOmetriaInit(ometriaToken);
-    /* </production> */
-
-    /* <testing> */
-    handleOmetriaTestingInit(setAuthModal, setOmetriaToken, handleOmetriaInit);
-    /* </testing> */
+    // This is optional if you want to use the reinitialization feature
+    // If not, you can call handleOmetriaInit here directly with the token as a parameter
+    handleOmetriaInitWithReinitialization();
   }, []);
 
   useEffect(handlePushNotifications, [initPN]);
@@ -295,24 +260,28 @@ const App = () => {
         <Text>{notificationContent}</Text>
       </View>
 
+      <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
       <AuthModal
         isVisible={authModal}
         onClose={() => setAuthModal(false)}
         onLogin={handleLogin}
-        /* <testing> */
-        testing={{
-          setToken: setOmetriaToken,
-          saveToken: _saveNewToken,
-          token: ometriaToken,
-          onSuccess: handleOmetriaInit,
+        /* Only for  reinitialization feature */
+        reinitialization={{
+          ometriaToken,
+          setOmetriaToken,
+          saveNewOmetriaToken,
+          handleOmetriaInit,
         }}
-        /* </testing> */
       />
-
-      <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
     </View>
   );
 };
+
+// MODALS
+
+/* <EventsModal />
+ * A component that lists events and allows you to send them
+ * */
 
 const EventsModal: React.FC<{
   isVisible: boolean;
@@ -410,21 +379,18 @@ const EventsModal: React.FC<{
   );
 };
 
+/*
+ * <AuthModal />
+ * A component to allow the user to change the login info
+ * It is used to change the customerId or the userEmail
+ * It is also used to save a new Ometria API Token if you want to use the reinitialization feature
+ * */
 const AuthModal: React.FC<{
   isVisible: boolean;
   onClose: () => void;
   onLogin: (method: { userEmail?: string; userId?: string }) => void;
-  /* <testing> */
-  testing: ModalTestingProp;
-  /* </testing> */
-}> = ({
-  isVisible,
-  onClose,
-  onLogin,
-  /* <testing> */
-  testing,
-  /* </testing> */
-}) => {
+  reinitialization: ModalReinitializationProps;
+}> = ({ isVisible, onClose, onLogin, reinitialization }) => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
@@ -437,9 +403,24 @@ const AuthModal: React.FC<{
     >
       <View style={styles.container}>
         <Text style={styles.title}>Change Login Info 🔐</Text>
-        {/* <testing> */}
-        <TestComponent {...testing} />
-        {/* </testing> */}
+        <TextInput
+          style={styles.input}
+          placeholder="Ometria API TOKEN"
+          placeholderTextColor="#000"
+          value={reinitialization.ometriaToken}
+          onChangeText={reinitialization.setOmetriaToken}
+        />
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() =>
+            reinitialization.saveNewOmetriaToken(
+              reinitialization.ometriaToken,
+              reinitialization.handleOmetriaInit
+            )
+          }
+        >
+          <Text style={styles.text}>Save Ometria pushToken</Text>
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           value={userId}
@@ -478,6 +459,7 @@ const AuthModal: React.FC<{
 
 export default App;
 
+// STYLES
 const styles = StyleSheet.create({
   container: {
     flex: 1,
