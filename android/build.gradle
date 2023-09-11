@@ -1,6 +1,7 @@
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
   def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['OmetriaReactNativeSdk_kotlinVersion']
+  def gradle_version = rootProject.ext.has('gradleVersion') ? rootProject.ext.get('gradleVersion') : project.properties['OmetriaReactNativeSdk_gradleVersion']
 
   repositories {
     google()
@@ -8,7 +9,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.2.2'
+    classpath "com.android.tools.build:gradle:$gradle_version"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -29,7 +30,7 @@ android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   buildToolsVersion getExtOrDefault('buildToolsVersion')
   defaultConfig {
-    minSdkVersion 23
+    minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     versionCode 1
     versionName "1.0"
@@ -127,20 +128,28 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 
 
 dependencies {
+  // See https://github.com/facebook/react-native/issues/35979
+   constraints {
+         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version") {
+             because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+         }
+         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version") {
+             because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+         }
+     }
 
-/*
-  // Debug implementations
-  implementation fileTree(dir: "libs", include: ["*.aar"]) //debug
-  implementation 'org.chromium.net:cronet-embedded:76.3809.111'// debug
-  compileOnly files('libs/OmetriaSDK-debug.aar') // debug
-  debugImplementation files('libs/OmetriaSDK-debug.aar') // debug
-*/
+  /* Debug implementations
+    implementation fileTree(dir: "libs", include: ["*.aar"]) //debug
+    implementation 'org.chromium.net:cronet-embedded:76.3809.111'// debug
+    compileOnly files('libs/OmetriaSDK-debug.aar') // debug
+    debugImplementation files('libs/OmetriaSDK-debug.aar') // debug
+  */
 
   implementation 'com.ometria:android-sdk:1.6.0' // production
 
-  // implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version" // kotlin-stdlib-jdk8 is now a part of kotlin-stdlib
   api 'com.facebook.react:react-native:+'
   implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
-  implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
   implementation 'com.google.firebase:firebase-messaging:23.0.0'
+  implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
