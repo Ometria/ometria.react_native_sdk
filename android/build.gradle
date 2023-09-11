@@ -125,6 +125,8 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
+def ometria_android_sdk_version = getExtOrDefault('ometriaAndroidSdkVersion')
+def is_production = getExtOrIntegerDefault('isProduction')
 
 
 dependencies {
@@ -138,14 +140,14 @@ dependencies {
          }
      }
 
-  /* Debug implementations
-    implementation fileTree(dir: "libs", include: ["*.aar"]) //debug
-    implementation 'org.chromium.net:cronet-embedded:76.3809.111'// debug
-    compileOnly files('libs/OmetriaSDK-debug.aar') // debug
-    debugImplementation files('libs/OmetriaSDK-debug.aar') // debug
-  */
-
-  implementation 'com.ometria:android-sdk:1.6.0' // production
+   if (is_production) {
+     implementation "com.ometria:android-sdk:$ometria_android_sdk_version"
+   } else {
+     implementation fileTree(dir: "libs", include: ["*.aar"])
+     implementation 'org.chromium.net:cronet-embedded:76.3809.111'
+     compileOnly files('libs/OmetriaSDK-debug.aar')
+     debugImplementation files('libs/OmetriaSDK-debug.aar')
+   }
 
   api 'com.facebook.react:react-native:+'
   implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
