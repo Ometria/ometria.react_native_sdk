@@ -150,8 +150,10 @@ dependencies {
    }
 
   api 'com.facebook.react:react-native:+'
-  implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
+  // Keep these in sync with the native SDK
+  implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
+  implementation("androidx.security:security-crypto:1.0.0")
   implementation 'com.google.firebase:firebase-messaging:23.0.0'
-  implementation 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
+  implementation 'androidx.lifecycle:lifecycle-common-java8:2.6.1'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
