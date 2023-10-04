@@ -7,6 +7,10 @@
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
+  "ometria_sdk_version": {
+    "ios": "1.4.0",
+    "android": "1.6.1"
+  },
   "files": [
     "src",
     "lib",

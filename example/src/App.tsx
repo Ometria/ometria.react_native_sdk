@@ -15,7 +15,7 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ometria, { OmetriaNotificationData } from 'react-native-ometria';
 
-import { version } from '../../package.json';
+import { version, ometria_sdk_version } from '../../package.json';
 import { Events, demoBasketItems } from './data';
 import { ModalReinitializationProps } from './models';
 
@@ -251,6 +251,10 @@ const App = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ometria React Native Demo {version}</Text>
+      <Text style={styles.subtitle}>
+        {Platform.OS === 'android' ? 'Android' : 'iOS'} SDK version{' '}
+        {ometria_sdk_version[Platform.OS === 'android' ? 'android' : 'ios']}
+      </Text>
       <TouchableOpacity style={styles.btn} onPress={() => setAuthModal(true)}>
         <Text style={styles.text}>Change Login Info 🔐 </Text>
       </TouchableOpacity>
@@ -476,6 +480,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 14,
+    marginBottom: 20,
     textAlign: 'center',
   },
   text: {
