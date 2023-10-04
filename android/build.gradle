@@ -143,8 +143,8 @@ dependencies {
    if (is_production) {
      implementation "com.ometria:android-sdk:$ometria_android_sdk_version"
    } else {
-     implementation fileTree(dir: "libs", include: ["*.aar"])
-     implementation 'org.chromium.net:cronet-embedded:76.3809.111'
+     debugImplementation fileTree(dir: "libs", include: ["*.aar"])
+     debugImplementation 'org.chromium.net:cronet-embedded:76.3809.111'
      compileOnly files('libs/OmetriaSDK-debug.aar')
      debugImplementation files('libs/OmetriaSDK-debug.aar')
    }
