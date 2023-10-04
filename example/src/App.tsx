@@ -54,6 +54,10 @@ const App = () => {
 
           // Ready to initialize Push Notifications handler
           await requestPNPermission();
+
+          // This needs to be called after the SDK has been initialized in order to enable the SDK event emitter for Notification event
+          Ometria.onDeepLinkInteracted();
+
           setInitPN(true);
         },
         (error) => {
