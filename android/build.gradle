@@ -143,17 +143,17 @@ dependencies {
    if (is_production) {
      implementation "com.ometria:android-sdk:$ometria_android_sdk_version"
    } else {
-     debugImplementation fileTree(dir: "libs", include: ["*.aar"])
-     debugImplementation 'org.chromium.net:cronet-embedded:76.3809.111'
+     implementation fileTree(dir: "libs", include: ["*.aar"])
+     implementation 'org.chromium.net:cronet-embedded:76.3809.111'
      compileOnly files('libs/OmetriaSDK-debug.aar')
      debugImplementation files('libs/OmetriaSDK-debug.aar')
    }
 
   api 'com.facebook.react:react-native:+'
   // Keep these in sync with the native SDK
-  implementation 'androidx.lifecycle:lifecycle-process:2.6.1'
-  implementation("androidx.security:security-crypto:1.0.0")
-  implementation 'com.google.firebase:firebase-messaging:23.0.0'
-  implementation 'androidx.lifecycle:lifecycle-common-java8:2.6.1'
+  implementation "androidx.lifecycle:lifecycle-process:2.6.1"
+  implementation "androidx.security:security-crypto:1.0.0"
+  implementation "com.google.firebase:firebase-messaging:23.2.0"
+  implementation "androidx.lifecycle:lifecycle-common-java8:2.6.1"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
