@@ -7,3 +7,10 @@ export type ModalReinitializationProps = {
   ) => void;
   handleOmetriaInit: (token: string) => Promise<void>;
 };
+
+export type AuthModalProps = {
+  isVisible: boolean;
+  onClose: () => void;
+  onLogin: (method: { userEmail?: string; userId?: string }) => void;
+  reinitialization: ModalReinitializationProps;
+};

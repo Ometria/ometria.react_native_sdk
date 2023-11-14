@@ -18,7 +18,7 @@ import { RESULTS, requestNotifications } from 'react-native-permissions';
 
 import { version, ometria_sdk_version } from '../../package.json';
 import { Events, demoBasketItems } from './data';
-import { ModalReinitializationProps } from './models';
+import { AuthModalProps } from './models';
 
 const App = () => {
   // If you want to use the reinitialization feature, you need to set the token as a state
@@ -413,12 +413,13 @@ const EventsModal: React.FC<{
  * It is used to change the customerId or the userEmail
  * It is also used to save a new Ometria API Token if you want to use the reinitialization feature
  * */
-const AuthModal: React.FC<{
-  isVisible: boolean;
-  onClose: () => void;
-  onLogin: (method: { userEmail?: string; userId?: string }) => void;
-  reinitialization: ModalReinitializationProps;
-}> = ({ isVisible, onClose, onLogin, reinitialization }) => {
+
+const AuthModal: React.FC<AuthModalProps> = ({
+  isVisible,
+  onClose,
+  onLogin,
+  reinitialization,
+}) => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
