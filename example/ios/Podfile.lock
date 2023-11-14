@@ -86,7 +86,7 @@ PODS:
   - nanopb/encode (2.30909.0)
   - Ometria (1.4.0):
     - FirebaseMessaging
-  - ometria-react-native-sdk (2.2.2):
+  - ometria-react-native-sdk (2.2.3):
     - Ometria (~> 1.4.0)
     - React
   - PromisesObjC (2.3.1)
@@ -435,6 +435,8 @@ PODS:
     - FirebaseCoreExtension (= 10.7.0)
     - React-Core
     - RNFBApp
+  - RNPermissions (3.10.1):
+    - React-Core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -480,6 +482,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -573,6 +576,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -595,7 +600,7 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   Ometria: cef743dda318f65a3a87dd4dbc5c0b14c8bbfc03
-  ometria-react-native-sdk: bc60065e259571bf139a01396180a40504c477c2
+  ometria-react-native-sdk: cf4b5633289dff4d63b1b7afe76c8e3e44a21aeb
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: c20235648eeb64a874f55459ceae6b081956318d
@@ -627,8 +632,9 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b90b71f45b8b97be43bc4284e71a6af48ac9f547
   RNFBApp: d59efa0872fff4e27de03cca3c528c203a436ae5
   RNFBMessaging: 216693dd5ba4f18ba65fb39fc73a44a23c26190f
+  RNPermissions: e48d69dcc3faa1345ba909a5d13b6d3101a08ef4
   Yoga: 135109c9b8c5d1a8af3a58d21cd4c7aa7f3bf555
 
-PODFILE CHECKSUM: 31d7f2f1aa689e96c70d9467d46874fd433ab235
+PODFILE CHECKSUM: 05fb9989fbaf93f9103eb814045d45a9b16ded74
 
 COCOAPODS: 1.12.1
