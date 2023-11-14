@@ -5494,7 +5494,12 @@
   "resolved" "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.19.tgz"
   "version" "0.71.19"
 
-"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.72 || 1000.0.0", "react-native@0.71.13":
+"react-native-permissions@^3.10.1":
+  "integrity" "sha512-Gc5BxxpjZn4QNUDiVeHOO0vXh3AH7ToolmwTJozqC6DsxV7NAf3ttap+8BSmzDR8WxuAM3Cror+YNiBhHJx7/w=="
+  "resolved" "https://registry.npmjs.org/react-native-permissions/-/react-native-permissions-3.10.1.tgz"
+  "version" "3.10.1"
+
+"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.72 || 1000.0.0", "react-native@>=0.63.3", "react-native@0.71.13":
   "integrity" "sha512-zEa69YQNLdv8Sf5Pn0CNDB1K9eGuNy1KoMNxXlrZ89JZ8d02b5hihZIoOCCIwhH+iPgslYwr3ZoGd3AY6FMrgw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.71.13.tgz"
   "version" "0.71.13"
@@ -5557,7 +5562,7 @@
     "react-shallow-renderer" "^16.15.0"
     "scheduler" "^0.23.0"
 
-"react@*", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.2.0", "react@18.2.0":
+"react@*", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.2.0", "react@>=16.13.1", "react@18.2.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"
