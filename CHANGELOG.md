@@ -1,3 +1,11 @@
+# 2.3.0
+
+2023-07
+
+- Updated example with request for notifications permission on Android 13
+- Fixed notification interaction handler in example app
+- Fixed Notification trampoline (Android 12+)
+
 # 2.2.3
 
 - Updated example and library to use updated React Native library version (0.71.13)
