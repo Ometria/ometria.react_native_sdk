@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ometria, { OmetriaNotificationData } from 'react-native-ometria';
+import { RESULTS, requestNotifications } from 'react-native-permissions';
 
 import { version, ometria_sdk_version } from '../../package.json';
 import { Events, demoBasketItems } from './data';
@@ -71,8 +72,24 @@ const App = () => {
 
   /**
    * Request Push Notifications permission
+   *
+   * - `react-native-permissions` for Android 13+ (or other library)
+   * - `react-native-firebase` for iOS (or react-native-permissions - up to you)
+   *
+   * until `react-native-firebase` supports Android 13+ notifications permissions.
+   * See https://github.com/invertase/react-native-firebase/issues/6283
+
    */
   const requestPNPermission = async () => {
+    if (Platform.OS === 'android') {
+      requestNotifications([]).then(
+        ({ status }) =>
+          status === RESULTS.GRANTED &&
+          console.log('🔔🤖 Push Notification permissions granted!')
+      );
+      return;
+    }
+
     const status = await messaging().requestPermission({
       sound: true,
       badge: true,
@@ -83,7 +100,7 @@ const App = () => {
       status === messaging.AuthorizationStatus.AUTHORIZED ||
       status === messaging.AuthorizationStatus.PROVISIONAL
     ) {
-      console.log('🔔 Push Notification permissions granted!');
+      console.log('🔔🍏 Push Notification permissions granted!');
     }
   };
 
