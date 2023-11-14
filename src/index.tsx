@@ -1,136 +1,65 @@
-import {
-  DeviceEventEmitter,
-  NativeEventEmitter,
-  NativeModules,
-  Platform,
-} from 'react-native';
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 
-export type OmetriaBasketItem = {
-  productId: string;
-  sku?: string;
-  quantity: number;
-  price: number;
-  variantId?: string;
-};
+import type {
+  OmetriaNotificationData as _OmetriaNotificationData,
+  OmetriaNotificationHandlerInit,
+  OmetriaOptions as _OmetriaOptions,
+  OmetriaReactNativeSdkType,
+} from './types';
 
-export type OmetriaOptions = {
-  notificationChannelName?: string; // only for Android
-};
+const OmetriaReactNativeSdk = NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
 
-export type OmetriaBasket = {
-  id?: string;
-  currency: string;
-  totalPrice: number;
-  items: OmetriaBasketItem[];
-  link: string;
-};
-
-export type OmetriaNotificationData = {
-  campaignType?: string;
-  deepLinkActionUrl?: string;
-  externalCustomerId?: string;
-  imageUrl?: string;
-  sendId?: string;
-  tracking: {
-    utm_medium?: string;
-    utm_source: string;
-    utm_campaign: string;
-    om_campagin: string;
-    [key: string]: string | undefined;
-  };
-};
-
-type OmetriaReactNativeSdkType = {
-  // iOS & Android
-  initializeWithApiToken(
-    token: string,
-    options?: OmetriaOptions
-  ): Promise<void>;
-  trackProfileIdentifiedByCustomerIdEvent(customerId: string): () => void;
-  trackProfileIdentifiedByEmailEvent(email: string): () => void;
-  trackProfileDeidentifiedEvent(): () => void;
-  trackProductViewedEvent(productId: string): () => void;
-  trackProductListingViewedEvent(
-    listingType: string,
-    listingAttributes: any
-  ): () => void;
-  /**
-   * @deprecated Deprecated since version 2.2.0.
-   *
-   * The event is no longer sent to the Ometria backend.
-   *
-   * Will be removed in the next major version.
-   *
-   */
-  trackWishlistAddedToEvent(productId: string): () => void;
-  /**
-   * @deprecated Deprecated since version 2.2.0.
-   *
-   * The event is no longer sent to the Ometria backend.
-   *
-   * Will be removed in the next major version.
-   *
-   */
-  trackWishlistRemovedFromEvent(productId: string): () => void;
-  trackBasketViewedEvent(): () => void;
-  trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
-  trackCheckoutStartedEvent(orderId?: string): () => void;
-  trackOrderCompletedEvent(orderId: string, basket?: OmetriaBasket): () => void;
-  trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
-  trackHomeScreenViewedEvent(): () => void;
-  trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
-  trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;
-  flush(): () => void;
-  clear(): () => void;
-  isLoggingEnabled(enabled: Boolean): Promise<void>;
-
-  onDeepLinkInteracted(): Promise<string>;
-  onNotificationInteracted(
-    handler: (response: OmetriaNotificationData) => void
-  ): () => void;
-
-  processUniversalLink(url: string): Promise<string>;
-  onNewToken(token: string): () => void;
-
-  // Android only
-  onMessageReceived(remoteMessage: string): () => void;
-  onPushTokenRefreshed(token: string): () => void;
-};
-
-/**
- *  ReactNative custom implementation for
- * `.onNotificationInteracted()` EventListener
- */
-const { OmetriaReactNativeSdk } = NativeModules;
-const OmetriaEventEmitter =
-  Platform.OS === 'ios'
-    ? new NativeEventEmitter(OmetriaReactNativeSdk)
-    : DeviceEventEmitter;
-
-OmetriaReactNativeSdk.onNotificationInteracted = (
-  handler: (response: OmetriaNotificationData) => void
-) => {
-  OmetriaEventEmitter &&
-    OmetriaEventEmitter.addListener(
-      'onNotificationInteracted',
-      (response: OmetriaNotificationData) => {
-        handler(response);
-      }
-    );
-};
-
-/**
- *  ReactNative custom implementation for
- * `.initializeWithApiToken` method
- */
+// Save original implementations
 const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
+const _onNotificationInteracted =
+  OmetriaReactNativeSdk.onNotificationInteracted;
 
+// initializeWithApiToken() custom implementation
 OmetriaReactNativeSdk.initializeWithApiToken = (
   token: string,
-  options?: OmetriaOptions
+  options?: _OmetriaOptions
 ) =>
   Platform.OS === 'android'
     ? _initializeWithApi(token, options ?? {})
     : _initializeWithApi(token);
 
-export default OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
+// onNotificationOpenedApp() custom implementation
+OmetriaReactNativeSdk.onNotificationOpenedApp = async ({
+  remoteMessage,
+}: {
+  remoteMessage: any;
+}) => {
+  Platform.OS === 'android' && _onNotificationInteracted(remoteMessage);
+};
+
+// setBackgroundMessageHandler() custom implementation
+OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
+  ometriaToken,
+  remoteMessage,
+  ometriaOptions,
+}: OmetriaNotificationHandlerInit) => {
+  Platform.OS === 'android' &&
+    OmetriaReactNativeSdk.initializeWithApiToken(
+      ometriaToken,
+      ometriaOptions
+    ).then(async () => {
+      OmetriaReactNativeSdk.onNotificationReceived(remoteMessage);
+    });
+};
+
+// onNotificationInteracted() custom implementation for iOS only
+const OmetriaEventEmitter =
+  Platform.OS === 'ios' && new NativeEventEmitter(OmetriaReactNativeSdk as any);
+(OmetriaReactNativeSdk as any).onNotificationInteracted = (
+  handler: (response: _OmetriaNotificationData) => void
+) => {
+  OmetriaEventEmitter &&
+    OmetriaEventEmitter.addListener(
+      'onNotificationInteracted',
+      (response: _OmetriaNotificationData) => handler(response)
+    );
+};
+
+export default OmetriaReactNativeSdk;
+export type OmetriaNotificationData = _OmetriaNotificationData;
+export type OmetriaOptions = _OmetriaOptions;
