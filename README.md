@@ -473,15 +473,39 @@ messaging()
 messaging().onTokenRefresh(pushToken => Ometria.onNewToken(pushToken));
 ```
 
-#### - Request permission to receive push notifications
-Then, you have to request push notifications permissions (for iOS) using Firebase Messaging, e.g.:
-```js
-await messaging().requestPermission({
-  sound: true,
-  badge: true,
-  alert: true,
-});
+#### - Request permission to receive Push Notifications
+
+For **Android 13** (API level 33) and higher you first have to declare the permission in your AndroidManifest.xml file:
+```xml
+<manifest ...>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <application ...>
+        ...
+    </application>
+</manifest>
 ```
+
+
+On iOS you can request permissions using Firebase Mesaging. <br>
+On Android, Firebase Messaging [doesn't support this yet](https://github.com/invertase/react-native-firebase/issues/6283). You can use [react-native-permissions](https://github.com/zoontek/react-native-permissions) instead. E.g.:
+
+
+```js
+import {requestNotifications } from 'react-native-permissions';
+...
+if (Platform.OS === 'android') {
+  await requestNotifications([]);
+}
+
+if (Platform.OS === 'ios') {
+  await messaging().requestPermission({
+    sound: true,
+    badge: true,
+    alert: true,
+  });
+}
+```
+Find more about Notification runtime permissions on Android [here](https://developer.android.com/develop/ui/views/notifications/notification-permission)
 #### - Handling remote messages on iOS
 
 The Ometria SDK will automatically handle remote background messages and provide them to the backend.
