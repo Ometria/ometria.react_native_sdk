@@ -1,10 +1,13 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 
 import type {
-  OmetriaNotificationData as _OmetriaNotificationData,
+  OmetriaNotificationData,
   OmetriaNotificationHandlerInit,
-  OmetriaOptions as _OmetriaOptions,
+  OmetriaOptions,
+  OmetriaBasketItem,
   OmetriaReactNativeSdkType,
+  OmetriaBasket,
+  OmetriaNotificationHandler,
 } from './types';
 
 const OmetriaReactNativeSdk = NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
@@ -17,7 +20,7 @@ const _onNotificationInteracted =
 // initializeWithApiToken() custom implementation
 OmetriaReactNativeSdk.initializeWithApiToken = (
   token: string,
-  options?: _OmetriaOptions
+  options?: OmetriaOptions
 ) =>
   Platform.OS === 'android'
     ? _initializeWithApi(token, options ?? {})
@@ -51,15 +54,21 @@ OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
 const OmetriaEventEmitter =
   Platform.OS === 'ios' && new NativeEventEmitter(OmetriaReactNativeSdk as any);
 (OmetriaReactNativeSdk as any).onNotificationInteracted = (
-  handler: (response: _OmetriaNotificationData) => void
+  handler: (response: OmetriaNotificationData) => void
 ) => {
   OmetriaEventEmitter &&
     OmetriaEventEmitter.addListener(
       'onNotificationInteracted',
-      (response: _OmetriaNotificationData) => handler(response)
+      (response: OmetriaNotificationData) => handler(response)
     );
 };
 
 export default OmetriaReactNativeSdk;
-export type OmetriaNotificationData = _OmetriaNotificationData;
-export type OmetriaOptions = _OmetriaOptions;
+
+export {
+  OmetriaBasket,
+  OmetriaBasketItem,
+  OmetriaNotificationData,
+  OmetriaOptions,
+  OmetriaNotificationHandler,
+};
