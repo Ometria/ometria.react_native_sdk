@@ -163,6 +163,9 @@ const App = () => {
       return;
     }
 
+    // Sets Notification Interaction event to trigger a `onNotificationInteracted` event on Android
+    Ometria.onDeepLinkInteracted();
+
     const unsubscribeFromMessages = messaging().onMessage(
       async (remoteMessage: any) => {
         console.log('📭 Foreground message received:', remoteMessage);
