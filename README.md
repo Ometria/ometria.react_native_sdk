@@ -486,7 +486,7 @@ For **Android 13** (API level 33) and higher you first have to declare the permi
 ```
 
 
-On iOS you can request permissions using Firebase Mesaging. <br>
+On iOS you can request permissions using Firebase Cloud Messaging. <br>
 On Android, Firebase Messaging [doesn't support this yet](https://github.com/invertase/react-native-firebase/issues/6283). You can use [react-native-permissions](https://github.com/zoontek/react-native-permissions) instead. E.g.:
 
 
