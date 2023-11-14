@@ -1,4 +1,4 @@
-import { OmetriaBasketItem } from 'src/types';
+import { OmetriaBasketItem, OmetriaOptions } from 'react-native-ometria';
 
 export const Events = {
   ENABLE_LOGGING: 'ENABLE_LOGGING',
@@ -42,3 +42,9 @@ export const demoBasketItems: OmetriaBasketItem[] = [
     variantId: 'variant-3',
   },
 ];
+
+export const customOmetriaOptions: OmetriaOptions = {
+  notificationChannelName: 'Example Cha',
+};
+
+export const TOKEN_KEY_STORAGE = 'token';
