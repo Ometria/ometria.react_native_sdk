@@ -15,14 +15,14 @@ import { getOmetriaTokenFromStorage } from './src/utils';
 import { customOmetriaOptions } from './src/data';
 
 // Early subscribe to background PN messages on Android
-
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  console.log('📭 Quit message received:', remoteMessage);
-  Ometria.setBackgroundMessageHandler({
-    ometriaToken: await getOmetriaTokenFromStorage(),
-    ometriaOptions: customOmetriaOptions,
-    remoteMessage,
+Platform.OS === 'android' &&
+  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    console.log('📫 Quit message received', remoteMessage);
+    Ometria.setBackgroundMessageHandler({
+      ometriaToken: await getOmetriaTokenFromStorage(),
+      ometriaOptions: customOmetriaOptions,
+      remoteMessage,
+    });
   });
-});
 console.log(Platform.OS);
 AppRegistry.registerComponent(appName, () => App);

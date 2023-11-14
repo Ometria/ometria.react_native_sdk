@@ -55,6 +55,7 @@ const App = () => {
           // Request Push Notifications permission after Ometria SDK initialization
           await requestNotifications(['alert', 'sound', 'badge']).then(
             ({ status }) => {
+              console.log('🔔 Push Notification permissions status:', status);
               if (status === RESULTS.GRANTED) {
                 handlePushNotifications();
                 console.log('🔔 Push Notification permissions granted!');
@@ -123,7 +124,7 @@ const App = () => {
       parsedNotification && notificationInteractionHandler(parsedNotification);
     };
 
-    // E. Check for background notification that opened the app
+    // E. Check for background notification that opened the app 🤖
     messaging()
       .getInitialNotification()
       .then(
@@ -131,12 +132,12 @@ const App = () => {
           remoteMessage && androidOnNotificationInterracted(remoteMessage)
       );
 
-    // F. Check for foreground notification that opened the app
+    // F. Check for foreground notification that opened the app 🤖
     messaging().onNotificationOpenedApp((remoteMessage) =>
       androidOnNotificationInterracted(remoteMessage)
     );
 
-    // G. Subscribe to foreground PN messages
+    // G. Subscribe to foreground PN messages 🤖
     const unsubscribeFromMessages = messaging().onMessage(
       async (remoteMessage) => {
         console.log('📭 Background message received:', remoteMessage);
@@ -240,7 +241,8 @@ const App = () => {
 
   const handleOmetriaTokenInit = async () => {
     const savedToken = await getOmetriaTokenFromStorage();
-    if (savedToken === null) {
+    if (savedToken === '') {
+      // Do not initialize Ometria SDK if there is no token
       setAuthModal(true);
       return;
     }
