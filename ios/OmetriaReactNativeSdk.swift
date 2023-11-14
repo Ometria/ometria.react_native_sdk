@@ -22,7 +22,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
 
     @objc(initializeWithApiToken:resolver:rejecter:)
     func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
-        OmetriaStorageKeys.rnVersion = "2.2.3"
+        OmetriaStorageKeys.rnVersion = "2.3.0"
         DispatchQueue.main.async {
             let ometriaInit = Ometria.initialize(apiToken: apiToken)
             resolve(ometriaInit)
