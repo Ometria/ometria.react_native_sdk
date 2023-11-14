@@ -1,4 +1,4 @@
-import { OmetriaBasketItem } from 'react-native-ometria';
+import { OmetriaBasketItem } from 'src/types';
 
 export const Events = {
   ENABLE_LOGGING: 'ENABLE_LOGGING',
