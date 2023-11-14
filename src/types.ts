@@ -1,3 +1,5 @@
+import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+
 export type OmetriaBasketItem = {
   productId: string;
   sku?: string;
@@ -11,7 +13,7 @@ export type OmetriaOptions = {
 };
 
 export type OmetriaNotificationHandler = {
-  remoteMessage: any;
+  remoteMessage: FirebaseMessagingTypes.RemoteMessage;
 };
 
 export interface OmetriaNotificationHandlerInit
@@ -76,13 +78,16 @@ export type OmetriaReactNativeSdkType = {
   ): () => void;
 
   // Android only
-  onPushTokenRefreshed(token: string): () => void;
   setBackgroundMessageHandler(
     handler: OmetriaNotificationHandlerInit
   ): Promise<void>;
   onNotificationOpenedApp(handler: OmetriaNotificationHandler): Promise<void>;
-  onNotificationReceived(remoteMessage: any): () => void;
-  parseNotification(remoteMessage: any): Promise<OmetriaNotificationData>;
+  onNotificationReceived(
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage
+  ): () => void;
+  parseNotification(
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage
+  ): Promise<OmetriaNotificationData>;
 
   /**
    * @deprecated Deprecated since version 2.2.0.
