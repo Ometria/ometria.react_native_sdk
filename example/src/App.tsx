@@ -12,52 +12,29 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ometria, { OmetriaNotificationData } from 'react-native-ometria';
 import { RESULTS, requestNotifications } from 'react-native-permissions';
 
-import { version, ometria_sdk_version } from '../../package.json';
-import {
-  Events,
-  TOKEN_KEY_STORAGE,
-  customOmetriaOptions,
-  demoBasketItems,
-} from './data';
 import { AuthModalProps } from './models';
-
-// STORAGE
-const getOmetriaTokenFromStorage = async () =>
-  (await AsyncStorage.getItem(TOKEN_KEY_STORAGE)) || '';
-
-const setOmetriaTokenToStorage = async (token: string) =>
-  await AsyncStorage.setItem(TOKEN_KEY_STORAGE, token);
-
-// Early subscribe to background PN messages on Android
-Platform.OS === 'android' &&
-  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    const savedToken = await getOmetriaTokenFromStorage();
-    console.log('🔔 Message handled in the background!', remoteMessage);
-    // Send event to Ometria SDK
-    Ometria.setBackgroundMessageHandler({
-      remoteMessage,
-      ometriaToken: savedToken,
-      ometriaOptions: customOmetriaOptions,
-    });
-  });
+import { version, ometria_sdk_version } from '../../package.json';
+import { Events, customOmetriaOptions, demoBasketItems } from './data';
+import {
+  getOmetriaTokenFromStorage,
+  setOmetriaTokenToStorage,
+  stringifyMe,
+} from './utils';
 
 const App = () => {
-  // If you want to use the reinitialization feature, you need to set the token as a state
-  // If not you can set the token as a constant
-  const [ometriaToken, setOmetriaToken] = useState(''); // OMETRIA_API_TOKEN
+  // Set this as a state if you want to use the reinitialization feature, otherwise you can use a static token
+  const [ometriaToken, setOmetriaToken] = useState('');
+  const [authModal, setAuthModal] = useState(false);
+  const [evtsModal, setEvtsModal] = useState(false);
 
   const [notificationContent, setNotificationContent] = useState(
     'Interract with a notification to see its content here.'
   );
 
-  const [authModal, setAuthModal] = useState(false);
-  const [evtsModal, setEvtsModal] = useState(false);
-
-  // METHODS
+  /*  METHODS */
 
   /**
    * Initialize Ometria with the API Token
@@ -69,17 +46,21 @@ const App = () => {
    */
   const handleOmetriaInit = async (token: string) => {
     try {
-      Ometria.initializeWithApiToken(token, {
-        notificationChannelName: 'Example Channel Name',
-      }).then(
+      Ometria.initializeWithApiToken(token, customOmetriaOptions).then(
         async () => {
-          console.log('🎉 Ometria has been initialized!');
-          Ometria.isLoggingEnabled(true);
           setAuthModal(false);
+          Ometria.isLoggingEnabled(true);
+          console.log('🎉 Ometria has been initialized!');
 
-          // Ready to initialize Push Notifications handler
-          await requestPNPermission();
-          handlePushNotifications();
+          // Request Push Notifications permission after Ometria SDK initialization
+          await requestNotifications(['alert', 'sound', 'badge']).then(
+            ({ status }) => {
+              if (status === RESULTS.GRANTED) {
+                handlePushNotifications();
+                console.log('🔔 Push Notification permissions granted!');
+              }
+            }
+          );
         },
         (error) => {
           throw error;
@@ -91,41 +72,23 @@ const App = () => {
   };
 
   /**
-   * Request Push Notifications permission
+   * Handle Push Notifications 🍏 & 🤖
+   * - A. Provides Ometria SDK with the FCM token
+   * - B. Listen for new FCM tokens and provide them to the Ometria SDK
    *
-   * - `react-native-permissions` for Android 13+ (or other library)
-   * - `react-native-firebase` for iOS (or react-native-permissions - up to you)
+   * #### iOS only 🍏 (SDK handles PN)
+   * - C. Captures user interaction with push notifications event emmited by the iOS SDK
    *
-   * until `react-native-firebase` supports Android 13+ notifications permissions.
-   * See https://github.com/invertase/react-native-firebase/issues/6283
-
-   */
-  const requestPNPermission = async () =>
-    requestNotifications(['alert', 'sound', 'badge']).then(
-      ({ status }) =>
-        status === RESULTS.GRANTED &&
-        console.log('🔔 Push Notification permissions granted!')
-    );
-
-  /**
-   * Handle Push Notifications
-   *
-   * #### iOS & Android:
-   * - Provides Ometria SDK with the FCM token
-   * - Listen for new FCM tokens and provide them to the Ometria SDK
-   * - Set up a listener for user interaction with push notifications
-   *
-   * #### Android only
-   * - Subscribe to foreground PN messages
-   * - Subscribe to background PN messages
-   *
-   * (On iOS the SDK handles Firebase PN background messages.)
-   *
+   * #### Android only 🤖 (SDK does not handle PN)
+   * - D. Captures user interaction with push notifications event emmited by the developer
+   * - E. Handles background notification that opened the app
+   * - F. Handles foreground notification that opened the app
+   * - G. Subscribe to foreground PN messages
    * @returns unsubscribeFromMessages function
    */
 
   const handlePushNotifications = () => {
-    // Provides Ometria SDK with the initial FCM token
+    // A. Provides Ometria SDK with the FCM token 🍏 & 🤖
     messaging()
       .getToken()
       .then((pushToken: string) => {
@@ -133,84 +96,64 @@ const App = () => {
         console.log('🔑 Firebase token:', pushToken);
       });
 
-    // Listen for new FCM tokens and provide them to the Ometria SDK
+    // B. Listen for new FCM tokens and provide them to the Ometria SDK 🍏 & 🤖
     messaging().onTokenRefresh((pushToken: string) =>
       Ometria.onNewToken(pushToken)
     );
 
-    // Capture user interaction with PN on iOS only 🍏
-    Ometria.onNotificationInteracted((response: OmetriaNotificationData) => {
-      console.log('🔔 Notification Interacted', response);
-      setNotificationContent(JSON.stringify(response));
+    // C. Handles user interaction with push notifications event emmited by the iOS SDK 🍏
 
-      if (response.deepLinkActionUrl) {
-        // Handle deep linking open URL action
-        Ometria.trackDeepLinkOpenedEvent(response.deepLinkActionUrl, 'Browser');
-        Linking.openURL(response.deepLinkActionUrl);
-      }
-    });
+    Platform.OS === 'ios' &&
+      Ometria.onNotificationInteracted((response: OmetriaNotificationData) =>
+        notificationInteractionHandler(response)
+      );
 
-    /*
-     * Android only
-     *
-     * - Subscribe to foreground PN messages
-     * - Subscribe to background PN messages
-     *
-     * On iOS the SDK handles Firebase PN background messages.
-     * */
-
+    /* Android only */
     if (Platform.OS !== 'android') {
       return;
     }
 
-    // Method to parse and handle notifications
-    const parseAndHandleNotification = (remoteMessage: any) => {
-      // Send event to Ometria SDK
-      Ometria.onNotificationOpenedApp({
-        remoteMessage,
-      });
-      // Parse notification and handle deep link
-      Ometria.parseNotification(remoteMessage).then((response) => {
-        if (response.deepLinkActionUrl) {
-          Ometria.trackDeepLinkOpenedEvent(
-            response.deepLinkActionUrl,
-            'Browser'
-          );
-          try {
-            Linking.openURL(response.deepLinkActionUrl);
-          } catch (e) {
-            console.log('🔔 Error opening notification URL: ', e);
-          }
-        }
-        console.log('🔔 Notification parsed: ', response);
-        setNotificationContent(JSON.stringify(response));
-      });
+    /**
+     * D. Function that handles user interaction with push notifications event emmited by the developer for Android 🤖
+     * It is the Android implementation of iOS Ometria.onNotificationInteracted listener
+     */
+    const androidOnNotificationInterracted = async (remoteMessage: any) => {
+      Ometria.onNotificationOpenedApp({ remoteMessage });
+      const parsedNotification = await Ometria.parseNotification(remoteMessage);
+      parsedNotification && notificationInteractionHandler(parsedNotification);
     };
 
-    // Check for quit notification that opened the app
+    // E. Check for background notification that opened the app
     messaging()
       .getInitialNotification()
       .then(
         (remoteMessage) =>
-          remoteMessage && parseAndHandleNotification(remoteMessage)
+          remoteMessage && androidOnNotificationInterracted(remoteMessage)
       );
 
-    // Check for background notification that opened the app
+    // F. Check for foreground notification that opened the app
     messaging().onNotificationOpenedApp((remoteMessage) =>
-      parseAndHandleNotification(remoteMessage)
+      androidOnNotificationInterracted(remoteMessage)
     );
 
-    // Subscribe to forground PN messages
+    // G. Subscribe to foreground PN messages
     const unsubscribeFromMessages = messaging().onMessage(
-      async (remoteMessage: any) => {
-        console.log('📭 Foreground message received:', remoteMessage);
+      async (remoteMessage) => {
+        console.log('📭 Background message received:', remoteMessage);
         Ometria.onNotificationReceived(remoteMessage);
         try {
-          Ometria.parseNotification(remoteMessage).then((response) => {
-            setNotificationContent(JSON.stringify(response));
-            // To display a notification when the app is in the foreground
-            // you need to implement a 3rd party library like notifee.
-          });
+          Ometria.parseNotification(remoteMessage).then(
+            (parsedNotification) => {
+              setNotificationContent(
+                stringifyMe([remoteMessage, parsedNotification])
+              );
+              /* Foreground notifications are NOT shown to the user.
+             Instead, you could trigger a local notification or update the in-app UI to signal a new notification.
+             Read more at: https://rnfirebase.io/messaging/usage#foreground-state-messages
+             Don't forget to call androidOnNotificationInterracted() if you want to handle the notification interaction event
+            */
+            }
+          );
         } catch (error) {
           console.log(error);
         }
@@ -219,7 +162,30 @@ const App = () => {
     return unsubscribeFromMessages;
   };
 
-  // Other methods
+  // Other methods for both iOS and Android
+
+  /**
+   * Handle notification interaction event (regardles who emitted it)
+   * - Log the notification content
+   * - Open the notification deep link if available
+   * @param response {OmetriaNotificationData}
+   */
+  const notificationInteractionHandler = (
+    response: OmetriaNotificationData
+  ) => {
+    console.log('🔔 Notification interacted with: ', response);
+    setNotificationContent(stringifyMe([response]));
+
+    if (response.deepLinkActionUrl) {
+      Ometria.trackDeepLinkOpenedEvent(response.deepLinkActionUrl, 'Browser');
+      try {
+        Linking.openURL(response.deepLinkActionUrl);
+      } catch (e) {
+        console.log('🔔 Error opening notification URL: ', e);
+      }
+    }
+  };
+
   /**
    * Handle Deeplinking
    * @param payload {url: String}
@@ -292,7 +258,7 @@ const App = () => {
 
   useEffect(() => {
     // This is optional if you want to use the reinitialization feature
-    // If not, you can call handleOmetriaInit here directly with the token as a parameter
+    // If not, you can call handleOmetriaInit here directly with the static token as a parameter
     handleOmetriaTokenInit();
   }, []);
 
@@ -302,7 +268,7 @@ const App = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Ometria React Native Demo {version}</Text>
       <Text style={styles.subtitle}>
         {Platform.OS === 'android' ? 'Android' : 'iOS'} SDK version{' '}
@@ -334,7 +300,7 @@ const App = () => {
           handleOmetriaInit,
         }}
       />
-    </View>
+    </ScrollView>
   );
 };
 

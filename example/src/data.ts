@@ -46,5 +46,3 @@ export const demoBasketItems: OmetriaBasketItem[] = [
 export const customOmetriaOptions: OmetriaOptions = {
   notificationChannelName: 'Example Cha',
 };
-
-export const TOKEN_KEY_STORAGE = 'token';
