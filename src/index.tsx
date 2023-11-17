@@ -53,6 +53,7 @@ OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
 // onNotificationInteracted() custom implementation for iOS only
 const OmetriaEventEmitter =
   Platform.OS === 'ios' && new NativeEventEmitter(OmetriaReactNativeSdk as any);
+
 (OmetriaReactNativeSdk as any).onNotificationInteracted = (
   handler: (response: OmetriaNotificationData) => void
 ) => {
