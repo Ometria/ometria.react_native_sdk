@@ -44,5 +44,5 @@ export const demoBasketItems: OmetriaBasketItem[] = [
 ];
 
 export const customOmetriaOptions: OmetriaOptions = {
-  notificationChannelName: 'Example Cha',
+  notificationChannelName: 'Example Channel Name',
 };
