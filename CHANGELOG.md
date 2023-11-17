@@ -6,7 +6,7 @@
 - Updated example with request for notifications permission on Android 13
 - Fixed Notification trampoline (Android 12+)
 - Upated example and library to use updated React Native library version (0.71.13)
-- Updated Ometria native SDK to the latest versions - 🍏 1.5.0 iOS & 🤖 1.5.1 Android. Both SDK support now reinitialisation.
+- Updated Ometria native SDK to the latest versions - 🍏 1.5.0 iOS & 🤖 1.6.1 Android. Both SDK support now reinitialisation.
 
 # 2.2.2
 
