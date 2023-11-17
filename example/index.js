@@ -24,5 +24,5 @@ Platform.OS === 'android' &&
       remoteMessage,
     });
   });
-console.log(Platform.OS);
+
 AppRegistry.registerComponent(appName, () => App);

@@ -11,7 +11,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import messaging from '@react-native-firebase/messaging';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
 import Ometria, { OmetriaNotificationData } from 'react-native-ometria';
 import { RESULTS, requestNotifications } from 'react-native-permissions';
 
@@ -118,7 +120,9 @@ const App = () => {
      * D. Function that handles user interaction with push notifications event emmited by the developer for Android 🤖
      * It is the Android implementation of iOS Ometria.onNotificationInteracted listener
      */
-    const androidOnNotificationInterracted = async (remoteMessage: any) => {
+    const androidOnNotificationInterracted = async (
+      remoteMessage: FirebaseMessagingTypes.RemoteMessage
+    ) => {
       Ometria.onNotificationOpenedApp({ remoteMessage });
       const parsedNotification = await Ometria.parseNotification(remoteMessage);
       parsedNotification && notificationInteractionHandler(parsedNotification);
@@ -132,7 +136,7 @@ const App = () => {
           remoteMessage && androidOnNotificationInterracted(remoteMessage)
       );
 
-    // F. Check for foreground notification that opened the app 🤖
+    // F. Subscribe to foreground notification that opens the app 🤖
     messaging().onNotificationOpenedApp((remoteMessage) =>
       androidOnNotificationInterracted(remoteMessage)
     );
