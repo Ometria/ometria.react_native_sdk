@@ -507,7 +507,7 @@ Find more about Notification runtime permissions on Android [here](https://devel
 The Ometria SDK will automatically handle remote background messages and provide them to the backend.
 This way your app will start receiving notifications from Ometria.
 
-Additionally, you can use `Ometria.onNotificationInteracted` iOS only available method to capture notification interactions.
+Additionally on iOS, you should use the Ometria.onNotificationInteracted method to capture notification interactions.
 
 ```js
 Platform.OS === 'ios' &&
