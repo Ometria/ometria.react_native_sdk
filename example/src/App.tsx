@@ -266,6 +266,7 @@ const App = () => {
     // This is optional if you want to use the reinitialization feature
     // If not, you can call handleOmetriaInit here directly with the static token as a parameter
     handleOmetriaTokenInit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
