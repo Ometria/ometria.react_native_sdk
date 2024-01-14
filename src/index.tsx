@@ -10,7 +10,8 @@ import type {
   OmetriaNotificationHandler,
 } from './types';
 
-const OmetriaReactNativeSdk = NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
+const OmetriaReactNativeSdk =
+  NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
 
 // Save original implementations
 const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
