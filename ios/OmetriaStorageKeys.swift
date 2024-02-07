@@ -21,4 +21,14 @@ struct OmetriaStorageKeys {
         }
     }
     
+    static var cachedToken: String? {
+        get{
+            let value = UserDefaults(suiteName: "group.com.tapptitude.ometria.sampleRN")?.object(forKey: "cachedTokenRN") as? String
+            return value ?? nil
+        }
+        set{
+            UserDefaults(suiteName: "group.com.tapptitude.ometria.sampleRN")?.set(newValue, forKey: "cachedTokenRN")
+        }
+    }
+    
 }

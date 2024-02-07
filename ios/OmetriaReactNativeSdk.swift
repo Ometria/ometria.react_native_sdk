@@ -24,6 +24,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
         OmetriaStorageKeys.rnVersion = "2.3.1"
         DispatchQueue.main.async {
+            OmetriaStorageKeys.cachedToken = apiToken
             let ometriaInit = Ometria.initialize(apiToken: apiToken)
             resolve(ometriaInit)
             Ometria.sharedInstance().notificationInteractionDelegate = self
