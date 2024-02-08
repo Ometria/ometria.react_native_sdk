@@ -8,9 +8,9 @@
 
 import Foundation
 
-struct OmetriaStorageKeys {
+public struct OmetriaStorageKeys {
     
-    static var rnVersion: String? {
+    public static var rnVersion: String? {
         get{
             let value = UserDefaults.standard.object(forKey: "sdkVersionRN") as? String
             return value ?? nil
@@ -21,7 +21,7 @@ struct OmetriaStorageKeys {
         }
     }
     
-    static var cachedToken: String? {
+    public static var cachedToken: String? {
         get{
             let value = UserDefaults(suiteName: "group.com.tapptitude.ometria.sampleRN")?.object(forKey: "cachedTokenRN") as? String
             return value ?? nil

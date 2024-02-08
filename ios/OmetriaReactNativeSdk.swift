@@ -20,6 +20,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         return [:]
     }
 
+    @available(iOSApplicationExtension, unavailable)
     @objc(initializeWithApiToken:resolver:rejecter:)
     func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
         OmetriaStorageKeys.rnVersion = "2.3.1"
