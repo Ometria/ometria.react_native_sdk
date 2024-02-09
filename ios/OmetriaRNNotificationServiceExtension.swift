@@ -9,8 +9,8 @@ import Foundation
 import UserNotifications
 import Ometria
 
-class OmetriaRNNotificationServiceExtension: UNNotificationServiceExtension {
-    func instantiateOmetria() -> Ometria? {
+class OmetriaRNNotificationServiceExtension: OmetriaNotificationServiceExtension {
+    override func instantiateOmetria() -> Ometria? {
         if let apiToken = OmetriaStorageKeys.cachedToken {
             Ometria.initializeForExtension(apiToken: apiToken, appGroupIdentifier: "group.com.tapptitude.ometria.sampleRN")
         }

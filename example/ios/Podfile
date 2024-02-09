@@ -75,6 +75,5 @@ end
 
 target 'NotificationService' do
   sharedConfig
-  pod "Ometria", :modular_headers => true
 end
 
