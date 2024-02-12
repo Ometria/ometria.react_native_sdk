@@ -6,8 +6,11 @@
 //
 
 import UserNotifications
-import ometria_react_native_sdk
+import Ometria
 
-class NotificationService: OmetriaRNNotificationServiceExtension {
+class NotificationService: OmetriaNotificationServiceExtension {
+  override func instantiateOmetria() -> Ometria? {
+    Ometria.initializeForExtension(appGroupIdentifier: "group.com.tapptitude.ometria.sampleRN")
+  }
 }
   

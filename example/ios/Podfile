@@ -74,6 +74,7 @@ target 'sampleApp' do
 end
 
 target 'NotificationService' do
-  sharedConfig
+  use_frameworks! :linkage => :static
+  pod 'Ometria'
 end
 

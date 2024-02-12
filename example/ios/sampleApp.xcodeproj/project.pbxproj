@@ -244,8 +244,8 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				842B4CF959BD2304F88B99D8 /* [CP] Embed Pods Frameworks */,
 				7E0B176CF6CF602C91F2B5FD /* [CP] Copy Pods Resources */,
-				51C2C4CC98FB72CBBE281EB2 /* [CP-User] [RNFB] Core Configuration */,
 				AA1A86132B73A88800800142 /* Embed Foundation Extensions */,
+				51C2C4CC98FB72CBBE281EB2 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -265,7 +265,6 @@
 				AA1A86072B73A88800800142 /* Sources */,
 				AA1A86082B73A88800800142 /* Frameworks */,
 				AA1A86092B73A88800800142 /* Resources */,
-				FF06D052D68DBF425B0DD186 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -472,23 +471,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FF06D052D68DBF425B0DD186 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NotificationService/Pods-NotificationService-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NotificationService/Pods-NotificationService-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NotificationService/Pods-NotificationService-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
