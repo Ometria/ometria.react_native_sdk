@@ -124,6 +124,7 @@ export type OmetriaBasket = {
 
 export type OmetriaOptions = {
   notificationChannelName?: string; // only for Android
+  appGroupIdentifier?: string; // only for iOS
 };
 
 export type OmetriaNotificationHandler = {

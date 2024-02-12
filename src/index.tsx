@@ -22,10 +22,7 @@ const _onNotificationInteracted =
 OmetriaReactNativeSdk.initializeWithApiToken = (
   token: string,
   options?: OmetriaOptions
-) =>
-  Platform.OS === 'android'
-    ? _initializeWithApi(token, options ?? {})
-    : _initializeWithApi(token);
+) => _initializeWithApi(token, options ?? {});
 
 // onNotificationOpenedApp() custom implementation
 OmetriaReactNativeSdk.onNotificationOpenedApp = async ({
