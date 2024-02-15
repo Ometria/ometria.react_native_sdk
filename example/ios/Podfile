@@ -29,9 +29,9 @@ flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : Flip
 
 $RNFirebaseAsStaticFramework = true
 
+pod 'GoogleUtilities', :modular_headers => true
 
 def sharedConfig
-  
   linkage = ENV['USE_FRAMEWORKS']
   if linkage != nil
     Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -40,7 +40,6 @@ def sharedConfig
 
   use_frameworks! :linkage => :static
   pod 'FirebaseCore', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseMessaging', :modular_headers => true
   pod 'ometria-react-native-sdk', :path => '../..', :modular_headers => true
 end
