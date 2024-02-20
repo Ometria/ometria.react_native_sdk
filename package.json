@@ -8,7 +8,7 @@
   "react-native": "src/index",
   "source": "src/index",
   "ometria_sdk_version": {
-    "ios": "1.5.0",
+    "ios": "1.5.1",
     "android": "1.6.1"
   },
   "files": [
