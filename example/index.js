@@ -17,8 +17,8 @@ import { customOmetriaOptions } from './src/data';
 // Early subscribe to background PN messages on Android
 Platform.OS === 'android' &&
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    console.log('📫 Quit message received', remoteMessage);
     Ometria.setBackgroundMessageHandler({
+      // 🏹 Ometria Event Logged: onNotificationReceived
       ometriaToken: await getOmetriaTokenFromStorage(),
       ometriaOptions: customOmetriaOptions,
       remoteMessage,

@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
-import Ometria, { OmetriaNotificationData } from 'react-native-ometria';
+import Ometria from 'react-native-ometria';
 import { RESULTS, requestNotifications } from 'react-native-permissions';
 
 import { AuthModalProps } from './models';
@@ -22,8 +22,8 @@ import { version, ometria_sdk_version } from '../../package.json';
 import { Events, customOmetriaOptions, demoBasketItems } from './data';
 import {
   getOmetriaTokenFromStorage,
+  openUrl,
   setOmetriaTokenToStorage,
-  stringifyMe,
 } from './utils';
 
 const App = () => {
@@ -33,7 +33,7 @@ const App = () => {
   const [evtsModal, setEvtsModal] = useState(false);
 
   const [notificationContent, setNotificationContent] = useState(
-    'Interract with a notification to see its content here.'
+    'Receive or interract with a notification to see its content here.'
   );
 
   /*  METHODS */
@@ -42,7 +42,7 @@ const App = () => {
    * Initialize Ometria with the API Token
    *
    * Additionally you can pass an options object to customize the SDK behavior,
-   * for example you can set the notification channel name for Android.
+   * for example you can set the notification channel name for Android or set the appGroupIdentifier for iOS
    *
    * @param token String
    */
@@ -78,15 +78,11 @@ const App = () => {
    * Handle Push Notifications 🍏 & 🤖
    * - A. Provides Ometria SDK with the FCM token
    * - B. Listen for new FCM tokens and provide them to the Ometria SDK
+   * - C. Captures user interaction with push notifications event emmited by the developer
+   * - D. Handles notification that opened the app from a quit state
+   * - E. Handles notification that opened the app from a background state
+   * - F. Subscribe to foreground PN messages
    *
-   * #### iOS only 🍏 (SDK handles PN)
-   * - C. Captures user interaction with push notifications event emmited by the iOS SDK
-   *
-   * #### Android only 🤖 (SDK does not handle PN)
-   * - D. Captures user interaction with push notifications event emmited by the developer
-   * - E. Handles background notification that opened the app
-   * - F. Handles foreground notification that opened the app
-   * - G. Subscribe to foreground PN messages
    * @returns unsubscribeFromMessages function
    */
 
@@ -104,91 +100,55 @@ const App = () => {
       Ometria.onNewToken(pushToken)
     );
 
-    // C. Handles user interaction with push notifications event emmited by the iOS SDK 🍏
-
-    Platform.OS === 'ios' &&
-      Ometria.onNotificationInteracted((response: OmetriaNotificationData) =>
-        notificationInteractionHandler(response)
-      );
-
-    /* Android only */
-    if (Platform.OS !== 'android') {
-      return;
-    }
-
-    /**
-     * D. Function that handles user interaction with push notifications event emmited by the developer for Android 🤖
-     * It is the Android implementation of iOS Ometria.onNotificationInteracted listener
-     */
-    const androidOnNotificationInterracted = async (
+    // C. Function that handles user interaction with push notifications event 🍏 & 🤖
+    const onNotificationOpenedApp = async (
       remoteMessage: FirebaseMessagingTypes.RemoteMessage
     ) => {
-      Ometria.onNotificationOpenedApp({ remoteMessage });
-      const parsedNotification = await Ometria.parseNotification(remoteMessage);
-      parsedNotification && notificationInteractionHandler(parsedNotification);
+      console.log('🔔 Notification has been interacted with and opened app.');
+      setNotificationContent(JSON.stringify(remoteMessage, null, 2));
+
+      Ometria.onNotificationOpenedApp({ remoteMessage }); // 🏹 Ometria Event Logged: onNotificationInteracted
+
+      const notif = await Ometria.parseNotification(remoteMessage);
+      if (notif?.deepLinkActionUrl) {
+        Ometria.trackDeepLinkOpenedEvent(notif.deepLinkActionUrl, 'Browser'); // 🏹 Ometria Event Logged: deepLinkOpened
+        openUrl(notif.deepLinkActionUrl);
+      }
+      Ometria.flush();
     };
 
-    // E. Check for background notification that opened the app 🤖
+    // D. Check for notification that opened the app from a quit state 🍏 & 🤖
     messaging()
       .getInitialNotification()
-      .then(
-        (remoteMessage) =>
-          remoteMessage && androidOnNotificationInterracted(remoteMessage)
-      );
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log('🔔 Notification opened the app from quit state');
+          onNotificationOpenedApp(remoteMessage);
+        }
+      });
 
-    // F. Subscribe to foreground notification that opens the app 🤖
-    messaging().onNotificationOpenedApp((remoteMessage) =>
-      androidOnNotificationInterracted(remoteMessage)
-    );
+    // E. Subscribe to notification that opens the app from a background state 🍏 & 🤖
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      if (remoteMessage) {
+        console.log('🔔 Notification opened the app from background');
+        onNotificationOpenedApp(remoteMessage);
+      }
+    });
 
-    // G. Subscribe to foreground PN messages 🤖
+    // F. Subscribe to foreground PN messages 🍏 & 🤖
     const unsubscribeFromMessages = messaging().onMessage(
       async (remoteMessage) => {
-        console.log('📭 Background message received:', remoteMessage);
-        Ometria.onNotificationReceived(remoteMessage);
-        try {
-          Ometria.parseNotification(remoteMessage).then(
-            (parsedNotification) => {
-              setNotificationContent(
-                stringifyMe([remoteMessage, parsedNotification])
-              );
-              /* Foreground notifications are NOT shown to the user.
-             Instead, you could trigger a local notification or update the in-app UI to signal a new notification.
-             Read more at: https://rnfirebase.io/messaging/usage#foreground-state-messages
-             Don't forget to call androidOnNotificationInterracted() if you want to handle the notification interaction event
-            */
-            }
-          );
-        } catch (error) {
-          console.log(error);
-        }
+        console.log('📭 Foreground message received:', remoteMessage);
+        setNotificationContent(JSON.stringify(remoteMessage, null, 2));
+        Ometria.onNotificationReceived(remoteMessage); // 🏹 Ometria Event Logged: onNotificationReceived
+        /* Keep in mind that foreground notifications are NOT shown to the user.
+           Instead, you could trigger a local notification or update the in-app UI to signal a new notification.
+           Read more at: https://rnfirebase.io/messaging/usage#foreground-state-messages
+           Don't forget to call onNotificationOpenedApp() if you want to handle the notification interaction event
+        */
       }
     );
     return unsubscribeFromMessages;
-  };
-
-  // Other methods for both iOS and Android
-
-  /**
-   * Handle notification interaction event (regardles who emitted it)
-   * - Log the notification content
-   * - Open the notification deep link if available
-   * @param response {OmetriaNotificationData}
-   */
-  const notificationInteractionHandler = (
-    response: OmetriaNotificationData
-  ) => {
-    console.log('🔔 Notification interacted with: ', response);
-    setNotificationContent(stringifyMe([response]));
-
-    if (response.deepLinkActionUrl) {
-      Ometria.trackDeepLinkOpenedEvent(response.deepLinkActionUrl, 'Browser');
-      try {
-        Linking.openURL(response.deepLinkActionUrl);
-      } catch (e) {
-        console.log('🔔 Error opening notification URL: ', e);
-      }
-    }
   };
 
   /**
@@ -500,7 +460,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     backgroundColor: 'white',
-    paddingTop: Platform.OS === 'ios' ? 50 : 10,
+    paddingTop: 50,
   },
   title: {
     fontSize: 18,
