@@ -36,14 +36,6 @@ export type OmetriaReactNativeSdkType = {
   onNewToken(token: string): () => void;
 
   /**
-   * Only for iOS
-   * @param handler - Function that will be called when the notification is interacted with
-   */
-  onNotificationInteracted(
-    handler: (response: OmetriaNotificationData) => void
-  ): () => void;
-
-  /**
    * Only for Android
    * @param handler - Function that will be called when a notification is received while the app is in the quit state
    */
@@ -52,27 +44,24 @@ export type OmetriaReactNativeSdkType = {
   ): Promise<void>;
 
   /**
-   * Only for Android
    * @param handler - Function that will be called when a notification is interacted with
    */
-  onNotificationOpenedApp(handler: OmetriaNotificationHandler): Promise<void>;
+  onNotificationOpenedApp(handler: OmetriaNotificationHandler): void;
 
   /**
-   * Only for Android
    * @param handler - Function that will be called when a notification is received
    */
   onNotificationReceived(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ): () => void;
+  ): void;
 
   /**
-   * Only for Android
    * @param remoteMessage - Remote message received from the Firebase SDK
    * @returns Promise with the parsed notification data
    */
   parseNotification(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ): Promise<OmetriaNotificationData>;
+  ): Promise<OmetriaNotificationData | undefined>;
 
   /**
    * @deprecated Deprecated since version 2.2.0.
@@ -104,6 +93,15 @@ export type OmetriaReactNativeSdkType = {
    * Will be removed in the next major version.
    */
   onMessageReceived(remoteMessage: string): () => void;
+
+  /**
+   * Only for iOS
+   * @deprecated Deprecated since version 2.4.0.
+   * @param handler - Function that will be called when the notification is interacted with
+   */
+  onNotificationInteracted(
+    handler: (response: OmetriaNotificationData) => void
+  ): () => void;
 };
 
 export type OmetriaBasketItem = {
@@ -123,8 +121,14 @@ export type OmetriaBasket = {
 };
 
 export type OmetriaOptions = {
-  notificationChannelName?: string; // only for Android
-  appGroupIdentifier?: string; // only for iOS
+  /**
+   * Only for Android
+   */
+  notificationChannelName?: string;
+  /**
+   * Only for iOS
+   */
+  appGroupIdentifier?: string;
 };
 
 export type OmetriaNotificationHandler = {
