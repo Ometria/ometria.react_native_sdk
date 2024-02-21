@@ -83,8 +83,8 @@ android {
         applicationId "com.example.ometriareactnativesdk"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23
-        versionName "2.3.1"
+        versionCode 25
+        versionName "2.4.0"
     }
 
     signingConfigs {
