@@ -2,12 +2,11 @@ import { NativeModules, Platform } from 'react-native';
 
 import type {
   OmetriaNotificationData,
-  OmetriaNotificationHandlerInit,
   OmetriaOptions,
   OmetriaBasketItem,
-  OmetriaReactNativeSdkType,
   OmetriaBasket,
-  OmetriaNotificationHandler,
+  OmetriaNotification,
+  OmetriaReactNativeSdkType,
 } from './types';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
@@ -15,15 +14,12 @@ const OmetriaReactNativeSdk =
   NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
 
 // 🛟 Save original implementations
+const _onNotificationReceived = OmetriaReactNativeSdk.onNotificationReceived;
 const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
 const _parseNotification = OmetriaReactNativeSdk.parseNotification;
-const _onNotificationReceived = OmetriaReactNativeSdk.onNotificationReceived;
-const _onNotificationInteracted =
-  /* This is marked as deprecated to the end user,
-  as the method has changed its signature and
-  we don't want to expose it anymore to the end user
-  However, we still need to use it internally */
-  OmetriaReactNativeSdk.onNotificationInteracted;
+const _onNotificationInteracted = (
+  OmetriaReactNativeSdk as unknown as OmetriaReactNativeSdkInternalType
+).onNotificationInteracted;
 
 // 🛠️ Custom Implementation: initializeWithApiToken()
 OmetriaReactNativeSdk.initializeWithApiToken = (
@@ -32,18 +28,16 @@ OmetriaReactNativeSdk.initializeWithApiToken = (
 ) => _initializeWithApi(token, options ?? {});
 
 // 🛠️ Custom Implementation: onNotificationOpenedApp()
-OmetriaReactNativeSdk.onNotificationOpenedApp = async ({
-  remoteMessage,
-}: {
-  remoteMessage: any;
-}) => {
+OmetriaReactNativeSdk.onNotificationOpenedApp = async (remoteMessage) => {
   const iOSRemoteMessage = {
     ...remoteMessage,
     data: {
-      ometria: JSON.parse(remoteMessage?.data?.ometria || '{}'),
+      ometria: JSON.parse(
+        remoteMessage?.data?.ometria || '{}'
+      ) as OmetriaNotificationData,
     },
   };
-  // This is marked as deprecated to the end user, but we still need to use it internally
+
   _onNotificationInteracted(
     Platform.OS === 'ios' ? iOSRemoteMessage : remoteMessage
   );
@@ -81,12 +75,12 @@ OmetriaReactNativeSdk.parseNotification = async (
   return parsedNotification;
 };
 
-// 🛠️ Custom Implementation: 🤖 only - setBackgroundMessageHandler()
-OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
+// 🛠️ Custom Implementation: 🤖 only - onBackgroundMessage()
+OmetriaReactNativeSdk.onAndroidBackgroundMessage = async ({
   ometriaToken,
   remoteMessage,
   ometriaOptions,
-}: OmetriaNotificationHandlerInit) => {
+}) => {
   Platform.OS === 'android' &&
     OmetriaReactNativeSdk.initializeWithApiToken(
       ometriaToken,
@@ -96,6 +90,37 @@ OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
     });
 };
 
+// 🛠️ Deprecated Implementations
+OmetriaReactNativeSdk.setBackgroundMessageHandler = async () => {
+  console.warn(
+    'setBackgroundMessageHandler is deprecated, no longer works and will be removed in the next major version'
+  );
+  Promise.resolve();
+};
+
+OmetriaReactNativeSdk.onNotificationInteracted = () => {
+  console.warn(
+    'onNotificationInteracted is deprecated, no longer works and will be removed in the next major version'
+  );
+  return () => {};
+};
+
+// 🪦 onNotificationInteracted is a private method that was deprecated for the public API
+type OmetriaReactNativeSdkInternalType = Omit<
+  OmetriaReactNativeSdkType,
+  'onNotificationInteracted'
+> & {
+  onNotificationInteracted: (
+    notification: Omit<FirebaseMessagingTypes.RemoteMessage, 'data'> & {
+      data?:
+        | {
+            ometria: OmetriaNotificationData;
+          }
+        | { [key: string]: string };
+    }
+  ) => void;
+};
+
 export default OmetriaReactNativeSdk;
 
 export {
@@ -103,5 +128,5 @@ export {
   OmetriaBasketItem,
   OmetriaNotificationData,
   OmetriaOptions,
-  OmetriaNotificationHandler,
+  OmetriaNotification,
 };

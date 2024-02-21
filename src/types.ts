@@ -1,6 +1,6 @@
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
-export type OmetriaReactNativeSdkType = {
+type OmetriaReactNativeSdkCoreType = {
   /**
    * Initializes the Ometria SDK with the API token.
    *
@@ -36,19 +36,24 @@ export type OmetriaReactNativeSdkType = {
   onNewToken(token: string): () => void;
 
   /**
-   * Only for Android
-   * @param handler - Function that will be called when a notification is received while the app is in the quit state
+   * Function to call when the app is opened from a notification (quit or background state)
+   * @param notification - {remoteMessage: RemoteMessage}
    */
-  setBackgroundMessageHandler(
-    handler: OmetriaNotificationHandlerInit
+  onNotificationOpenedApp(
+    notification: FirebaseMessagingTypes.RemoteMessage
+  ): void;
+
+  /**
+   * Only for Android
+   * Function to call when a notification is received in the background state
+   * @param payload - {remoteMessage: RemoteMessage, ometriaToken: string, ometriaOptions?: OmetriaOptions}
+   */
+  onAndroidBackgroundMessage(
+    payload: OmetriaOnBackgroundMessagePayload
   ): Promise<void>;
 
   /**
-   * @param handler - Function that will be called when a notification is interacted with
-   */
-  onNotificationOpenedApp(handler: OmetriaNotificationHandler): void;
-
-  /**
+   * Function to call when a notification is received in the foreground state
    * @param handler - Function that will be called when a notification is received
    */
   onNotificationReceived(
@@ -56,13 +61,16 @@ export type OmetriaReactNativeSdkType = {
   ): void;
 
   /**
+   * Function to parse the notification from the Firebase SDK
    * @param remoteMessage - Remote message received from the Firebase SDK
    * @returns Promise with the parsed notification data
    */
   parseNotification(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
   ): Promise<OmetriaNotificationData | undefined>;
+};
 
+type OmetriaReactNativeSdkDeprecatedType = {
   /**
    * @deprecated Deprecated since version 2.2.0.
    * The event is no longer sent to the Ometria backend.
@@ -102,7 +110,18 @@ export type OmetriaReactNativeSdkType = {
   onNotificationInteracted(
     handler: (response: OmetriaNotificationData) => void
   ): () => void;
+
+  /**
+   * Only for Android
+   * @deprecated since version 2.4.0.
+   */
+  setBackgroundMessageHandler(
+    handler: OmetriaOnBackgroundMessagePayload
+  ): Promise<void>;
 };
+
+export type OmetriaReactNativeSdkType = OmetriaReactNativeSdkCoreType &
+  OmetriaReactNativeSdkDeprecatedType;
 
 export type OmetriaBasketItem = {
   productId: string;
@@ -131,12 +150,11 @@ export type OmetriaOptions = {
   appGroupIdentifier?: string;
 };
 
-export type OmetriaNotificationHandler = {
+export type OmetriaNotification = {
   remoteMessage: FirebaseMessagingTypes.RemoteMessage;
 };
 
-export interface OmetriaNotificationHandlerInit
-  extends OmetriaNotificationHandler {
+export interface OmetriaOnBackgroundMessagePayload extends OmetriaNotification {
   ometriaToken: string;
   ometriaOptions?: OmetriaOptions;
 }
