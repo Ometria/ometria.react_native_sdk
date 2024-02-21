@@ -107,7 +107,7 @@ const App = () => {
       console.log('🔔 Notification has been interacted with and opened app.');
       setNotificationContent(JSON.stringify(remoteMessage, null, 2));
 
-      Ometria.onNotificationOpenedApp({ remoteMessage }); // 🏹 Ometria Event Logged: onNotificationInteracted
+      Ometria.onNotificationOpenedApp(remoteMessage); // 🏹 Ometria Event Logged: onNotificationInteracted
 
       const notif = await Ometria.parseNotification(remoteMessage);
       if (notif?.deepLinkActionUrl) {
