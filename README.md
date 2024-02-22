@@ -77,7 +77,7 @@ Ometria.isLoggingEnabled(true);
 
 You need to be aware of your users’ behaviour on your platforms in order to understand them. Some behaviour is automatically detectable, other events need work from the app developer to track.
 
-Many of these methods have analogous events in a server-to-server API called the Ometria Data API, and through a separate JavaScript API.
+Many of these methods have analogous events in our [website tracker](https://support.ometria.com/hc/en-gb/articles/4405356106653-JavaScript-tracker).
 
 ⚠️ If your business already integrates with Ometria in any way, it is very important that the values sent here correspond to those in other integrations.
 
