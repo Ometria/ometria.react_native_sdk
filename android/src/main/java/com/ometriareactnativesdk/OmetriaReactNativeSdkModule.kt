@@ -15,7 +15,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   var deeplinkInteractionPromise: Promise? = null
 
   init {
-    StorageController(reactContext.applicationContext).saveSdkVersionRN("2.3.1")
+    StorageController(reactContext.applicationContext).saveSdkVersionRN("2.4.0")
   }
 
   override fun getName(): String {
