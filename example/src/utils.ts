@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Linking } from 'react-native';
 
 const TOKEN_KEY_STORAGE = 'token';
 
@@ -10,3 +11,7 @@ export const setOmetriaTokenToStorage = async (token: string) =>
 
 export const stringifyMe = (arr: any[]) =>
   arr.map((obj) => JSON.stringify(obj, null, 2)).join('');
+
+export const openUrl = (url: string) => {
+  Linking.openURL(url).catch((err) => console.error('An error occurred', err));
+};

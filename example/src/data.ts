@@ -45,4 +45,5 @@ export const demoBasketItems: OmetriaBasketItem[] = [
 
 export const customOmetriaOptions: OmetriaOptions = {
   notificationChannelName: 'Example Channel Name',
+  appGroupIdentifier: 'group.com.tapptitude.ometria.sampleRN',
 };

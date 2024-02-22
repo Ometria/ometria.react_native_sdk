@@ -1,46 +1,86 @@
-import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 import type {
   OmetriaNotificationData,
-  OmetriaNotificationHandlerInit,
   OmetriaOptions,
   OmetriaBasketItem,
-  OmetriaReactNativeSdkType,
   OmetriaBasket,
-  OmetriaNotificationHandler,
+  OmetriaNotification,
+  OmetriaReactNativeSdkType,
 } from './types';
+import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
-const OmetriaReactNativeSdk = NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
+const OmetriaReactNativeSdk =
+  NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
 
-// Save original implementations
+// 🛟 Save original implementations
+const _onNotificationReceived = OmetriaReactNativeSdk.onNotificationReceived;
 const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
-const _onNotificationInteracted =
-  OmetriaReactNativeSdk.onNotificationInteracted;
+const _parseNotification = OmetriaReactNativeSdk.parseNotification;
+const _onNotificationInteracted = (
+  OmetriaReactNativeSdk as unknown as OmetriaReactNativeSdkInternalType
+).onNotificationInteracted;
 
-// initializeWithApiToken() custom implementation
+// 🛠️ Custom Implementation: initializeWithApiToken()
 OmetriaReactNativeSdk.initializeWithApiToken = (
   token: string,
   options?: OmetriaOptions
-) =>
-  Platform.OS === 'android'
-    ? _initializeWithApi(token, options ?? {})
-    : _initializeWithApi(token);
+) => _initializeWithApi(token, options ?? {});
 
-// onNotificationOpenedApp() custom implementation
-OmetriaReactNativeSdk.onNotificationOpenedApp = async ({
-  remoteMessage,
-}: {
-  remoteMessage: any;
-}) => {
-  Platform.OS === 'android' && _onNotificationInteracted(remoteMessage);
+// 🛠️ Custom Implementation: onNotificationOpenedApp()
+OmetriaReactNativeSdk.onNotificationOpenedApp = async (remoteMessage) => {
+  const iOSRemoteMessage = {
+    ...remoteMessage,
+    data: {
+      ometria: JSON.parse(
+        remoteMessage?.data?.ometria || '{}'
+      ) as OmetriaNotificationData,
+    },
+  };
+
+  _onNotificationInteracted(
+    Platform.OS === 'ios' ? iOSRemoteMessage : remoteMessage
+  );
+  OmetriaReactNativeSdk.flush();
 };
 
-// setBackgroundMessageHandler() custom implementation
-OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
+// 🛠️ Custom Implementation: onNotificationReceived()
+OmetriaReactNativeSdk.onNotificationReceived = (
+  remoteMessage: FirebaseMessagingTypes.RemoteMessage
+) => {
+  const iOSRemoteMessage = {
+    ...remoteMessage,
+    data: {
+      ometria: JSON.parse(remoteMessage?.data?.ometria || '{}'),
+    },
+  };
+  _onNotificationReceived(
+    Platform.OS === 'ios' ? iOSRemoteMessage : remoteMessage
+  );
+};
+
+// 🛠️ Custom Implementation: parseNotification()
+OmetriaReactNativeSdk.parseNotification = async (
+  notification: FirebaseMessagingTypes.RemoteMessage
+) => {
+  const parsedNotification =
+    Platform.OS === 'android'
+      ? await _parseNotification(notification)
+      : (Promise.resolve(
+          notification?.data?.ometria
+            ? JSON.parse(notification.data.ometria)
+            : undefined
+        ) as unknown as OmetriaNotificationData);
+
+  return parsedNotification;
+};
+
+// 🛠️ Custom Implementation: 🤖 only - onBackgroundMessage()
+OmetriaReactNativeSdk.onAndroidBackgroundMessage = async ({
   ometriaToken,
   remoteMessage,
   ometriaOptions,
-}: OmetriaNotificationHandlerInit) => {
+}) => {
   Platform.OS === 'android' &&
     OmetriaReactNativeSdk.initializeWithApiToken(
       ometriaToken,
@@ -50,18 +90,35 @@ OmetriaReactNativeSdk.setBackgroundMessageHandler = async ({
     });
 };
 
-// onNotificationInteracted() custom implementation for iOS only
-const OmetriaEventEmitter =
-  Platform.OS === 'ios' && new NativeEventEmitter(OmetriaReactNativeSdk as any);
+// 🛠️ Deprecated Implementations
+OmetriaReactNativeSdk.setBackgroundMessageHandler = async () => {
+  console.warn(
+    'setBackgroundMessageHandler is deprecated, no longer works and will be removed in the next major version'
+  );
+  Promise.resolve();
+};
 
-(OmetriaReactNativeSdk as any).onNotificationInteracted = (
-  handler: (response: OmetriaNotificationData) => void
-) => {
-  OmetriaEventEmitter &&
-    OmetriaEventEmitter.addListener(
-      'onNotificationInteracted',
-      (response: OmetriaNotificationData) => handler(response)
-    );
+OmetriaReactNativeSdk.onNotificationInteracted = () => {
+  console.warn(
+    'onNotificationInteracted is deprecated, no longer works and will be removed in the next major version'
+  );
+  return () => {};
+};
+
+// 🪦 onNotificationInteracted is a private method that was deprecated for the public API
+type OmetriaReactNativeSdkInternalType = Omit<
+  OmetriaReactNativeSdkType,
+  'onNotificationInteracted'
+> & {
+  onNotificationInteracted: (
+    notification: Omit<FirebaseMessagingTypes.RemoteMessage, 'data'> & {
+      data?:
+        | {
+            ometria: OmetriaNotificationData;
+          }
+        | { [key: string]: string };
+    }
+  ) => void;
 };
 
 export default OmetriaReactNativeSdk;
@@ -71,5 +128,5 @@ export {
   OmetriaBasketItem,
   OmetriaNotificationData,
   OmetriaOptions,
-  OmetriaNotificationHandler,
+  OmetriaNotification,
 };

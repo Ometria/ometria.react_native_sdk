@@ -1,5 +1,4 @@
-1\. Why integrate Ometria in a mobile app?
-------------------------------------------
+# 1. Why integrate Ometria in a mobile app?
 
 Ometria helps your marketing department understand and better engage with your customers by delivering personalised emails and push notifications.
 
@@ -15,68 +14,54 @@ For your mobile app, this means:
 
 App developers integrating with this SDK should follow the guide below. You can also look at the Sample app we have included for a reference implementation.
 
-2\. Before you begin
-----------------------
+# 2. Before you begin
 
 See [Setting up your mobile app with Firebase credentials](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials) in the Ometria help centre and follow the steps there to get an API key.
 
-3\. Install the library
------------------------
+# 3. Install the library
 
-The easiest way to get Ometria into your React-Native project is by using `npm install` or `yarn add`.
+The easiest way to get Ometria into your ReactNative project is by using `npm install` or `yarn add`.
 
-1. Install Ometria React-Native package from `react-native-ometria` using `npm install react-native-ometria` or `yarn add react-native-ometria`
+1. Install Ometria ReactNative package from `react-native-ometria` using `npm install react-native-ometria` or `yarn add react-native-ometria`
 
-note: If you have issues with installing the library, please consider excluding the example from typescript config
+Note: If you have issues with installing the library, please consider excluding the example from typescript config
 eg:
+
 ```
 {
   ...,
   "exclude": ["example"]
-} 
+}
 ```
+
 2. For `iOS` you need to install Pods `pod install` to create a local CocoaPods spec mirror.
 
-3. If you encounter ```The Swift pod 'Ometria' depends upon 'FirebaseMessaging'``` error when running pod install, please consider adding ```use_frameworks! :linkage => :static```.
+3. If you encounter `The Swift pod 'Ometria' depends upon 'FirebaseMessaging'` error when running pod install, please consider adding `use_frameworks! :linkage => :static`.
 
-4\. Initialise the library
---------------------------
+# 4. Initialise the library
 
 To initialise the Ometria SDK, you need to enter the API key from **[2. Before you begin](#2-before-you-begin)**.
 
 ```js
-import Ometria from 'react-native-ometria'
-// Ometria init
+import Ometria from 'react-native-ometria';
+
 await Ometria.initializeWithApiToken('API_KEY', {
   notificationChannelName: 'Example Channel Name', // optional, only for Android
+  appGroupIdentifier: 'group.com.ometria.sampleRN', // optional, only for iOS
 });
 ```
 
-Since version 2.3.0, the SDK allows for reinitialization of the Ometria instance. So you can call this method again later in the app if you need to.
+ℹ️ Since version 2.3.0, the SDK allows for reinitialization of the Ometria instance. So you can call this method again later in the app if you need to.
 
-Any other Ometria methods must be called **after** this method has been called once.
+⚠️ Any other Ometria methods must be called **after** this method has been called once.
 Once you've called this method once, the SDK will be able to send events to Ometria.
 You can now access your instance throughout the rest of your application.
 
-You can specify a custom name of the Android notification channel in the second optional options parameter. Default channel name is `<blank>`.
+#### Optional parameters
 
-#### Notifications
+* You can specify a custom name of the Android notification channel in the second optional options parameter. Default channel name is `<blank>`.
 
-Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices.
-
-You will therefore have to add ‘React-Native Firebase’ as a dependency of Ometria, using the following lines:
-
-```js
-import firebase from '@react-native-firebase/app';
-import messaging from '@react-native-firebase/messaging';
-```
-
-For **Android** follow the Firebase React-Native tutorial [Firebase for Android](https://rnfirebase.io/#2-android-setup)
-For **iOS** follow the Firebase React-Native tutorial [Firebase for iOS](https://rnfirebase.io/#3-ios-setup)
-
-To use push notifications, you also need to follow the steps in [Configure push notifications in your application](#configure-push-notifications-in-your-application)
-
-Read the full Ometria [Push notifications guide](#6-push-notifications-guide-for-react-native-apps)
+* You can also specify an app group identifier in the second optional options parameter. See [this section](#62--adding-notification-service-extension-target-ios-only) for iOS.
 
 #### Debugging
 
@@ -88,81 +73,23 @@ You can enable advanced logging if you want more information on what’s happeni
 Ometria.isLoggingEnabled(true);
 ```
 
-4.1\. Firebase 8.0-8.10 issue IOS
----------------------------------
-
-:warning: If using firebase version [8.0 - 8.10] consider updating to firebase 8.11 in order for push notifications to work.
-If you have a hard dependency on firebase [8.0 - 8.10] make sure to add the following snippet in your AppDelegate file:
-```objc
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-  [FIRMessaging.messaging setAPNSToken:deviceToken];
-}
-``` 
-
-4.2\. Using Firebase 9.x on iOS
----------------------------------
-
-:warning: 
-If you are using Firebase 9.x on iOS, make sure you have the following lines in your `/ios/Podfile` file:
-```objc
-  pod 'FirebaseCore', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true 
-  pod 'FirebaseMessaging', :modular_headers => true
-``` 
-
-
-5\. Event tracking guide
-------------------------
+# 4. Event tracking guide
 
 You need to be aware of your users’ behaviour on your platforms in order to understand them. Some behaviour is automatically detectable, other events need work from the app developer to track.
 
-Many of these methods have analogous events in a server-to-server API called the [Ometria Data API](https://support.ometria.com/hc/en-gb/articles/360011511017-Data-API-introduction), and through a separate JavaScript API.
+Many of these methods have analogous events in our [website tracker](https://support.ometria.com/hc/en-gb/articles/4405356106653-JavaScript-tracker).
 
-**Be aware:** If your business already integrates with Ometria in any way, it is very important that the values sent here correspond to those in other integrations.
+⚠️ If your business already integrates with Ometria in any way, it is very important that the values sent here correspond to those in other integrations.
 
 E.g., the customer identified event takes a customer ID or an email - these identifiers must be the same here as it is in the data API. If you specify both email and customer id, both need to match.
 
 The events are merged on Ometria's side into one big cross-channel view of your customer behaviour. If you use inconsistent email/customer ids, this could result in duplicate profiles created or data loss.
 
-### Manually tracked events
+## Manually tracked events
 
-Once the SDK is initialised, you can track an event by calling its dedicated method:
+Once the SDK is initialised, you can track an event by calling its dedicated method.
 
-```js
-const items: OmetriaBasketItem[] = [
-  {
-    productId: 'product-1',
-    sku: 'sku-product-1',
-    quantity: 1,
-    price: 12.0,
-    variantId: 'variant-1',
-  },
-  {
-    productId: 'product-2',
-    sku: 'sku-product-2',
-    quantity: 2,
-    price: 9.0,
-    variantId: 'variant-2',
-  },
-  {
-    productId: 'product-3',
-    sku: 'sku-product-3',
-    quantity: 3,
-    price: 20.0,
-    variantId: 'variant-3',
-  },
-];
-
-Ometria.trackBasketUpdatedEvent({
-  totalPrice: 12.0,
-  id: 'basket_id_eg',
-  currency: 'USD',
-  items,
-  link: 'link_eg'
-});
-```
-
-#### Profile identified
+### Profile identified
 
 An app user has just identified themselves, i.e. logged in.
 
@@ -183,11 +110,10 @@ Having a **customerId** makes profile matching more robust.
 It’s not mutually exclusive with sending an email event; for optimal integration you should send either event as soon as you have the information.
 These two events are pivotal to the functioning of the SDK, so make sure you send them as early as possible. Reiterating here that these identifiers must be the same here as the ones you use in your e-commerce platform and you send to Ometria (via the data API or other ways). If you specify both email and customer id, both need to match. A typical error we see at integrations is that the app generates a new customer id on each login (that doesn't match the customer id stored in Ometria). To avoid this, generate these ids centrally on your servers and send consistent ones through the Ometria mobile SDK and the Ometria Data API. If it is impractical to generate consistent ids, we suggest only using email to identify contacts.
 
-#### Profile deidentified
+### Profile deidentified
 
 Undo a profileIdentified event.
-
-Use this if a user logs out, or otherwise signals that this device is no longer attached to the same person.
+You can use this if an user logs out.
 
 ```js
 Ometria.trackProfileDeidentifiedEvent();
@@ -195,7 +121,7 @@ Ometria.trackProfileDeidentifiedEvent();
 
 Currently this event clears the stored ids (email and/or customer id) from the phone's local storage. It has no other effect within Ometria.
 
-#### Product viewed
+### Product viewed
 
 A visitor clicks/taps/views/highlights or otherwise shows interest in a product.
 
@@ -207,8 +133,7 @@ This event is about capturing interest from the visitor for this product.
 Ometria.trackProductViewedEvent('product_id');
 ```
 
-
-#### Basket viewed
+### Basket viewed
 
 The visitor has viewed a dedicated page, screen or modal with the contents of the shopping basket:
 
@@ -216,7 +141,7 @@ The visitor has viewed a dedicated page, screen or modal with the contents of th
 Ometria.trackBasketViewedEvent();
 ```
 
-#### Basket updated
+### Basket updated
 
 The visitor has changed their shopping basket:
 
@@ -250,7 +175,7 @@ Ometria.trackBasketUpdatedEvent({
   id: 'basket_id_eg',
   currency: 'USD',
   items,
-  link: 'link_eg'
+  link: 'link_eg',
 });
 ```
 
@@ -258,15 +183,32 @@ This event takes the full current basket as a parameter - not just the updated p
 
 This helps recover from lost or out of sync basket events: the latest update is always authoritative.
 
-#### Checkout started
+**OmetriaBasketItem** is an object that describes the contents of a shopping basket item. It can have its own price and quantity based on different rules and promotions that are being applied. It has the following properties:
 
-Track when the user has started the checkout process:
+>* **productId**: (`String`, required) - A string representing the unique identifier of this product.
+>* **sku**: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
+>* **quantity**: (`Int`, required) - The number of items that this entry represents.
+>* **price**: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item
+>* **variandId**: (`String`, optional) - An identifier for a variant product associated with this line item.
+
+**OmetriaBasket** is an object that describes the contents of a shopping basket and has the following properties:
+
+>* **id**: (`String`, optional) - A unique identifier for this basket
+>* **currency**: (`String`, required) - A string representing the currency in ISO 4217 three-letter currency code, e.g. `"USD"`, `"GBP"`
+>* **totalPrice**: (`float`, required) - A float value representing the pricing.
+>* **items**: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
+>* **link**: (`String`) - A deeplink to the web or in-app page for this basket. Can be used in a notification sent to the user, e.g. "Forgot to check out? Here's your basket to continue: 'https://eg.com/basket_url'". Following that link should take them straight to the basket page.
+
+### Checkout started
+
+Track when the user has started the checkout process.
+This is currently only used to count page views, and has no other effect in Ometria.
 
 ```js
 Ometria.trackCheckoutStartedEvent('order_id');
 ```
 
-#### Order completed
+### Order completed
 
 The order has been completed and paid for:
 
@@ -277,7 +219,7 @@ const items: OmetriaBasketItem[] = [
     sku: 'sku-product-1',
     quantity: 1,
     price: 12.0,
-  }
+  },
 ];
 
 Ometria.trackOrderCompletedEvent('order_id', {
@@ -285,23 +227,19 @@ Ometria.trackOrderCompletedEvent('order_id', {
   id: 'basket_id_eg',
   currency: 'USD',
   items,
-  link: 'link_eg'
+  link: 'link_eg',
 });
 ```
 
-#### Deep link opened
+### Deep link opened
 
-Based on the implementation status of interaction with notifications that contain deep links, this event can be automatically tracked or not.
-
-The default implementation automatically logs a deep link opened event every time the user interacts with a notification that has a deep link. This is possible because we know that the default implementation will open the link in a browser.
-
-If you chose to handle deep links yourself (using the guide for [Handling interaction with notifications that contain URLs](#handling-interaction-with-notifications-that-contain-urls)), then you should manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
+Use the guide for [Handling interaction with notifications that contain URLs](#handling-interaction-with-notifications-that-contain-urls) to manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
 
 ```js
 Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
 ```
 
-#### View home page
+### View home page
 
 The visitor views the ‘home page’ or landing screen of your app.
 
@@ -309,7 +247,7 @@ The visitor views the ‘home page’ or landing screen of your app.
 Ometria.trackHomeScreenViewedEvent();
 ```
 
-#### View list of products
+### View list of products
 
 The visitor clicks/taps/views/highlights or otherwise shows interest in a product listing. This kind of screen includes search results, listings of products in a group, category, collection or any other screen that presents a list of products.
 
@@ -325,7 +263,7 @@ This event should be triggered on:
 Ometria.trackProductListingViewedEvent();
 ```
 
-#### Screen viewed
+### Screen viewed
 
 Tracking a visitor’s independent screen views helps us track their engagement with the app, as well as where they are in a journey.
 
@@ -343,7 +281,7 @@ To track these custom screens, use the _Screen viewed_ event:
 Ometria.trackScreenViewedEvent('OnboardingScreen', { a: '1', b: '2' });
 ```
 
-#### Custom events
+### Custom events
 
 Your app might have specific flows or pages that are of interest to the marketing team.
 
@@ -357,40 +295,11 @@ Check with the marketing team about the specifics, and what they might need. Esp
 Ometria.trackCustomEvent('my_custom_type', {});
 ```
 
-### `OmetriaBasket`
-
-An object that describes the contents of a shopping basket.
-
-#### Properties
-
-* `id`: (`String`, optional) - A unique identifier for this basket
-* `currency`: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`
-* `totalPrice`: (`float`, required) - A float value representing the pricing.
-* `items`: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
-* `link`: (`String`) - A deeplink to the web or in-app page for this basket. Can be used in
- a notification sent to the user, e.g. "Forgot to check out? Here's
- your basket to continue: 'https://eg.com/basket_url'". Following that link should take
- them straight to the basket page.
-
-### `OmetriaBasketItem`
-
-An object that describes the contents of a shopping basket.
-
-It can have its own price and quantity based on different rules and promotions that are being applied.
-
-#### Properties
-
-* `productId`: (`String`, required) - A string representing the unique identifier of this product.
-* `sku`: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
-* `quantity`: (`Int`, required) - The number of items that this entry represents.
-* `price`: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item
-* `variandId`: (`String`, optional) - An identifier for a variant product associated with this line item.
-
-### Automatically tracked events
+## Automatically tracked events
 
 The following events are automatically tracked by the SDK.
 
-Linking and initialising the SDK is enough to take advantage of these; no further integration is required.
+Initialising the SDK is enough to take advantage of these; no further integration is required (unless mentioned otherwise).
 
 | Event| Description|
 | ------------- |:-------------:|
@@ -398,15 +307,16 @@ Linking and initialising the SDK is enough to take advantage of these; no furthe
 | **Application launched** | Someone has just launched the app.|
 | **Application foregrounded** | The app was already launched, but it was in the background. It has just been brought to the foreground.|
 | **Application backgrounded** | The app was in active use and has just been sent to the background. |
-| **Notification received** | A Push notification was received by the system. (only on iOS) |
-| **Notification interacted** | The user has just clicked on / tapped on / opened a notification. (only on iOS) |
+| **Notification received in quit state of the app** | A Push notification was received by the system while the app was in quit state. ([needs a Notification Service Extension on iOS](#62--adding-notification-service-extension-target-ios-only)) |
 | **Error occurred** | An error occurred on the client side. We try to detect any problems with actual notification payload on our side, so we don't expect any errors which need to be fed back to end users. |
+
 
 ### Flush tracked events
 
 In order to reduce power and bandwidth consumption, the Ometria library doesn’t send the events one by one unless you request it to do so.
 
 Instead, it composes batches of events that are sent to the backend during application runtime when the one of the following happened:
+
 * it has collected 10 events or
 * there was a firebase token refresh (`pushtokenRefreshed` event)
 * a `notificationReceived` event
@@ -416,7 +326,7 @@ Instead, it composes batches of events that are sent to the backend during appli
 You can request the library to send all remaining events to the backend whenever you want by calling:
 
 ```js
-Ometria.flush()
+Ometria.flush();
 ```
 
 ### Clear tracked events
@@ -426,27 +336,66 @@ You can completely clear all the events that have been tracked and not yet flush
 To do this, call the following method:
 
 ```js
-Ometria.clear()
+Ometria.clear();
 ```
 
-### Debugging events
+## Debugging events
+
 To see what events were captured, you can check the logs coming from the Ometria SDK, if logging is enabled. You can filter for the word "Ometria".
 The SDK logs all events as they happen, and also logs the flushing i.e. when they are sent to the Ometria mobile events API. Any potential errors with the sending (API issues or event validation issues) would be visible here too.
 
-6\. Push notifications guide for React-Native apps
-----------------------------
+# 5. Push Notifications Firebase setup
+
+Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices.
+
+You will therefore have to add ‘React-Native Firebase’ as a dependency of Ometria, using the following lines:
+
+```js
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+```
+
+For **Android** follow the Firebase ReactNative tutorial [Firebase for Android](https://rnfirebase.io/#2-android-setup)
+For **iOS** follow the Firebase ReactNative tutorial [Firebase for iOS](https://rnfirebase.io/#3-ios-setup)
+
+To use push notifications, you also need to follow the steps in [Push Notifications ReactNative Guide](#6-push-notifications-reactnative-guide)
+
+
+### Firebase 8.0-8.10 issue on iOS
+
+:warning: If using firebase version [8.0 - 8.10] consider updating to firebase 8.11 in order for push notifications to work.
+If you have a hard dependency on firebase [8.0 - 8.10] make sure to add the following snippet in your AppDelegate file:
+
+```objc
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  [FIRMessaging.messaging setAPNSToken:deviceToken];
+}
+```
+
+### Using Firebase 9.x on iOS
+
+:warning:
+If you are using Firebase 9.x on iOS, make sure you have the following lines in your `/ios/Podfile` file:
+
+```objc
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseMessaging', :modular_headers => true
+```
+
+# 6. Push Notifications ReactNative guide
 
 When correctly set up, Ometria can send personalised notifications for your mobile application.
 
 Follow these steps:
 
-1. Enable your app to receive push notifications by creating an appId and enabling the push notifications entitlement.
-2. Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria.
-3. Enable Cloud Messaging on your Firebase account and provide your application’s **SSL push certificate**.
-4. Configure push notifications in your application.
-5. Add a **Notification Service Extension** to your app in order to enable receiving rich content notifications.
+* Enable your app to receive push notifications by creating an appId and enabling the push notifications entitlement.
+* Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria.
+* Enable Cloud Messaging on your Firebase account and provide your application’s **SSL push certificate**.
+* Configure push notifications in your application.
+* Add a **Notification Service Extension** to your app in order to enable receiving rich content notifications and to track notifications received in quit state of the app on iOS.
 
-### I. Configure push notifications in your application
+## 6.1. Configure push notifications in your application (iOS and Android)
 
 Before continuing, you must have already configured:
 
@@ -455,30 +404,12 @@ Before continuing, you must have already configured:
 
 Read more about those steps in section [4\. Initialise the library](#4-initialise-the-library)
 
-#### - Forward the push token to Ometria
-After Ometria initialisation, you **must forward the Firebase Push Notification token** (both iOS and Android).
 
-You also have to forward the push notification token to Ometria every time it is refreshed.
-
-```js
-import Ometria from 'react-native-ometria';
-import messaging from '@react-native-firebase/messaging';
-// ...
-// Initialize the Ometria SDK
-await Ometria.initializeWithApiToken('API_KEY', {
-    notificationChannelname: 'Example Channel Name', // optional, only for Android
-});
-// ...
-messaging()
-      .getToken()
-      .then(pushToken => Ometria.onNewToken(pushToken));
-
-messaging().onTokenRefresh(pushToken => Ometria.onNewToken(pushToken));
-```
-
-#### - Request permission to receive Push Notifications
+### A. Request permission to receive Push Notifications
+___
 
 For **Android 13** (API level 33) and higher you first have to declare the permission in your AndroidManifest.xml file:
+
 ```xml
 <manifest ...>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -488,9 +419,7 @@ For **Android 13** (API level 33) and higher you first have to declare the permi
 </manifest>
 ```
 
-
 You have to request permissions for notifications. You can use [react-native-permissions](https://github.com/zoontek/react-native-permissions).
-
 
 ```js
 import {requestNotifications, RESULTS } from 'react-native-permissions';
@@ -501,101 +430,118 @@ await requestNotifications(['alert', 'sound', 'badge']).then(({ status }) => {
     }
 });
 ```
-Find more about Notification runtime permissions on Android [here](https://developer.android.com/develop/ui/views/notifications/notification-permission)
-#### - Handling remote messages on iOS
 
-The Ometria SDK will automatically handle remote background messages and provide them to the backend.
-This way your app will start receiving notifications from Ometria.
+Find more about Notification runtime permissions on Android [here](https://developer.android.com/develop/ui/views/notifications/notification-permission).
 
-Additionally on iOS, you should use the Ometria.onNotificationInteracted method to capture notification interactions.
+### B. Forward the push token to Ometria
+___
+
+After Ometria initialisation, you **must forward the Firebase Push Notification token** (both iOS and Android).
+
+You also have to forward the push notification token to Ometria every time it is refreshed.
 
 ```js
-Platform.OS === 'ios' &&
-    Ometria.onNotificationInteracted((notificationData: OmetriaNotificationData) =>
-        // Use the notification data that has been interacted with.
-    );
+import Ometria from 'react-native-ometria';
+import messaging from '@react-native-firebase/messaging';
+
+await Ometria.initializeWithApiToken('API_KEY', {
+  notificationChannelname: 'Example Channel Name', // optional, only for Android
+  appGroupIdentifier: 'group.com.ometria.sampleRN', // optional, only for iOS
+});
+
+messaging()
+  .getToken()
+  .then((pushToken) => Ometria.onNewToken(pushToken));
+
+messaging().onTokenRefresh((pushToken) => Ometria.onNewToken(pushToken));
 ```
 
-Handling those notifications while the app is running in the foreground or additional handling is up to you.
 
-**Notes:**
-- As of version 2.3.0 `Ometria.onNotificationInteracted` is an iOS specific method.
-- As of version 2.0.0 `Ometria.onNotificationInteracted` requires a callback function parameter that handles the interaction response. Usage of `.then().catch()` that was used in 1.x.x no longer works! Please use a callback instead.
+### C. Handling Notifications in Foreground App State
+___
+Subscribe to remote messages that your app gets while in foreground app state. You can do this by using the `onMessage` method from the `@react-native-firebase/messaging` package.
 
-#### - Handling remote messages on Android
+In the callback, you can use `Ometria.onNotificationReceived` to let the Ometria SDK know that a remote message has been received and the `notificationReceived` event will be fired. Use `Ometria.parseNotification` if you want to extract Ometria data from the remote message.
 
-For Android, you have the freedom to implement all methods that handle the remote messages as you like.
+```js
+messaging().onMessage(async (remoteMessage) => {
+  Ometria.onNotificationReceived(remoteMessage);
+  const ometriaData = Ometria.parseNotification(remoteMessage);
+  // Use ometriaData
+});
+```
 
-1. Subscribe early (in `index.js`) to remote messages that your app gets while being in quit state.
-`Ometria.setBackgroundMessageHandle` will let the Ometria SDK know that a remote message has been received and the *notificationReceived* event will be fired. It needs the Ometria token in order to initialize the SDK in background.
+⚠️ Keep in mind that foreground notifications are **not** shown to the user. Instead, you could trigger a local notification or update the in-app UI to signal a new notification. Read more [here](https://rnfirebase.io/messaging/usage#foreground-state-messages).
+
+ℹ️ If you implement such a custom solution, don't forget to call `Ometria.onNotificationOpenedApp` to let the SDK the notification has been interacted with when handling the notification interaction event for foreground notifications.
+
+
+### D. Handling Notifications in Quit & Background App State on iOS 🍏
+___
+
+In order for Ometria to accurately track all the notifications that were received in quit and background state of the app on iOS, it needs to leverage the power of a background service, that has access to all notifications.
+
+For a complete guide on how to set up a Notification Service Extension, see [Adding Notification Service Extension Target](#62--adding-notification-service-extension-target-ios-only).
+
+
+### E. Handling Notifications in Quit & Background App State on Android 🤖
+___
+In order for Ometria to accurately track all the notifications that were received in quit and background state of the app on Android you need to subscribe early (in `index.js`) to remote messages that your app gets while being in quit and background state.
+
+`Ometria.onAndroidBackgroundMessage` will let the Ometria SDK know that a remote message has been received and the _notificationReceived_ event will be fired. It needs the Ometria token in order to initialize the SDK in background.
 
 ```js
 Platform.OS === 'android' &&
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    Ometria.setBackgroundMessageHandler({
+    Ometria.onAndroidBackgroundMessage({
       ometriaToken: 'OMETRIA_KEY'
       ometriaOptions: {},
       remoteMessage,
     });
   });
-  ```
+```
 
-2. Subscribe to remote messages that your app gets while in foreground or background state. Use `Ometria.onNotificationReceived` to let the Ometria SDK know that a remote message has been received and the `notificationReceived` event will be fired. Use `Ometria.parseNotification` if you want to extract Ometria data from the remote message. Keep in mind that foreground notifications are **not** shown to the user. Instead, you could trigger a local notification or update the in-app UI to signal a new notification. Read more [here](https://rnfirebase.io/messaging/usage#foreground-state-messages). If you implement such a custom solution, don't forget to call `Ometria.onNotificationOpenedApp` to let the SDK the notification has been interacted with, if you want to handle the notification interaction event.
+ℹ️ As of version 2.4.0 `Ometria.setBackgroundMessageHandler` is a deprecated method. Use `Ometria.onAndroidBackgroundMessage` instead.
+
+### F. Handling Notification Interaction (background and quit state)
+___
+When a user interacts with a notification in background or quit state, you have to let the Ometria SDK know that the notification has been interacted with and the app has been opened. You can do this by calling `Ometria.onNotificationOpenedApp` with the remote message as a parameter.
+
 
 ```js
-messaging().onMessage(
-    async (remoteMessage) => {
-        Ometria.onNotificationReceived(remoteMessage);
-        Ometria.parseNotification(remoteMessage).then((parsedNotification) => {
-               // use the parsed notification data
-        })
+// Check if the app was opened from quit state by a notification
+messaging()
+  .getInitialNotification()
+  .then((remoteMessage) => {
+    if (remoteMessage) {
+       Ometria.onNotificationOpenedApp(remoteMessage);
     }
+  });
+
+// Subscribe to the app being opened from background state by a notification
+messaging().onNotificationOpenedApp((remoteMessage) =>
+  Ometria.onNotificationOpenedApp(remoteMessage)
 );
 ```
 
-3. Finally, you have to also listen to notifications that open the app (from background and quit state).
+ℹ️ As of version 2.4.0 `Ometria.onNotificationInteracted` is a deprecated method. Use `Ometria.onNotificationOpenedApp` instead.
+
+
+### Handling interaction with notifications that contain URLs
+___
+
+Ometria allows you to send URLs and tracking info alongside your push notifications and allows you to handle them on the device. When a notification opened the app, you can parse the notification remote message and check if it contains a deeplink URL.
 
 ```js
-const handleInteraction = remoteMessage => {
-    Ometria.onNotificationOpenedApp({ remoteMessage });
-    // Parse remote message with Ometria.parseNotification(remoteMessage) and use it
-};
-
-// Check for background notification that opened the app
-messaging()
-    .getInitialNotification()
-    .then(remoteMessage => remoteMessage && handleInteraction(remoteMessage));
-
-// Subscribe to foreground notification that opens the app
-messaging().onNotificationOpenedApp(remoteMessage => handleInteraction(remoteMessage));
+const notif = await Ometria.parseNotification(remoteMessage);
+if (notif?.deepLinkActionUrl) {
+  Ometria.trackDeepLinkOpenedEvent(notif.deepLinkActionUrl, 'Browser');
+  Linking.openURL(notif.deepLinkActionUrl);
+}
 ```
 
-For a complete example and use case please consult the [Sample app](example/src/App.tsx).
+`Ometria.parseNotification` returns an object with `OmetriaNotificationData` type that looks like this:
 
-### II. Handling interaction with notifications that contain URLs
-
-Ometria allows you to send URLs and tracking info alongside your push notifications and allows you to handle them on the device.
-
-- On **iOS** the Ometria SDK automatically handles any interaction with push notifications that contain URLs by opening them in a browser. However, it enables developers to handle those URLs as they see fit (e.g. take the user to a specific screen in the app). To get access to those interactions and the URLs, implement the `Ometria.onNotificationInteracted` iOS method. This method accepts a callback function that has access to the parsed Ometria notification data.
-
-```js
-Platform.OS === 'ios' &&
-    Ometria.onNotificationInteracted((response: OmetriaNotificationData) =>
-        response.deepLinkActionUrl && Linking.openURL(response.deepLinkActionUrl)
-    );
-```
-
-- On **Android** the developer handles the interactions with push notifications, as described in the previous section. When a notification opened the app, you can parse the notification remote message and check if it contains a deeplink URL.
-
-```js
-const handleInteraction = remoteMessage => {
-    Ometria.onNotificationOpenedApp({ remoteMessage });
-    const response = await Ometria.parseNotification(remoteMessage);
-    response.deepLinkActionUrl && Linking.openURL(response.deepLinkActionUrl)
-};
-```
-
-`OmetriaNotificationData` type looks like this:
 ```
 type OmetriaNotificationData = {
   campaignType?: 'trigger;  // represents automation campaigns
@@ -613,86 +559,105 @@ type OmetriaNotificationData = {
 };
 ```
 
-### III. Enabling rich content notifications (iOS only)
+## 6.2. 🍏 Adding Notification Service Extension Target (iOS only)
 
-For **iOS** you have to integrate the rich content notification support directly in the Xcode project.
+The Notification Service Extension has two purposes:
 
-Starting with iOS 12.0, Apple enabled regular applications to receive and display notifications that contain media content such as images.
+1. Starting with iOS 12.0, Apple enabled regular applications to receive and display notifications that contain media content such as images. In order to be able to display the rich content, notifications have to be processed by the Notification Service Extension before being shown to the user.
+2. There are lots of users that forget to open their apps. In order for Ometria to accurately track all the notifications that were received in quit state, it needs to leverage the power of a background service, that has access to all notifications.
 
-Ometria uses this feature to further enhance your application, but it requires you to add a new target extension that intercepts all push notifications containing 'mutable-content: 1' in the payload.
+### Add a Notification Service Extension
 
-To do this, go to **File > New > Target**, and select **Notification Service Extension > Next**.
+In order to add the extension, go to **File > New > Target**, and select **Notification Service Extension > Next**.
 
 ![](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/notification_service_extension.png)
 
-A new item displays in your target list:
+A new item is displayed in your target list:
 
 ![](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/project_targets.png)
 
 Next, make sure that the Ometria SDK is also available to this new target by updating your podfile to include your newly added target and specify Ometria as a dependency.
 
-**Warning**: If you try to run pod install and then build the extension, you will get some compilation errors.
-
-Since we are trying to run Ometria on an extension, there are several methods in the SDK that are not supported, although not being used.
-
-To silence those errors and get everything functional you will have to update your podfile ending up with something like this:
-
 ```ruby
- platform :ios, '10.0'
 
-target 'OmetriaSample' do
-  use_frameworks!
+# move this line before the App target
+pod 'GoogleUtilities', : modular_headers => true
 
-  pod 'Ometria', :path => '../../SDK'
+use_frameworks! :linkage => :static
 
-  target 'OmetriaSampleNotificationService' do
-    pod 'Ometria', :path => '../../SDK'
-  end
+target 'sampleApp' do
+  # Pods for sampleApp
+end
 
-  end
-
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    if target.name == 'Ometria'
-      target.build_configurations.each do |config|
-        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
-      end
-    end
-  end
+# Add the following lines
+target 'NotificationService' do
+  use_frameworks! :linkage => :static
+  pod 'Ometria'
 end
 ```
 
-Once you’ve done this, you can run your application and the extension you have just created.
+### Create an app group
 
-To finalise the implementation and allow Ometria to intercept notifications, open the `NotificationService` class and replace the content with the following:
+At this point the main application and the extension function as two separate entities with the only shared component being the code. In order for the extension to obtain read and write access to data that is relevant for the SDK, it requires to be in the same App Group as the main target. This will allow the main target and the extension to share data.
+
+In your project navigator, select your project, then go to **Signing & Capabilities** and select **+ Capability** in the top left corner.
+
+![](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/dd8cd6e7-ff00-41be-9573-2589436a4616)
+
+Once you have done so, a new section will be displayed below Signing. It will allow you to add a new app group. Make sure you select a relevant identifier (e.g.`group.[BUNDLE_IDENTIFIER]`), and retain the value, as you will need it when instantiating Ometria.
+Repeat the process for the Notification Service Extension target, and you should be good to go.
+
+![alt text](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/3d9d0500-3832-4312-a918-e5b05404886d)
+
+### Update NotificationService
+
+To allow Ometria to intercept notifications, open the `NotificationService` class that was automatically created alongside the extension, and replace the content with the following:
 
 ```swift
 import UserNotifications
 import Ometria
 
 class NotificationService: OmetriaNotificationServiceExtension {
-
+  override func instantiateOmetria() -> Ometria? {
+    Ometria.initializeForExtension(appGroupIdentifier: "group.[BUNDLE_IDENTIFIER]")
+  }
 }
+
 ```
 
-Now you can receive notifications from Ometria and you are also able to see the images that are attached to your notifications.
+### Use app group identifier when initialising Ometria
 
-7\. App links guide
-----------------------------
+Finally, you have to use the app group identifier when initialising Ometria in the ReactNative application.
+
+```js
+import Ometria from 'react-native-ometria';
+// Ometria init
+await Ometria.initializeWithApiToken('API_KEY', {
+  notificationChannelName: 'Example Channel Name', // optional, only for Android
+  appGroupIdentifier: 'group.[BUNDLE_IDENTIFIER]', // optional, only for iOS
+});
+```
+
+Now your app will emit a `notificationReceived` event every time a notification is received in quit state and you will be able to display rich content notifications on iOS.
+
+
+💡 For a complete example and use case please consult the [Sample app](example/src/App.tsx).
+
+# 7. App links guide
 
 Ometria sends personalised emails with URLs that point back to your website. In order to open these URLs inside your application, make sure you follow this guide.
 
-### Pre-requisites
+## Pre-requisites
 
 First, make sure you have an SSL-enabled Ometria tracking domain set up for your account. You may already have this for
 your email campaigns, but if not ask your Ometria contact to set one up, and they should provide you with the domain.
 
-### Enable the Associated Domains entitlement for your application
+## Enable the Associated Domains entitlement for your application
 
 Please follow the [ios documentation for associated domains](https://github.com/Ometria/ometria.ios_sdk/blob/master/README.md#enable-the-associated-domains-entitlement-for-your-application),
 then [create an apple-app-site-association file and send it to your Ometria contact](https://github.com/Ometria/ometria.ios_sdk/blob/master/README.md#create-an-apple-app-site-association-file-and-send-it-to-your-ometria-contact).
 
-### Process App Links inside your application
+## Process App Links inside your application
 
 The final step is to process the URLs in your app and take the user to the appropriate sections of the app. Note that
 you need to implement the mapping between your website's URLs and the screens of your app.
@@ -701,7 +666,7 @@ See also [Linking push notifications to app screens](https://support.ometria.com
 
 If you are dealing with normal URLs pointing to your website, you can decompose it into different path components and parameters. This will allow you to source the required information to navigate through to the correct screen in your app.
 
-In order for React-Native to identify that an url is opening the app you need to adjust AppDelegate.m file from ios folder
+In order for ReactNative to identify that an url is opening the app you need to adjust AppDelegate.m file from ios folder
 add the following code to AppDelegate.m from ./ios/ProjectName
 
 ```objective-c

@@ -1,6 +1,6 @@
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
-export type OmetriaReactNativeSdkType = {
+type OmetriaReactNativeSdkCoreType = {
   /**
    * Initializes the Ometria SDK with the API token.
    *
@@ -36,44 +36,41 @@ export type OmetriaReactNativeSdkType = {
   onNewToken(token: string): () => void;
 
   /**
-   * Only for iOS
-   * @param handler - Function that will be called when the notification is interacted with
+   * Function to call when the app is opened from a notification (quit or background state)
+   * @param notification - {remoteMessage: RemoteMessage}
    */
-  onNotificationInteracted(
-    handler: (response: OmetriaNotificationData) => void
-  ): () => void;
+  onNotificationOpenedApp(
+    notification: FirebaseMessagingTypes.RemoteMessage
+  ): void;
 
   /**
    * Only for Android
-   * @param handler - Function that will be called when a notification is received while the app is in the quit state
+   * Function to call when a notification is received in the background state
+   * @param payload - {remoteMessage: RemoteMessage, ometriaToken: string, ometriaOptions?: OmetriaOptions}
    */
-  setBackgroundMessageHandler(
-    handler: OmetriaNotificationHandlerInit
+  onAndroidBackgroundMessage(
+    payload: OmetriaOnBackgroundMessagePayload
   ): Promise<void>;
 
   /**
-   * Only for Android
-   * @param handler - Function that will be called when a notification is interacted with
-   */
-  onNotificationOpenedApp(handler: OmetriaNotificationHandler): Promise<void>;
-
-  /**
-   * Only for Android
+   * Function to call when a notification is received in the foreground state
    * @param handler - Function that will be called when a notification is received
    */
   onNotificationReceived(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ): () => void;
+  ): void;
 
   /**
-   * Only for Android
+   * Function to parse the notification from the Firebase SDK
    * @param remoteMessage - Remote message received from the Firebase SDK
    * @returns Promise with the parsed notification data
    */
   parseNotification(
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ): Promise<OmetriaNotificationData>;
+  ): Promise<OmetriaNotificationData | undefined>;
+};
 
+type OmetriaReactNativeSdkDeprecatedType = {
   /**
    * @deprecated Deprecated since version 2.2.0.
    * The event is no longer sent to the Ometria backend.
@@ -104,7 +101,27 @@ export type OmetriaReactNativeSdkType = {
    * Will be removed in the next major version.
    */
   onMessageReceived(remoteMessage: string): () => void;
+
+  /**
+   * Only for iOS
+   * @deprecated Deprecated since version 2.4.0. use the new method `onNotificationOpenedApp` to handle notifications that oppened the app.
+   * @param handler - Function that will be called when the notification is interacted with
+   */
+  onNotificationInteracted(
+    handler: (response: OmetriaNotificationData) => void
+  ): () => void;
+
+  /**
+   * Only for Android
+   * @deprecated since version 2.4.0. Use the new method `onAndroidBackgroundMessage` to handle background messages.
+   */
+  setBackgroundMessageHandler(
+    handler: OmetriaOnBackgroundMessagePayload
+  ): Promise<void>;
 };
+
+export type OmetriaReactNativeSdkType = OmetriaReactNativeSdkCoreType &
+  OmetriaReactNativeSdkDeprecatedType;
 
 export type OmetriaBasketItem = {
   productId: string;
@@ -123,15 +140,21 @@ export type OmetriaBasket = {
 };
 
 export type OmetriaOptions = {
-  notificationChannelName?: string; // only for Android
+  /**
+   * Only for Android
+   */
+  notificationChannelName?: string;
+  /**
+   * Only for iOS
+   */
+  appGroupIdentifier?: string;
 };
 
-export type OmetriaNotificationHandler = {
+export type OmetriaNotification = {
   remoteMessage: FirebaseMessagingTypes.RemoteMessage;
 };
 
-export interface OmetriaNotificationHandlerInit
-  extends OmetriaNotificationHandler {
+export interface OmetriaOnBackgroundMessagePayload extends OmetriaNotification {
   ometriaToken: string;
   ometriaOptions?: OmetriaOptions;
 }

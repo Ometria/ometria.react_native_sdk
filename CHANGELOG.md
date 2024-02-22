@@ -1,3 +1,13 @@
+# 2.4.0
+
+2024-02
+
+- Updated ReactNative to 0.73.2
+- Deprecated `onNotificationInteracted` method. Use `onNotificationOpenedApp` instead for handling notification interaction.
+- Deprecated `setBackgroundMessageHandler`Android method. Use the new method `onAndroidBackgroundMessage` to handle background messages on Android.
+- Changed `onNotificationOpenedApp` signature to include the remote message object as a parameter for better compatibility with the native SDK.
+- Updated Ometria native SDK to the latest versions - 🍏 1.5.1 iOS & 🤖 1.6.2 Android. Both SDK  support quit app state notification handling.
+
 # 2.3.0
 
 2023-11

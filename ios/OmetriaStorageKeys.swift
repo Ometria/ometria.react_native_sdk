@@ -8,9 +8,9 @@
 
 import Foundation
 
-struct OmetriaStorageKeys {
+public struct OmetriaStorageKeys {
     
-    static var rnVersion: String? {
+    public static var rnVersion: String? {
         get{
             let value = UserDefaults.standard.object(forKey: "sdkVersionRN") as? String
             return value ?? nil
@@ -20,5 +20,4 @@ struct OmetriaStorageKeys {
             UserDefaults.standard.synchronize()
         }
     }
-    
 }

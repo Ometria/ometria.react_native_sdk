@@ -14,11 +14,11 @@ import messaging from '@react-native-firebase/messaging';
 import { getOmetriaTokenFromStorage } from './src/utils';
 import { customOmetriaOptions } from './src/data';
 
-// Early subscribe to background PN messages on Android
+// Early subscribe to background PN messages on Android - Quit notifications will be handled by the Ometria SDK
 Platform.OS === 'android' &&
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    console.log('📫 Quit message received', remoteMessage);
-    Ometria.setBackgroundMessageHandler({
+    Ometria.onAndroidBackgroundMessage({
+      // 🏹 Ometria Event Logged: onNotificationReceived
       ometriaToken: await getOmetriaTokenFromStorage(),
       ometriaOptions: customOmetriaOptions,
       remoteMessage,

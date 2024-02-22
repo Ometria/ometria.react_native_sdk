@@ -5,30 +5,42 @@ import UserNotifications
 @objc(OmetriaReactNativeSdk)
 class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDelegate {
 
-    static let RNOmetriaRCTEventNameOnNotificationInteracted = "onNotificationInteracted"
-    static let RNOmetriaRCTEventNameOnDeepLinkInteracted = "onDeepLinkInteracted"
+    // No longer needed since 2.4.0
+    // static let RNOmetriaRCTEventNameOnNotificationInteracted = "onNotificationInteracted"
+    // static let RNOmetriaRCTEventNameOnDeepLinkInteracted = "onDeepLinkInteracted"
+    
+    fileprivate enum Constants {
+        static let appGroupIdentifierKey = "appGroupIdentifier"
+    }
 
     override static func requiresMainQueueSetup() -> Bool {
         return true
     }
 
-    override func supportedEvents() -> [String]! {
+    // No longer needed since 2.4.0
+    /* override func supportedEvents() -> [String]! {
         return [Self.RNOmetriaRCTEventNameOnNotificationInteracted, Self.RNOmetriaRCTEventNameOnDeepLinkInteracted]
-    }
+    }*/
 
     override func constantsToExport() -> [AnyHashable : Any]! {
         return [:]
     }
 
-    @objc(initializeWithApiToken:resolver:rejecter:)
-    func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
-        OmetriaStorageKeys.rnVersion = "2.3.0"
+    @objc(initializeWithApiToken:options:resolver:rejecter:)
+    func initialize(apiToken: String, options: [String: String]?, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
+        OmetriaStorageKeys.rnVersion = "2.4.0"
         DispatchQueue.main.async {
-            let ometriaInit = Ometria.initialize(apiToken: apiToken)
+            let ometriaInit = Ometria.initialize(apiToken: apiToken, enableSwizzling: false, appGroupIdentifier: options?[Constants.appGroupIdentifierKey])
             resolve(ometriaInit)
             Ometria.sharedInstance().notificationInteractionDelegate = self
         }
     }
+
+    @objc(initializeWithApiToken:resolver:rejecter:)
+    func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
+        initialize(apiToken: apiToken, options: nil, resolve: resolve, reject: reject)
+    }
+
 
     @objc(trackProfileIdentifiedByCustomerIdEvent:resolver:rejecter:)
     func trackProfileIdentifiedByCustomerIdEvent(customerId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
@@ -61,15 +73,17 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         resolve(nil)
     }
 
+    // Deprecated
     @objc(trackWishlistAddedToEvent:resolver:rejecter:)
     func trackWishlistAddedToEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().trackWishlistAddedToEvent(productId: productId)
+        // Ometria.sharedInstance().trackWishlistAddedToEvent(productId: productId)
         resolve(nil)
     }
 
+    // Deprecated
     @objc(trackWishlistRemovedFromEvent:resolver:rejecter:)
     func trackWishlistRemovedFromEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().trackWishlistRemovedFromEvent(productId: productId)
+        // Ometria.sharedInstance().trackWishlistRemovedFromEvent(productId: productId)
         resolve(nil)
     }
 
@@ -136,6 +150,23 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         Ometria.sharedInstance().trackScreenViewedEvent(screenName: screenName, additionalInfo: additionalInfo ?? [:])
         resolve(nil)
     }
+    
+    @objc(onNotificationInteracted:resolver:rejecter:)
+    func onNotificationInteracted(remoteMessage: [AnyHashable: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        let data = remoteMessage["data"] as? [AnyHashable: Any]
+        let response:[AnyHashable: Any] = ["aps": ["alert": data]]
+        Ometria.sharedInstance().handleNotificationResponse(response)
+        resolve(nil)
+    }
+    
+    @objc(onNotificationReceived:resolver:rejecter:)
+    func onNotificationReceived(remoteMessage: [AnyHashable: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        let data = remoteMessage["data"] as? [AnyHashable: Any]
+        let response:[AnyHashable: Any] = ["aps": ["alert": data]]
+        Ometria.sharedInstance().handleReceivedNotification(response)
+        resolve(nil)
+    }
+
 
     @objc(trackCustomEvent:additionalInfo:resolver:rejecter:)
     func trackCustomEvent(customEventType: String, additionalInfo: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
@@ -179,19 +210,19 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     }
 
 
-    // MARK: - OmetriaNotificationInteractionDelegate
-
+    // Deprecated
     func handleDeepLinkInteraction(_ deepLink: URL) {
-        sendEvent(withName: Self.RNOmetriaRCTEventNameOnDeepLinkInteracted, body: deepLink.absoluteString)
+        // sendEvent(withName: Self.RNOmetriaRCTEventNameOnDeepLinkInteracted, body: deepLink.absoluteString)
     }
 
     func handleOmetriaNotificationInteraction(_ notification: OmetriaNotification) -> Void {
-        let ometriaNotificationObject: [String: Any] = ["deepLinkActionUrl": notification.deepLinkActionUrl,
-                                                        "imageUrl": notification.imageUrl,
-                                                        "externalCustomerId": notification.externalCustomerId,
-                                                        "campaignType": notification.campaignType,
-                                                        "sendId": notification.sendId,
-                                                        "tracking": notification.tracking]
-        sendEvent(withName: Self.RNOmetriaRCTEventNameOnNotificationInteracted, body: ometriaNotificationObject)
+        /*  let ometriaNotificationObject: [String: Any] = ["deepLinkActionUrl": notification.deepLinkActionUrl,
+                                                          "imageUrl": notification.imageUrl,
+                                                          "externalCustomerId": notification.externalCustomerId,
+                                                          "campaignType": notification.campaignType,
+                                                          "sendId": notification.sendId,
+                                                          "tracking": notification.tracking]
+          sendEvent(withName: Self.RNOmetriaRCTEventNameOnNotificationInteracted, body: ometriaNotificationObject)
+         */
     }
 }
