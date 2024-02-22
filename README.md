@@ -113,8 +113,7 @@ These two events are pivotal to the functioning of the SDK, so make sure you sen
 ### Profile deidentified
 
 Undo a profileIdentified event.
-
-Use this if a user logs out, or otherwise signals that this device is no longer attached to the same person.
+You can use this if an user logs out.
 
 ```js
 Ometria.trackProfileDeidentifiedEvent();
@@ -195,14 +194,15 @@ This helps recover from lost or out of sync basket events: the latest update is 
 **OmetriaBasket** is an object that describes the contents of a shopping basket and has the following properties:
 
 >* **id**: (`String`, optional) - A unique identifier for this basket
->* **currency**: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`
+>* **currency**: (`String`, required) - A string representing the currency in ISO 4217 three-letter currency code, e.g. `"USD"`, `"GBP"`
 >* **totalPrice**: (`float`, required) - A float value representing the pricing.
 >* **items**: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
 >* **link**: (`String`) - A deeplink to the web or in-app page for this basket. Can be used in a notification sent to the user, e.g. "Forgot to check out? Here's your basket to continue: 'https://eg.com/basket_url'". Following that link should take them straight to the basket page.
 
 ### Checkout started
 
-Track when the user has started the checkout process:
+Track when the user has started the checkout process.
+This is currently only used to count page views, and has no other effect in Ometria.
 
 ```js
 Ometria.trackCheckoutStartedEvent('order_id');
