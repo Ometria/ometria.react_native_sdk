@@ -104,7 +104,7 @@ type OmetriaReactNativeSdkDeprecatedType = {
 
   /**
    * Only for iOS
-   * @deprecated Deprecated since version 2.4.0.
+   * @deprecated Deprecated since version 2.4.0. use the new method `onNotificationOpenedApp` to handle notifications that oppened the app.
    * @param handler - Function that will be called when the notification is interacted with
    */
   onNotificationInteracted(
@@ -113,7 +113,7 @@ type OmetriaReactNativeSdkDeprecatedType = {
 
   /**
    * Only for Android
-   * @deprecated since version 2.4.0.
+   * @deprecated since version 2.4.0. Use the new method `onAndroidBackgroundMessage` to handle background messages.
    */
   setBackgroundMessageHandler(
     handler: OmetriaOnBackgroundMessagePayload
