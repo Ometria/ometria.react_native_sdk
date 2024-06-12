@@ -8,7 +8,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     // No longer needed since 2.4.0
     // static let RNOmetriaRCTEventNameOnNotificationInteracted = "onNotificationInteracted"
     // static let RNOmetriaRCTEventNameOnDeepLinkInteracted = "onDeepLinkInteracted"
-    
+
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
     }
@@ -28,7 +28,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
 
     @objc(initializeWithApiToken:options:resolver:rejecter:)
     func initialize(apiToken: String, options: [String: String]?, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
-        OmetriaStorageKeys.rnVersion = "2.4.0"
+        OmetriaStorageKeys.rnVersion = "2.4.1"
         DispatchQueue.main.async {
             let ometriaInit = Ometria.initialize(apiToken: apiToken, enableSwizzling: false, appGroupIdentifier: options?[Constants.appGroupIdentifierKey])
             resolve(ometriaInit)
@@ -150,7 +150,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         Ometria.sharedInstance().trackScreenViewedEvent(screenName: screenName, additionalInfo: additionalInfo ?? [:])
         resolve(nil)
     }
-    
+
     @objc(onNotificationInteracted:resolver:rejecter:)
     func onNotificationInteracted(remoteMessage: [AnyHashable: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         let data = remoteMessage["data"] as? [AnyHashable: Any]
@@ -158,7 +158,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         Ometria.sharedInstance().handleNotificationResponse(response)
         resolve(nil)
     }
-    
+
     @objc(onNotificationReceived:resolver:rejecter:)
     func onNotificationReceived(remoteMessage: [AnyHashable: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         let data = remoteMessage["data"] as? [AnyHashable: Any]

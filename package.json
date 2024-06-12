@@ -1,6 +1,6 @@
 {
   "name": "react-native-ometria",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "We help retailers create marketing experiences their customers will love",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -8,8 +8,8 @@
   "react-native": "src/index",
   "source": "src/index",
   "ometria_sdk_version": {
-    "ios": "1.5.1",
-    "android": "1.6.2"
+    "ios": "1.6.0",
+    "android": "1.7.0"
   },
   "files": [
     "src",

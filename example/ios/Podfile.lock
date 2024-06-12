@@ -2,16 +2,16 @@ PODS:
   - boost (1.83.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.74.2)
-  - Firebase/CoreOnly (10.7.0):
-    - FirebaseCore (= 10.7.0)
-  - Firebase/Messaging (10.7.0):
+  - Firebase/CoreOnly (10.27.0):
+    - FirebaseCore (= 10.27.0)
+  - Firebase/Messaging (10.27.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 10.7.0)
-  - FirebaseCore (10.7.0):
+    - FirebaseMessaging (~> 10.27.0)
+  - FirebaseCore (10.27.0):
     - FirebaseCoreInternal (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreExtension (10.7.0):
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.27.0):
     - FirebaseCore (~> 10.0)
   - FirebaseCoreInternal (10.27.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
@@ -20,15 +20,15 @@ PODS:
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (10.7.0):
+  - FirebaseMessaging (10.27.0):
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
-    - GoogleDataTransport (~> 9.2)
+    - GoogleDataTransport (~> 9.3)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/Reachability (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
-    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
   - fmt (9.1.0)
   - glog (0.3.5)
   - GoogleDataTransport (9.4.1):
@@ -82,15 +82,15 @@ PODS:
   - hermes-engine (0.74.2):
     - hermes-engine/Pre-built (= 0.74.2)
   - hermes-engine/Pre-built (0.74.2)
-  - nanopb (2.30909.1):
-    - nanopb/decode (= 2.30909.1)
-    - nanopb/encode (= 2.30909.1)
-  - nanopb/decode (2.30909.1)
-  - nanopb/encode (2.30909.1)
-  - Ometria (1.5.1):
+  - nanopb (2.30910.0):
+    - nanopb/decode (= 2.30910.0)
+    - nanopb/encode (= 2.30910.0)
+  - nanopb/decode (2.30910.0)
+  - nanopb/encode (2.30910.0)
+  - Ometria (1.6.0):
     - FirebaseMessaging
-  - ometria-react-native-sdk (2.4.0):
-    - Ometria (~> 1.5.1)
+  - ometria-react-native-sdk (2.4.1):
+    - Ometria (~> 1.6.0)
     - React
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.01.01.00):
@@ -1252,12 +1252,12 @@ PODS:
     - React-utils (= 0.74.2)
   - RNCAsyncStorage (1.21.0):
     - React-Core
-  - RNFBApp (17.5.0):
-    - Firebase/CoreOnly (= 10.7.0)
+  - RNFBApp (20.1.0):
+    - Firebase/CoreOnly (= 10.27.0)
     - React-Core
-  - RNFBMessaging (17.5.0):
-    - Firebase/Messaging (= 10.7.0)
-    - FirebaseCoreExtension (= 10.7.0)
+  - RNFBMessaging (20.1.0):
+    - Firebase/Messaging (= 10.27.0)
+    - FirebaseCoreExtension
     - React-Core
     - RNFBApp
   - RNPermissions (3.10.1):
@@ -1472,23 +1472,23 @@ SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 4bc164e5b5e6cfc288d2b5ff28643ea15fa1a589
-  Firebase: 0219acf760880eeec8ce479895bd7767466d9f81
-  FirebaseCore: e317665b9d744727a97e623edbbed009320afdd7
-  FirebaseCoreExtension: f17247ba8c61e4d3c8d136b5e2de3cb4ac6a85b6
+  Firebase: 26b040b20866a55f55eb3611b9fcf3ae64816b86
+  FirebaseCore: a2b95ae4ce7c83ceecfbbbe3b6f1cddc7415a808
+  FirebaseCoreExtension: 4ec89dd0c6de93d6becde32122d68b7c35f6bf5d
   FirebaseCoreInternal: 4b297a2d56063dbea2c1d0d04222d44a8d058862
   FirebaseInstallations: 766dabca09fd94aef922538aaf144cc4a6fb6869
-  FirebaseMessaging: ac9062bcc35ed56e15a0241d8fd317022499baf8
+  FirebaseMessaging: 585984d0a1df120617eb10b44cad8968b859815e
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   hermes-engine: 01d3e052018c2a13937aca1860fbedbccd4a41b7
-  nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
-  Ometria: 6b06449058668b906d014a03f69ddb1303180ac8
-  ometria-react-native-sdk: 64edcc4ebbf55e24fdf38eec17cba5a7d1727333
+  nanopb: 438bc412db1928dac798aa6fd75726007be04262
+  Ometria: 76d1f868d079f0b19a9aca407c429e608a23667f
+  ometria-react-native-sdk: 2021504e8c25efa8a51a7e9f836ec9af8454ade6
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
-  RCTDeprecation: e989346ee1f1a0e6c155ac0969f7834b043b2f08
+  RCTDeprecation: b03c35057846b685b3ccadc9bfe43e349989cdb2
   RCTRequired: 194626909cfa8d39ca6663138c417bc6c431648c
   RCTTypeSafety: 552aff5b8e8341660594db00e53ac889682bc120
   React: a57fe42044fe6ed3e828f8867ce070a6c5872754
@@ -1535,12 +1535,12 @@ SPEC CHECKSUMS:
   React-utils: 5a40a1bb87d8c2d42a6bbbb7ead6d95785ca6042
   ReactCommon: e5866ad8f7487779853fa3fe33f1c075207c3262
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
-  RNFBApp: d59efa0872fff4e27de03cca3c528c203a436ae5
-  RNFBMessaging: 216693dd5ba4f18ba65fb39fc73a44a23c26190f
+  RNFBApp: 9acbe359ef3559d6f8ca5c350db471f2b352f98a
+  RNFBMessaging: b82ef70d252500d3ad104284c0c7f8e1cd22b51e
   RNPermissions: e48d69dcc3faa1345ba909a5d13b6d3101a08ef4
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 45564236f670899c9739b1581a12b00ead5d391f
 
 PODFILE CHECKSUM: 7a891c51a2b3e1c3fd839e15ec1b3a95f463f1c0
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.15.2
