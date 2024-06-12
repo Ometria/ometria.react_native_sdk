@@ -107,9 +107,11 @@ const App = () => {
       console.log('🔔 Notification has been interacted with and opened app.');
       setNotificationContent(JSON.stringify(remoteMessage, null, 2));
 
-      Ometria.onNotificationOpenedApp(remoteMessage); // 🏹 Ometria Event Logged: onNotificationInteracted
+      // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
+      Ometria.onNotificationOpenedApp(remoteMessage as any); // 🏹 Ometria Event Logged: onNotificationInteracted
 
-      const notif = await Ometria.parseNotification(remoteMessage);
+      // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
+      const notif = await Ometria.parseNotification(remoteMessage as any);
       if (notif?.deepLinkActionUrl) {
         Ometria.trackDeepLinkOpenedEvent(notif.deepLinkActionUrl, 'Browser'); // 🏹 Ometria Event Logged: deepLinkOpened
         openUrl(notif.deepLinkActionUrl);
@@ -140,7 +142,8 @@ const App = () => {
       async (remoteMessage) => {
         console.log('📭 Foreground message received:', remoteMessage);
         setNotificationContent(JSON.stringify(remoteMessage, null, 2));
-        Ometria.onNotificationReceived(remoteMessage); // 🏹 Ometria Event Logged: onNotificationReceived
+        // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
+        Ometria.onNotificationReceived(remoteMessage as any); // 🏹 Ometria Event Logged: onNotificationReceived
         /* Keep in mind that foreground notifications are NOT shown to the user.
            Instead, you could trigger a local notification or update the in-app UI to signal a new notification.
            Read more at: https://rnfirebase.io/messaging/usage#foreground-state-messages
