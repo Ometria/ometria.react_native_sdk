@@ -361,27 +361,10 @@ For **iOS** follow the Firebase ReactNative tutorial [Firebase for iOS](https://
 To use push notifications, you also need to follow the steps in [Push Notifications ReactNative Guide](#6-push-notifications-reactnative-guide)
 
 
-### Firebase 8.0-8.10 issue on iOS
+### Firebase versions on iOS
 
-:warning: If using firebase version [8.0 - 8.10] consider updating to firebase 8.11 in order for push notifications to work.
-If you have a hard dependency on firebase [8.0 - 8.10] make sure to add the following snippet in your AppDelegate file:
+:warning: As a recommendation coming from Firebase, we advise cocoapods users to also update to a version that is more recent than 10.10.0.
 
-```objc
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-  [FIRMessaging.messaging setAPNSToken:deviceToken];
-}
-```
-
-### Using Firebase 9.x on iOS
-
-:warning:
-If you are using Firebase 9.x on iOS, make sure you have the following lines in your `/ios/Podfile` file:
-
-```objc
-  pod 'FirebaseCore', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
-  pod 'FirebaseMessaging', :modular_headers => true
-```
 
 # 6. Push Notifications ReactNative guide
 

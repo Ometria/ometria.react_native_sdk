@@ -1,3 +1,10 @@
+# 2.4.1
+
+2024-06
+
+- Updated ReactNative to 0.74.2
+- Updated Ometria native SDK to the latest versions - 🍏 1.6.0 iOS & 🤖 1.7.0 Android.
+
 # 2.4.0
 
 2024-02
