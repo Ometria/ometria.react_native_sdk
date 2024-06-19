@@ -32,6 +32,9 @@ const App = () => {
   const [authModal, setAuthModal] = useState(false);
   const [evtsModal, setEvtsModal] = useState(false);
 
+  // A flag to prevent the user from sending events before the SDK is initialized in the sample app - not needed in production
+  const [ometriaIsInitalized, setOmetriaIsInitalized] = useState(false);
+
   const [notificationContent, setNotificationContent] = useState(
     'Receive or interract with a notification to see its content here.'
   );
@@ -50,6 +53,7 @@ const App = () => {
     try {
       Ometria.initializeWithApiToken(token, customOmetriaOptions).then(
         async () => {
+          setOmetriaIsInitalized(true);
           setAuthModal(false);
           Ometria.isLoggingEnabled(true);
           console.log('🎉 Ometria has been initialized!');
@@ -70,6 +74,8 @@ const App = () => {
         }
       );
     } catch (error) {
+      setAuthModal(false);
+      setOmetriaIsInitalized(false);
       console.error('😕 Error: ', error);
     }
   };
@@ -180,9 +186,9 @@ const App = () => {
    */
   const handleLogin = (method: { userEmail?: string; userId?: string }) => {
     method.userEmail &&
-      Ometria.trackProfileIdentifiedByEmailEvent(method.userEmail!);
+      Ometria.trackProfileIdentifiedByEmailEvent(method.userEmail);
     method.userId &&
-      Ometria.trackProfileIdentifiedByCustomerIdEvent(method.userId!);
+      Ometria.trackProfileIdentifiedByCustomerIdEvent(method.userId);
     setAuthModal(false);
   };
 
@@ -199,6 +205,7 @@ const App = () => {
     initializeWithNewToken: (token: string) => Promise<void>
   ) => {
     if (newToken === '') {
+      Alert.alert('🔐 Token cannot be empty');
       return;
     }
     await setOmetriaTokenToStorage(newToken);
@@ -248,9 +255,11 @@ const App = () => {
         <Text style={styles.text}>Change Login Info 🔐 </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.btn} onPress={() => setEvtsModal(true)}>
-        <Text style={styles.text}>Go to Events 📝</Text>
-      </TouchableOpacity>
+      {ometriaIsInitalized && (
+        <TouchableOpacity style={styles.btn} onPress={() => setEvtsModal(true)}>
+          <Text style={styles.text}>Go to Events 📝</Text>
+        </TouchableOpacity>
+      )}
 
       <View>
         <Text style={styles.textBold}>🔔 Notification Content: </Text>
@@ -269,6 +278,7 @@ const App = () => {
           saveNewOmetriaToken,
           handleOmetriaInit,
         }}
+        ometriaIsInitialized={ometriaIsInitalized}
       />
     </ScrollView>
   );
@@ -388,6 +398,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   onLogin,
   reinitialization,
+  ometriaIsInitialized,
 }) => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -417,36 +428,40 @@ const AuthModal: React.FC<AuthModalProps> = ({
             )
           }
         >
-          <Text style={styles.text}>Save Ometria pushToken</Text>
+          <Text style={styles.text}>Save Ometria Token</Text>
         </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          value={userId}
-          placeholder="Customer Id"
-          placeholderTextColor="#000"
-          onChangeText={setUserId}
-        />
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            onLogin({ userId });
-          }}
-        >
-          <Text style={styles.text}>Login with customer ID</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={userEmail}
-          placeholderTextColor="#000"
-          onChangeText={setUserEmail}
-        />
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => onLogin({ userEmail })}
-        >
-          <Text style={styles.text}>Login with customer Email</Text>
-        </TouchableOpacity>
+        {ometriaIsInitialized && (
+          <>
+            <TextInput
+              style={styles.input}
+              value={userId}
+              placeholder="Customer Id"
+              placeholderTextColor="#000"
+              onChangeText={setUserId}
+            />
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => {
+                onLogin({ userId });
+              }}
+            >
+              <Text style={styles.text}>Login with customer ID</Text>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={userEmail}
+              placeholderTextColor="#000"
+              onChangeText={setUserEmail}
+            />
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => onLogin({ userEmail })}
+            >
+              <Text style={styles.text}>Login with customer Email</Text>
+            </TouchableOpacity>
+          </>
+        )}
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
           <Text style={styles.text}>Close settings</Text>
         </TouchableOpacity>

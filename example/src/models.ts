@@ -13,4 +13,5 @@ export type AuthModalProps = {
   onClose: () => void;
   onLogin: (method: { userEmail?: string; userId?: string }) => void;
   reinitialization: ModalReinitializationProps;
+  ometriaIsInitialized: boolean;
 };
