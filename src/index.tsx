@@ -14,12 +14,46 @@ const OmetriaReactNativeSdk =
   NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
 
 // 🛟 Save original implementations
-const _onNotificationReceived = OmetriaReactNativeSdk.onNotificationReceived;
-const _initializeWithApi = OmetriaReactNativeSdk.initializeWithApiToken;
-const _parseNotification = OmetriaReactNativeSdk.parseNotification;
-const _onNotificationInteracted = (
-  OmetriaReactNativeSdk as unknown as OmetriaReactNativeSdkInternalType
-).onNotificationInteracted;
+const {
+  trackProfileIdentifiedByCustomerIdEvent:
+    _trackProfileIdentifiedByCustomerIdEvent,
+  trackProfileIdentifiedByEmailEvent: _trackProfileIdentifiedByEmailEvent,
+  trackOrderCompletedEvent: _trackOrderCompletedEvent,
+  trackScreenViewedEvent: _trackScreenViewedEvent,
+  trackCustomEvent: _trackCustomEvent,
+  onNotificationReceived: _onNotificationReceived,
+  initializeWithApiToken: _initializeWithApi,
+  parseNotification: _parseNotification,
+  onNotificationInteracted: _onNotificationInteracted,
+} = OmetriaReactNativeSdk as unknown as OmetriaReactNativeSdkInternalType;
+
+// 🛟  Custom implementation for methods that need an optional param
+OmetriaReactNativeSdk.trackProfileIdentifiedByCustomerIdEvent = (
+  customerId: string,
+  storeId: string | null = null
+) => _trackProfileIdentifiedByCustomerIdEvent(customerId, storeId);
+
+OmetriaReactNativeSdk.trackProfileIdentifiedByEmailEvent = (
+  email: string,
+  storeId: string | null = null
+) => _trackProfileIdentifiedByEmailEvent(email, storeId);
+
+OmetriaReactNativeSdk.trackOrderCompletedEvent = (
+  orderId: string,
+  basket: OmetriaBasket | null = null
+) => _trackOrderCompletedEvent(orderId, basket);
+
+OmetriaReactNativeSdk.trackScreenViewedEvent = (
+  screenName: string,
+  additionalInfo: object | null = null
+) => _trackScreenViewedEvent(screenName, additionalInfo);
+
+OmetriaReactNativeSdk.trackCustomEvent = (
+  customEventType: string,
+  additionalInfo: object | null = null
+) => _trackCustomEvent(customEventType, additionalInfo);
+
+// Other custom implementations
 
 // 🛠️ Custom Implementation: initializeWithApiToken()
 OmetriaReactNativeSdk.initializeWithApiToken = (

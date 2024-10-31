@@ -94,21 +94,29 @@ Once the SDK is initialised, you can track an event by calling its dedicated met
 An app user has just identified themselves, i.e. logged in.
 
 ```js
-Ometria.trackProfileIdentifiedByCustomerIdEvent('test_customer_id');
+Ometria.trackProfileIdentifiedByCustomerIdEvent('test_customer_id', 'storeId');
 ```
 
 Their **customer ID** is their **user ID** in your database.
+The **storeId** is an **optional** parameter that can be used to identify the store that the customer is associated with.
 
 Sometimes a user only supplies their email address without fully logging in or having an account. In that case, Ometria can profile match based on email:
 
 ```js
-Ometria.trackProfileIdentifiedByEmailEvent('test@gmail.com');
+Ometria.trackProfileIdentifiedByEmailEvent('test@gmail.com', 'storeId');
 ```
 
 Having a **customerId** makes profile matching more robust.
+The **storeId** is an **optional** parameter that can be used to identify the store that the customer is associated with.
 
 It’s not mutually exclusive with sending an email event; for optimal integration you should send either event as soon as you have the information.
 These two events are pivotal to the functioning of the SDK, so make sure you send them as early as possible. Reiterating here that these identifiers must be the same here as the ones you use in your e-commerce platform and you send to Ometria (via the data API or other ways). If you specify both email and customer id, both need to match. A typical error we see at integrations is that the app generates a new customer id on each login (that doesn't match the customer id stored in Ometria). To avoid this, generate these ids centrally on your servers and send consistent ones through the Ometria mobile SDK and the Ometria Data API. If it is impractical to generate consistent ids, we suggest only using email to identify contacts.
+
+You can also update the user's store id independently of the customer id or email:
+
+```js
+Ometria.updateStoreId('storeId');
+```
 
 ### Profile deidentified
 
@@ -120,6 +128,12 @@ Ometria.trackProfileDeidentifiedEvent();
 ```
 
 Currently this event clears the stored ids (email and/or customer id) from the phone's local storage. It has no other effect within Ometria.
+
+You can delete the store id independently of the customer id or email:
+
+```js
+Ometria.updateStoreId(null);
+```
 
 ### Product viewed
 
@@ -231,6 +245,8 @@ Ometria.trackOrderCompletedEvent('order_id', {
 });
 ```
 
+The second parameter (basket object) is optional.
+
 ### Deep link opened
 
 Use the guide for [Handling interaction with notifications that contain URLs](#handling-interaction-with-notifications-that-contain-urls) to manually track this event when you have enough information regarding the screen (or other destination) that the app will open.
@@ -281,6 +297,8 @@ To track these custom screens, use the _Screen viewed_ event:
 Ometria.trackScreenViewedEvent('OnboardingScreen', { a: '1', b: '2' });
 ```
 
+The second parameter is optional and can be used to send additional data about the screen.
+
 ### Custom events
 
 Your app might have specific flows or pages that are of interest to the marketing team.
@@ -294,6 +312,8 @@ Check with the marketing team about the specifics, and what they might need. Esp
 ```js
 Ometria.trackCustomEvent('my_custom_type', {});
 ```
+
+The second parameter is optional and can be used to send additional data about the event.
 
 ## Automatically tracked events
 

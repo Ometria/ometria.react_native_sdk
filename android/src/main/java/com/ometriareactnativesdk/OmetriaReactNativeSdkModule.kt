@@ -2,6 +2,7 @@ package com.ometriareactnativesdk
 
 import android.app.Application
 import android.os.Handler
+import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
@@ -41,13 +42,18 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedByCustomerIdEvent(customerId: String) {
-    Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId)
+  fun updateStoreId(storeId: String?) {
+    Ometria.instance().updateStoreId(storeId)
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedByEmailEvent(email: String) {
-    Ometria.instance().trackProfileIdentifiedByEmailEvent(email)
+  fun trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null) {
+    Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId, storeId)
+  }
+
+  @ReactMethod
+  fun trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null) {
+    Ometria.instance().trackProfileIdentifiedByEmailEvent(email, storeId)
   }
 
   @ReactMethod
@@ -161,7 +167,8 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun onNewToken(token: String) {
-    Ometria.instance().onNewToken(token)
+    // TODO: Remove this in production
+    Ometria.instance().onNewToken(token, true)
   }
 
   @ReactMethod

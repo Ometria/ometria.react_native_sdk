@@ -225,6 +225,10 @@ const App = () => {
     console.log('💾 Token from LocalStorage:', savedToken);
   };
 
+  const handleUpdateStoreId = (storeId: string | null) => {
+    Ometria.updateStoreId(storeId);
+  };
+
   // EFFECTS
   /**
    * Initialize with useEffect:
@@ -268,6 +272,7 @@ const App = () => {
 
       <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
       <AuthModal
+        onUpdateStoreId={handleUpdateStoreId}
         isVisible={authModal}
         onClose={() => setAuthModal(false)}
         onLogin={handleLogin}
@@ -294,6 +299,19 @@ const EventsModal: React.FC<{
   isVisible: boolean;
   onClose: () => void;
 }> = ({ isVisible, onClose }) => {
+  const simulatePushTokenRefresh = () => {
+    messaging()
+      .getToken()
+      .then((pushToken: string) => {
+        Ometria.onNewToken(pushToken);
+        console.log('🔑 Firebase token:', pushToken);
+      });
+  };
+
+  const deleteStoreId = () => {
+    Ometria.updateStoreId(null);
+  };
+
   const sendEvent = (eventType: string) => {
     switch (eventType) {
       case Events.ENABLE_LOGGING:
@@ -348,13 +366,22 @@ const EventsModal: React.FC<{
         });
         break;
       case Events.CUSTOM:
-        Ometria.trackCustomEvent('my_custom_type', {});
+        Ometria.trackCustomEvent('my_custom_type');
         break;
       case Events.FLUSH:
         Ometria.flush();
         break;
       case Events.CLEAR:
         Ometria.clear();
+        break;
+      case Events.SIMULATE_TOKEN_REFRESH:
+        simulatePushTokenRefresh();
+        break;
+      case Events.RESET_STORE_ID:
+        deleteStoreId();
+        break;
+      default:
+        return;
     }
   };
 
@@ -397,11 +424,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
   isVisible,
   onClose,
   onLogin,
+  onUpdateStoreId,
   reinitialization,
   ometriaIsInitialized,
 }) => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [storeId, setStoreId] = useState('');
 
   return (
     <Modal
@@ -459,6 +488,19 @@ const AuthModal: React.FC<AuthModalProps> = ({
               onPress={() => onLogin({ userEmail })}
             >
               <Text style={styles.text}>Login with customer Email</Text>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Store Id"
+              value={storeId}
+              placeholderTextColor="#000"
+              onChangeText={setStoreId}
+            />
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => onUpdateStoreId(storeId)}
+            >
+              <Text style={styles.text}>Update store Id</Text>
             </TouchableOpacity>
           </>
         )}

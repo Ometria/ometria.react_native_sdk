@@ -12,6 +12,7 @@ export type AuthModalProps = {
   isVisible: boolean;
   onClose: () => void;
   onLogin: (method: { userEmail?: string; userId?: string }) => void;
+  onUpdateStoreId: (storeId: string | null) => void;
   reinitialization: ModalReinitializationProps;
   ometriaIsInitialized: boolean;
 };

@@ -7,67 +7,100 @@ type OmetriaReactNativeSdkCoreType = {
    * @param token - Ometria API token
    * @param options - Additional options
    */
-  initializeWithApiToken(
+  initializeWithApiToken: (
     token: string,
     options?: OmetriaOptions
-  ): Promise<void>;
+  ) => Promise<void>;
 
-  trackProfileIdentifiedByCustomerIdEvent(customerId: string): () => void;
-  trackProfileIdentifiedByEmailEvent(email: string): () => void;
-  trackProfileDeidentifiedEvent(): () => void;
-  trackProductViewedEvent(productId: string): () => void;
-  trackProductListingViewedEvent(
+  trackProfileIdentifiedByCustomerIdEvent: (
+    customerId: string,
+    storeId?: string | null
+  ) => void;
+
+  trackProfileIdentifiedByEmailEvent: (
+    email: string,
+    storeId?: string | null
+  ) => void;
+
+  updateStoreId: (storeId: string | null) => void;
+
+  trackProfileDeidentifiedEvent: () => void;
+
+  trackProductViewedEvent: (productId: string) => void;
+
+  trackProductListingViewedEvent: (
     listingType: string,
-    listingAttributes: any
-  ): () => void;
-  trackBasketViewedEvent(): () => void;
-  trackBasketUpdatedEvent(basket: OmetriaBasket): () => void;
-  trackCheckoutStartedEvent(orderId?: string): () => void;
-  trackOrderCompletedEvent(orderId: string, basket?: OmetriaBasket): () => void;
-  trackDeepLinkOpenedEvent(link: string, screenName: string): () => void;
-  trackHomeScreenViewedEvent(): () => void;
-  trackScreenViewedEvent(screenName: string, additionalInfo?: any): () => void;
-  trackCustomEvent(customEventType: string, additionalInfo?: any): () => void;
+    listingAttributes: object
+  ) => void;
 
-  flush(): () => void;
-  clear(): () => void;
-  isLoggingEnabled(enabled: Boolean): Promise<void>;
-  processUniversalLink(url: string): Promise<string>;
-  onNewToken(token: string): () => void;
+  trackBasketViewedEvent: () => void;
+
+  trackBasketUpdatedEvent: (basket: OmetriaBasket) => void;
+
+  trackCheckoutStartedEvent: (orderId: string) => void;
+
+  trackOrderCompletedEvent: (
+    orderId: string,
+    basket?: OmetriaBasket | null
+  ) => void;
+
+  trackDeepLinkOpenedEvent: (link: string, screenName: string) => void;
+
+  trackHomeScreenViewedEvent: () => void;
+
+  trackScreenViewedEvent: (
+    screenName: string,
+    additionalInfo?: object | null
+  ) => void;
+
+  trackCustomEvent: (
+    customEventType: string,
+    additionalInfo?: object | null
+  ) => void;
+
+  flush: () => void;
+
+  clear: () => void;
+
+  isLoggingEnabled: (enabled: Boolean) => Promise<void>;
+
+  processUniversalLink: (url: string) => Promise<string>;
+
+  onNewToken: (token: string) => void;
 
   /**
    * Function to call when the app is opened from a notification (quit or background state)
    * @param notification - {remoteMessage: RemoteMessage}
    */
-  onNotificationOpenedApp(
+  onNotificationOpenedApp: (
     notification: FirebaseMessagingTypes.RemoteMessage
-  ): void;
+  ) => void;
 
   /**
    * Only for Android
    * Function to call when a notification is received in the background state
    * @param payload - {remoteMessage: RemoteMessage, ometriaToken: string, ometriaOptions?: OmetriaOptions}
    */
-  onAndroidBackgroundMessage(
+  onAndroidBackgroundMessage: (
     payload: OmetriaOnBackgroundMessagePayload
-  ): Promise<void>;
+  ) => Promise<void>;
 
   /**
    * Function to call when a notification is received in the foreground state
    * @param handler - Function that will be called when a notification is received
    */
-  onNotificationReceived(
+  onNotificationReceived: (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ): void;
+  ) => void;
 
   /**
    * Function to parse the notification from the Firebase SDK
    * @param remoteMessage - Remote message received from the Firebase SDK
    * @returns Promise with the parsed notification data
    */
-  parseNotification(
+  parseNotification: (
     remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ): Promise<OmetriaNotificationData | undefined>;
+  ) => Promise<OmetriaNotificationData | undefined>;
 };
 
 type OmetriaReactNativeSdkDeprecatedType = {
