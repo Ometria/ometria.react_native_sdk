@@ -7,6 +7,7 @@ import type {
   OmetriaBasket,
   OmetriaNotification,
   OmetriaReactNativeSdkType,
+  MaybeNull,
 } from './types';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
@@ -30,27 +31,27 @@ const {
 // 🛟  Custom implementation for methods that need an optional param
 OmetriaReactNativeSdk.trackProfileIdentifiedByCustomerIdEvent = (
   customerId: string,
-  storeId: string | null = null
+  storeId: MaybeNull<string> = null
 ) => _trackProfileIdentifiedByCustomerIdEvent(customerId, storeId);
 
 OmetriaReactNativeSdk.trackProfileIdentifiedByEmailEvent = (
   email: string,
-  storeId: string | null = null
+  storeId: MaybeNull<string> = null
 ) => _trackProfileIdentifiedByEmailEvent(email, storeId);
 
 OmetriaReactNativeSdk.trackOrderCompletedEvent = (
   orderId: string,
-  basket: OmetriaBasket | null = null
+  basket: MaybeNull<OmetriaBasket> = null
 ) => _trackOrderCompletedEvent(orderId, basket);
 
 OmetriaReactNativeSdk.trackScreenViewedEvent = (
   screenName: string,
-  additionalInfo: object | null = null
+  additionalInfo: MaybeNull<object> = null
 ) => _trackScreenViewedEvent(screenName, additionalInfo);
 
 OmetriaReactNativeSdk.trackCustomEvent = (
   customEventType: string,
-  additionalInfo: object | null = null
+  additionalInfo: MaybeNull<object> = null
 ) => _trackCustomEvent(customEventType, additionalInfo);
 
 // Other custom implementations

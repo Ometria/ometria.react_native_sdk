@@ -14,15 +14,15 @@ type OmetriaReactNativeSdkCoreType = {
 
   trackProfileIdentifiedByCustomerIdEvent: (
     customerId: string,
-    storeId?: string | null
+    storeId?: MaybeNull<string>
   ) => void;
 
   trackProfileIdentifiedByEmailEvent: (
     email: string,
-    storeId?: string | null
+    storeId?: MaybeNull<string>
   ) => void;
 
-  updateStoreId: (storeId: string | null) => void;
+  updateStoreId: (storeId: MaybeNull<string>) => void;
 
   trackProfileDeidentifiedEvent: () => void;
 
@@ -41,7 +41,7 @@ type OmetriaReactNativeSdkCoreType = {
 
   trackOrderCompletedEvent: (
     orderId: string,
-    basket?: OmetriaBasket | null
+    basket?: MaybeNull<OmetriaBasket>
   ) => void;
 
   trackDeepLinkOpenedEvent: (link: string, screenName: string) => void;
@@ -50,12 +50,12 @@ type OmetriaReactNativeSdkCoreType = {
 
   trackScreenViewedEvent: (
     screenName: string,
-    additionalInfo?: object | null
+    additionalInfo?: MaybeNull<object>
   ) => void;
 
   trackCustomEvent: (
     customEventType: string,
-    additionalInfo?: object | null
+    additionalInfo?: MaybeNull<object>
   ) => void;
 
   flush: () => void;
@@ -206,3 +206,5 @@ export type OmetriaNotificationData = {
     [key: string]: string | undefined;
   };
 };
+
+export type MaybeNull<T> = T | null;
