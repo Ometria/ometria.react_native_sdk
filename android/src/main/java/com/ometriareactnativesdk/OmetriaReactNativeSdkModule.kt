@@ -2,7 +2,6 @@ package com.ometriareactnativesdk
 
 import android.app.Application
 import android.os.Handler
-import android.util.Log
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
