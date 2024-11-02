@@ -14,11 +14,17 @@ RCT_EXTERN_METHOD(initializeWithApiToken:(NSString *)apiToken
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(updateStoreId: (NSString *)storeId
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(trackProfileIdentifiedByCustomerIdEvent:(NSString *)customerId
+                  storeId:(NSString *)storeId
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(trackProfileIdentifiedByEmailEvent:(NSString *)email
+                  storeId:(NSString *)storeId
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
@@ -31,15 +37,6 @@ RCT_EXTERN_METHOD(trackProductViewedEvent: (NSString *)productId
 
 RCT_EXTERN_METHOD(trackProductListingViewedEvent:(NSString *)listingType
                   listingAttributes:(NSDictionary *)listingAttributes
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-// Deprecated
-RCT_EXTERN_METHOD(trackWishlistAddedToEvent:(NSString *)productId
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-//Deprecated
-RCT_EXTERN_METHOD(trackWishlistRemovedFromEvent:(NSString *)productId
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

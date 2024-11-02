@@ -4,11 +4,6 @@ import UserNotifications
 
 @objc(OmetriaReactNativeSdk)
 class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDelegate {
-
-    // No longer needed since 2.4.0
-    // static let RNOmetriaRCTEventNameOnNotificationInteracted = "onNotificationInteracted"
-    // static let RNOmetriaRCTEventNameOnDeepLinkInteracted = "onDeepLinkInteracted"
-
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
     }
@@ -16,11 +11,6 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     override static func requiresMainQueueSetup() -> Bool {
         return true
     }
-
-    // No longer needed since 2.4.0
-    /* override func supportedEvents() -> [String]! {
-        return [Self.RNOmetriaRCTEventNameOnNotificationInteracted, Self.RNOmetriaRCTEventNameOnDeepLinkInteracted]
-    }*/
 
     override func constantsToExport() -> [AnyHashable : Any]! {
         return [:]
@@ -41,16 +31,21 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         initialize(apiToken: apiToken, options: nil, resolve: resolve, reject: reject)
     }
 
-
-    @objc(trackProfileIdentifiedByCustomerIdEvent:resolver:rejecter:)
-    func trackProfileIdentifiedByCustomerIdEvent(customerId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().trackProfileIdentifiedEvent(customerId: customerId)
+    @objc(updateStoreId:resolver:rejecter:)
+    func updateStoreId(storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().updateStoreIdentifier(storeId: storeId)
         resolve(nil)
     }
 
-    @objc(trackProfileIdentifiedByEmailEvent:resolver:rejecter:)
-    func trackProfileIdentifiedByEmailEvent(email: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().trackProfileIdentifiedEvent(email: email)
+  @objc(trackProfileIdentifiedByCustomerIdEvent:storeId:resolver:rejecter:)
+    func trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().trackProfileIdentifiedEvent(customerId: customerId, storeId: storeId)
+        resolve(nil)
+    }
+
+  @objc(trackProfileIdentifiedByEmailEvent:storeId:resolver:rejecter:)
+    func trackProfileIdentifiedByEmailEvent(email: String, storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().trackProfileIdentifiedEvent(email: email, storeId: storeId)
         resolve(nil)
     }
 
@@ -70,20 +65,6 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     @objc(trackProductListingViewedEvent:listingAttributes:resolver:rejecter:)
     func trackProductListingViewedEvent(listingType: String?, listingAttributes: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProductListingViewedEvent(listingType: listingType, listingAttributes: listingAttributes)
-        resolve(nil)
-    }
-
-    // Deprecated
-    @objc(trackWishlistAddedToEvent:resolver:rejecter:)
-    func trackWishlistAddedToEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        // Ometria.sharedInstance().trackWishlistAddedToEvent(productId: productId)
-        resolve(nil)
-    }
-
-    // Deprecated
-    @objc(trackWishlistRemovedFromEvent:resolver:rejecter:)
-    func trackWishlistRemovedFromEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        // Ometria.sharedInstance().trackWishlistRemovedFromEvent(productId: productId)
         resolve(nil)
     }
 
