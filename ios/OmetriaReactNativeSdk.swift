@@ -33,7 +33,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
 
     @objc(updateStoreId:resolver:rejecter:)
     func updateStoreId(storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().updateStoreIdentifier(storeId: storeId)
+      Ometria.sharedInstance().updateStoreId(storeId: storeId)
         resolve(nil)
     }
 
