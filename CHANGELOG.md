@@ -1,3 +1,11 @@
+# 2.5.0
+
+2024-11
+
+- Updated ReactNative to 0.76.1 (Note that the new architecture is not supported yet)
+- Updated Ometria native SDK to the latest versions
+- Added storeId support
+
 # 2.4.1
 
 2024-06
