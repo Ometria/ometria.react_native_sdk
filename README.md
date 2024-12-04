@@ -126,7 +126,7 @@ Currently this event clears the stored ids (email and/or customer id) from the p
 
 Ometria supports multiple stores for the same ecommerce platform (e.g. separate stores for different countries). There are three different methods for interacting with the store identifier for the current app installment.
 
-### 1. Using an optional parameter in the `profileIdentified` events tracking methods
+#### 1. Using an optional parameter in the `profileIdentified` events tracking methods
 
 ```js
 trackProfileIdentifiedEvent(email: String, storeId?: String)
