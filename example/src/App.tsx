@@ -227,6 +227,7 @@ const App = () => {
 
   const handleUpdateStoreId = (storeId: string | null) => {
     Ometria.updateStoreId(storeId);
+    setAuthModal(false);
   };
 
   // EFFECTS
