@@ -122,7 +122,7 @@ Ometria.trackProfileDeidentifiedEvent();
 
 Currently this event clears the stored ids (email and/or customer id) from the phone's local storage. It has no other effect within Ometria.
 
-## Update store identifier
+### Update store identifier
 
 Ometria supports multiple stores for the same ecommerce platform (e.g. separate stores for different countries). There are three different methods for interacting with the store identifier for the current app installment.
 
