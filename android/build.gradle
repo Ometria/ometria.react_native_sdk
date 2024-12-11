@@ -143,10 +143,10 @@ dependencies {
    if (is_production) {
      implementation "com.ometria:android-sdk:$ometria_android_sdk_version"
    } else {
-     implementation fileTree(dir: "libs", include: ["*.aar"]) // Comment this if you want to use the local AAR in release mode
+     implementation fileTree(dir: "libs", include: ["*.aar"]) // [DEBUG] Comment this if you want to use the local AAR in release mode
      implementation 'org.chromium.net:cronet-embedded:76.3809.111'
      compileOnly files('libs/OmetriaSDK-debug.aar')
-     debugImplementation files('libs/OmetriaSDK-debug.aar') // Comment this if you want to use the local AAR in release mode
+     debugImplementation files('libs/OmetriaSDK-debug.aar') // [DEBUG] Comment this if you want to use the local AAR in release mode
    }
 
   api 'com.facebook.react:react-native:+'
