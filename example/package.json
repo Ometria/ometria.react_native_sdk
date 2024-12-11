@@ -21,19 +21,19 @@
     "@react-native-firebase/app": "^20.1.0",
     "@react-native-firebase/messaging": "^20.1.0",
     "react": "18.3.1",
-    "react-native": "0.76.1",
+    "react-native": "0.76.4",
     "react-native-permissions": "^3.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.2",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "15.0.0",
-    "@react-native-community/cli-platform-android": "15.0.0",
-    "@react-native-community/cli-platform-ios": "15.0.0",
-    "@react-native/babel-preset": "0.76.1",
-    "@react-native/eslint-config": "0.76.1",
-    "@react-native/metro-config": "0.76.1",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
+    "@react-native-community/cli-platform-ios": "15.0.1",
+    "@react-native/babel-preset": "0.76.4",
+    "@react-native/eslint-config": "0.76.4",
+    "@react-native/metro-config": "0.76.4",
     "@react-native/typescript-config": "0.76.1",
     "@types/react": "^18.2.6",
     "@types/react-test-renderer": "^18.0.0",
@@ -47,6 +47,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "packageManager": "yarn@3.6.4"
+  }
 }
