@@ -166,8 +166,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun onNewToken(token: String) {
-    // TODO: Remove this in production
-    Ometria.instance().onNewToken(token, true)
+    Ometria.instance().onNewToken(token)
   }
 
   @ReactMethod

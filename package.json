@@ -8,8 +8,8 @@
   "react-native": "src/index",
   "source": "src/index",
   "ometria_sdk_version": {
-    "ios": "1.6.0",
-    "android": "1.7.0"
+    "ios": "1.7.0",
+    "android": "1.8.0"
   },
   "files": [
     "src",
@@ -73,11 +73,6 @@
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint && yarn typescript"
-    }
   },
   "commitlint": {
     "extends": [
