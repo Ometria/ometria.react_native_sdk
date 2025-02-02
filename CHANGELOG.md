@@ -1,3 +1,11 @@
+# 2.6.0
+
+2025-02
+
+- Updated ReactNative to 0.77.0 (Note that the new architecture is not supported yet by the Ometria SDK and you must use the legacy architecture)
+- Updated Ometria native SDK to the latest versions - 🍏 1.8.0 iOS & 🤖 1.9.0 Android.
+- Added in example an optional way to send the FCM token on app background state, once per week.
+
 # 2.5.0
 
 2024-12
@@ -21,7 +29,7 @@
 - Deprecated `onNotificationInteracted` method. Use `onNotificationOpenedApp` instead for handling notification interaction.
 - Deprecated `setBackgroundMessageHandler`Android method. Use the new method `onAndroidBackgroundMessage` to handle background messages on Android.
 - Changed `onNotificationOpenedApp` signature to include the remote message object as a parameter for better compatibility with the native SDK.
-- Updated Ometria native SDK to the latest versions - 🍏 1.5.1 iOS & 🤖 1.6.2 Android. Both SDK  support quit app state notification handling.
+- Updated Ometria native SDK to the latest versions - 🍏 1.5.1 iOS & 🤖 1.6.2 Android. Both SDK support quit app state notification handling.
 
 # 2.3.0
 
