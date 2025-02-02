@@ -31,11 +31,6 @@ def sharedConfig
   pod 'ometria-react-native-sdk', :path => '../..', :modular_headers => true
 end
 
-target 'sampleAppTests' do
-  inherit! :complete
-  # Pods for testing
-end
-
 target 'sampleApp' do
   config = use_native_modules!
   sharedConfig
