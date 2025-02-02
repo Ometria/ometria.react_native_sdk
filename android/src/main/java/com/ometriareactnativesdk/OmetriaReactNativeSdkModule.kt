@@ -68,7 +68,9 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   @ReactMethod
   fun trackProductListingViewedEvent(listingType: String? = null,
                                      listingAttributes: ReadableMap? = null) {
-    Ometria.instance().trackProductListingViewedEvent(listingType, listingAttributes?.toHashMap().orEmpty() )
+    Ometria.instance().trackProductListingViewedEvent(listingType,
+      listingAttributes?.toHashMap().orEmpty() as Map<String, Any>
+    )
   }
 
   @ReactMethod
@@ -113,14 +115,16 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   @ReactMethod
   fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackScreenViewedEvent(screenName, additionalInfo?.toHashMap()
-      ?: mutableMapOf())
+    Ometria.instance().trackScreenViewedEvent(screenName, (additionalInfo?.toHashMap()
+      ?: mutableMapOf()) as Map<String, Any>
+    )
   }
 
   @ReactMethod
   fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackCustomEvent(customEventType, additionalInfo?.toHashMap()
-      ?: mutableMapOf())
+    Ometria.instance().trackCustomEvent(customEventType, (additionalInfo?.toHashMap()
+      ?: mutableMapOf()) as Map<String, Any>
+    )
   }
 
   @ReactMethod
