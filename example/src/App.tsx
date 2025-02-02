@@ -24,6 +24,7 @@ import {
   getOmetriaTokenFromStorage,
   openUrl,
   setOmetriaTokenToStorage,
+  setThrottledBackgroundCallback,
 } from './utils';
 
 const App = () => {
@@ -106,7 +107,17 @@ const App = () => {
       Ometria.onNewToken(pushToken)
     );
 
-    // C. Function that handles user interaction with push notifications event 🍏 & 🤖
+    // C. Get the new token and send it when moving to the background, with a frequency of once a week (optional)
+    setThrottledBackgroundCallback(async () => {
+      messaging()
+        .getToken()
+        .then((pushToken: string) => {
+          Ometria.onNewToken(pushToken);
+          console.log('🔑 Firebase token in the background:', pushToken);
+        });
+    });
+
+    // D. Function that handles user interaction with push notifications event 🍏 & 🤖
     const onNotificationOpenedApp = async (
       remoteMessage: FirebaseMessagingTypes.RemoteMessage
     ) => {
@@ -125,7 +136,7 @@ const App = () => {
       Ometria.flush();
     };
 
-    // D. Check for notification that opened the app from a quit state 🍏 & 🤖
+    // E. Check for notification that opened the app from a quit state 🍏 & 🤖
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
@@ -135,7 +146,7 @@ const App = () => {
         }
       });
 
-    // E. Subscribe to notification that opens the app from a background state 🍏 & 🤖
+    // F. Subscribe to notification that opens the app from a background state 🍏 & 🤖
     messaging().onNotificationOpenedApp((remoteMessage) => {
       if (remoteMessage) {
         console.log('🔔 Notification opened the app from background');
@@ -143,7 +154,7 @@ const App = () => {
       }
     });
 
-    // F. Subscribe to foreground PN messages 🍏 & 🤖
+    // G. Subscribe to foreground PN messages 🍏 & 🤖
     const unsubscribeFromMessages = messaging().onMessage(
       async (remoteMessage) => {
         console.log('📭 Foreground message received:', remoteMessage);
