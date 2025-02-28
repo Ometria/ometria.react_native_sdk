@@ -289,7 +289,19 @@ This event should be triggered on:
 - any similar screens
 
 ```js
-Ometria.trackProductListingViewedEvent();
+Ometria.trackProductListingViewedEvent(listingType: string, listingAttributes: {type: string, id: string});
+```
+
+The `listingType` parameter can be any string the client chooses (currently has no effect, but helps us and the client to see what kind of listing page the user viewed). We recommend setting this to "category" for example for category pages or "search" for a search results page.
+The `listingAttributes` parameter should be an object that consists of 2 fields:
+* "type" which should be an attribute that exists in the Ometria database. For example "shoe-colour".
+* "id" which should be an attribute their_id that exists in the Ometria database. For example "red".
+
+Both "id" and "type" are needed to correctly specify attributes.
+
+for example:
+```js
+Ometria.trackProductListingViewedEvent("category", {"type": "shoe-colour", "id": "red"});
 ```
 
 ### Screen viewed
