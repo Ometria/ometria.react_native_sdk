@@ -22,6 +22,25 @@ type OmetriaReactNativeSdkCoreType = {
     storeId?: MaybeNull<string>
   ) => void;
 
+  /**
+   * Tracks the current app user being identified by both email and customerId.
+   * This method is used when an app user has just identified themselves
+   *
+   * Note: If you don't have one of the values (email or customerId),
+   * you can use the alternate versions of this method:
+   * - trackProfileIdentifiedByEmailEvent(email: string)
+   * - trackProfileIdentifiedByCustomerIdEvent(customerId: string)
+   *
+   * @param email - The email by which you identify a particular user in your database.
+   * @param customerId - The ID reserved for a particular user in your database.
+   * @param storeId - (Optional) The string representing the store identifier.
+   */
+  trackProfileIdentifiedEvent: (
+    customerId: string,
+    email: string,
+    storeId?: MaybeNull<string>
+  ) => void;
+
   updateStoreId: (storeId: MaybeNull<string>) => void;
 
   trackProfileDeidentifiedEvent: () => void;

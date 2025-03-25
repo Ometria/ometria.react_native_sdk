@@ -19,6 +19,7 @@ const {
   trackProfileIdentifiedByCustomerIdEvent:
     _trackProfileIdentifiedByCustomerIdEvent,
   trackProfileIdentifiedByEmailEvent: _trackProfileIdentifiedByEmailEvent,
+  trackProfileIdentifiedEvent: _trackProfileIdentifiedEvent,
   trackOrderCompletedEvent: _trackOrderCompletedEvent,
   trackScreenViewedEvent: _trackScreenViewedEvent,
   trackCustomEvent: _trackCustomEvent,
@@ -28,7 +29,7 @@ const {
   onNotificationInteracted: _onNotificationInteracted,
 } = OmetriaReactNativeSdk as unknown as OmetriaReactNativeSdkInternalType;
 
-// 🛟  Custom implementation for methods that need an optional param
+// 🛟  Custom implementation for methods that need an optional param for Android
 OmetriaReactNativeSdk.trackProfileIdentifiedByCustomerIdEvent = (
   customerId: string,
   storeId: MaybeNull<string> = null
@@ -38,6 +39,12 @@ OmetriaReactNativeSdk.trackProfileIdentifiedByEmailEvent = (
   email: string,
   storeId: MaybeNull<string> = null
 ) => _trackProfileIdentifiedByEmailEvent(email, storeId);
+
+OmetriaReactNativeSdk.trackProfileIdentifiedEvent = (
+  customerId: string,
+  email: string,
+  storeId: MaybeNull<string> = null
+) => _trackProfileIdentifiedEvent(customerId, email, storeId);
 
 OmetriaReactNativeSdk.trackOrderCompletedEvent = (
   orderId: string,
