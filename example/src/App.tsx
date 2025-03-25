@@ -192,14 +192,32 @@ const App = () => {
   };
 
   /**
-   * Handle Login by Email or UserId
-   * @param method {userEmail?: String, customerId?: String}
+   * Handle Identification by Email or UserId and maybe storeId
+   * @param method {email?: String, customerId?: String, storeId?: String}
    */
-  const handleLogin = (method: { userEmail?: string; userId?: string }) => {
-    method.userEmail &&
-      Ometria.trackProfileIdentifiedByEmailEvent(method.userEmail);
-    method.userId &&
-      Ometria.trackProfileIdentifiedByCustomerIdEvent(method.userId);
+  const handleProfileIdentified = (method: {
+    email?: string;
+    customerId?: string;
+    storeId?: string;
+  }) => {
+    // I want it to be null, not empty string
+    const updatedStoreId = method.storeId ? method.storeId : null;
+    if (!!method.email && !!method.customerId) {
+      Ometria.trackProfileIdentifiedEvent(
+        method.customerId,
+        method.email,
+        updatedStoreId
+      );
+      setAuthModal(false);
+      return;
+    }
+    method.email &&
+      Ometria.trackProfileIdentifiedByEmailEvent(method.email, updatedStoreId);
+    method.customerId &&
+      Ometria.trackProfileIdentifiedByCustomerIdEvent(
+        method.customerId,
+        updatedStoreId
+      );
     setAuthModal(false);
   };
 
@@ -287,7 +305,7 @@ const App = () => {
         onUpdateStoreId={handleUpdateStoreId}
         isVisible={authModal}
         onClose={() => setAuthModal(false)}
-        onLogin={handleLogin}
+        onProfileIdentified={handleProfileIdentified}
         /* Only for  reinitialization feature */
         reinitialization={{
           ometriaToken,
@@ -435,7 +453,7 @@ const EventsModal: React.FC<{
 const AuthModal: React.FC<AuthModalProps> = ({
   isVisible,
   onClose,
-  onLogin,
+  onProfileIdentified,
   onUpdateStoreId,
   reinitialization,
   ometriaIsInitialized,
@@ -451,7 +469,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Text style={styles.title}>Change Login Info 🔐</Text>
         <TextInput
           style={styles.input}
@@ -473,6 +491,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         </TouchableOpacity>
         {ometriaIsInitialized && (
           <>
+            <Text>Customer Id:</Text>
             <TextInput
               style={styles.input}
               value={userId}
@@ -480,14 +499,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               placeholderTextColor="#000"
               onChangeText={setUserId}
             />
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => {
-                onLogin({ userId });
-              }}
-            >
-              <Text style={styles.text}>Login with customer ID</Text>
-            </TouchableOpacity>
+            <Text>Email:</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -495,12 +507,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               placeholderTextColor="#000"
               onChangeText={setUserEmail}
             />
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => onLogin({ userEmail })}
-            >
-              <Text style={styles.text}>Login with customer Email</Text>
-            </TouchableOpacity>
+            <Text>Store Id (optional):</Text>
             <TextInput
               style={styles.input}
               placeholder="Store Id"
@@ -510,16 +517,62 @@ const AuthModal: React.FC<AuthModalProps> = ({
             />
             <TouchableOpacity
               style={styles.btn}
+              onPress={() => {
+                if (!userEmail) {
+                  Alert.alert('Please provide a customer Email');
+                  return;
+                }
+                onProfileIdentified({ email: userEmail, storeId: storeId });
+              }}
+            >
+              <Text style={styles.text}>
+                Identify with Customer Email (± Store Id)
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => {
+                if (!userId) {
+                  Alert.alert('Please provide a customer Id');
+                  return;
+                }
+                onProfileIdentified({ customerId: userId, storeId: storeId });
+              }}
+            >
+              <Text style={styles.text}>
+                Identify with Customer Id (± Store Id)
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => {
+                if (!userId || !userEmail) {
+                  Alert.alert('Please provide a customer Id and Email');
+                  return;
+                }
+                onProfileIdentified({
+                  customerId: userId,
+                  storeId: storeId,
+                  email: userEmail,
+                });
+              }}
+            >
+              <Text style={styles.text}>
+                Identify with Customer Id, Email (± Store Id)
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btn}
               onPress={() => onUpdateStoreId(storeId)}
             >
-              <Text style={styles.text}>Update store Id</Text>
+              <Text style={styles.text}>Update Store Id only</Text>
             </TouchableOpacity>
           </>
         )}
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
           <Text style={styles.text}>Close settings</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </Modal>
   );
 };
@@ -554,6 +607,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   input: {
+    marginTop: 4,
+    marginBottom: 12,
     padding: 12,
     color: '#000',
     borderColor: '#33323A',
@@ -561,7 +616,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     padding: 12,
-    marginVertical: 12,
+    marginVertical: 6,
     alignItems: 'center',
     backgroundColor: '#1e1f4d',
   },
@@ -570,5 +625,11 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     alignItems: 'center',
     backgroundColor: 'grey',
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#33323A',
+    marginTop: 12,
+    marginBottom: 24,
   },
 });
