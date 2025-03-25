@@ -28,6 +28,12 @@ RCT_EXTERN_METHOD(trackProfileIdentifiedByEmailEvent:(NSString *)email
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(trackProfileIdentifiedEvent:(NSString *)customerId
+                  email:(NSString *)email
+                  storeId:(NSString *)storeId
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(trackProfileDeidentifiedEvent:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

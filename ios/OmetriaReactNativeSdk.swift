@@ -49,6 +49,12 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         resolve(nil)
     }
 
+  @objc(trackProfileIdentifiedEvent:email:storeId:resolver:rejecter:)
+  func trackProfileIdentifiedEvent(customerId: String, email: String, storeId: String?, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+      Ometria.sharedInstance().trackProfileIdentifiedEvent(customerId: customerId, email: email, storeId: storeId)
+      resolve(nil)
+  }
+
     @objc(trackProfileDeidentifiedEvent:rejecter:)
     func trackProfileDeidentifiedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProfileDeidentifiedEvent()
