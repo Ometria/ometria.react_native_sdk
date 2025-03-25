@@ -56,6 +56,11 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
+  fun trackProfileIdentifiedEvent(customerId: String, email: String, storeId: String? = null) {
+    Ometria.instance().trackProfileIdentifiedEvent(customerId, email, storeId)
+  }
+
+  @ReactMethod
   fun trackProfileDeidentifiedEvent() {
     Ometria.instance().trackProfileDeidentifiedEvent()
   }
