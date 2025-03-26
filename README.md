@@ -93,18 +93,23 @@ Once the SDK is initialised, you can track an event by calling its dedicated met
 
 ### Profile identified
 
-An app user has just identified themselves, i.e. logged in.
+An app user has just identified themselves, i.e. logged in. Their **customer ID** is their **user ID** in your database.
 
 ```js
 Ometria.trackProfileIdentifiedByCustomerIdEvent('test_customer_id');
 ```
 
-Their **customer ID** is their **user ID** in your database.
 Sometimes a user only supplies their email address without fully logging in or having an account. In that case, Ometria can profile match based on email:
 
 ```js
 Ometria.trackProfileIdentifiedByEmailEvent('test@gmail.com');
 ```
+
+If you have both their email and their customerId Ometria can profile match based on both and you should call:
+
+````js
+Ometria.trackProfileIdentifiedEvent('test_customer_id','test@gmail.com');
+````
 
 Having a **customerId** makes profile matching more robust.
 
@@ -118,7 +123,7 @@ You can use this if an user logs out.
 
 ```js
 Ometria.trackProfileDeidentifiedEvent();
-```
+````
 
 Currently this event clears the stored ids (email and/or customer id) from the phone's local storage. It has no other effect within Ometria.
 
@@ -129,8 +134,9 @@ Ometria supports multiple stores for the same ecommerce platform (e.g. separate 
 #### 1. Using an optional parameter in the `profileIdentified` events tracking methods
 
 ```js
-trackProfileIdentifiedEvent(email: String, storeId?: String)
-trackProfileIdentifiedEvent(customerId: String,  storeId?: String)
+trackProfileIdentifiedEvent(email: string, storeId?: string)
+trackProfileIdentifiedEvent(customerId: string,  storeId?: string)
+trackProfileIdentifiedEvent(customerId: string, email: string, storeId?: string);
 ```
 
 When omitting the `storeId` parameter, the store identifier will not be affected in any way. Only sending a valid parameter will cause the store identifier to be updated to that value.
@@ -138,7 +144,7 @@ When omitting the `storeId` parameter, the store identifier will not be affected
 ##### 2. Using a separate method that allows setting/resetting the store identifier
 
 ```js
-updateStoreId(storeId: String | null)
+updateStoreId(storeId: string | null)
 ```
 
 - with a null `storeId` parameter, the method resets the store identifier.
@@ -212,19 +218,19 @@ This helps recover from lost or out of sync basket events: the latest update is 
 
 **OmetriaBasketItem** is an object that describes the contents of a shopping basket item. It can have its own price and quantity based on different rules and promotions that are being applied. It has the following properties:
 
-> - **productId**: (`String`, required) - A string representing the unique identifier of this product.
-> - **sku**: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
-> - **quantity**: (`Int`, required) - The number of items that this entry represents.
-> - **price**: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item
-> - **variandId**: (`String`, optional) - An identifier for a variant product associated with this line item.
+> - **productId**: (`string`, required) - A string representing the unique identifier of this product.
+> - **sku**: (`string`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
+> - **quantity**: (`int`, required) - The number of items that this entry represents.
+> - **price**: (`float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item
+> - **variandId**: (`string`, optional) - An identifier for a variant product associated with this line item.
 
 **OmetriaBasket** is an object that describes the contents of a shopping basket and has the following properties:
 
-> - **id**: (`String`, optional) - A unique identifier for this basket
-> - **currency**: (`String`, required) - A string representing the currency in ISO 4217 three-letter currency code, e.g. `"USD"`, `"GBP"`
+> - **id**: (`string`, optional) - A unique identifier for this basket
+> - **currency**: (`string`, required) - A string representing the currency in ISO 4217 three-letter currency code, e.g. `"USD"`, `"GBP"`
 > - **totalPrice**: (`float`, required) - A float value representing the pricing.
-> - **items**: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
-> - **link**: (`String`) - A deeplink to the web or in-app page for this basket. Can be used in a notification sent to the user, e.g. "Forgot to check out? Here's your basket to continue: 'https://eg.com/basket_url'". Following that link should take them straight to the basket page.
+> - **items**: (`OmetriaBasketItem[]`) - An array containing the item entries in this basket.
+> - **link**: (`string`) - A deeplink to the web or in-app page for this basket. Can be used in a notification sent to the user, e.g. "Forgot to check out? Here's your basket to continue: 'https://eg.com/basket_url'". Following that link should take them straight to the basket page.
 
 ### Checkout started
 
@@ -294,14 +300,19 @@ Ometria.trackProductListingViewedEvent(listingType: string, listingAttributes: {
 
 The `listingType` parameter can be any string the client chooses (currently has no effect, but helps us and the client to see what kind of listing page the user viewed). We recommend setting this to "category" for example for category pages or "search" for a search results page.
 The `listingAttributes` parameter should be an object that consists of 2 fields:
-* "type" which should be an attribute that exists in the Ometria database. For example "shoe-colour".
-* "id" which should be an attribute their_id that exists in the Ometria database. For example "red".
+
+- "type" which should be an attribute that exists in the Ometria database. For example "shoe-colour".
+- "id" which should be an attribute their_id that exists in the Ometria database. For example "red".
 
 Both "id" and "type" are needed to correctly specify attributes.
 
 for example:
+
 ```js
-Ometria.trackProductListingViewedEvent("category", {"type": "shoe-colour", "id": "red"});
+Ometria.trackProductListingViewedEvent('category', {
+  type: 'shoe-colour',
+  id: 'red',
+});
 ```
 
 ### Screen viewed
