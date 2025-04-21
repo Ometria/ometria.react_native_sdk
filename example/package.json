@@ -45,6 +45,11 @@
     "typescript": "5.0.4",
     "babel-plugin-module-resolver": "^5.0.0"
   },
+  "overrides": {
+    "metro": {
+      "image-size": "1.2.1"
+    }
+  },
   "engines": {
     "node": ">=18"
   }
