@@ -427,7 +427,14 @@ const EventsModal: React.FC<{
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
           <Text style={styles.text}>CLOSE EVENTS</Text>
         </TouchableOpacity>
-        <ScrollView>
+        {/*See https://github.com/facebook/react-native/issues/48822 for scrollView height issue*/}
+        <ScrollView
+          style={Platform.select({
+            android: {
+              height: 300,
+            },
+          })}
+        >
           {Object.values(Events).map((eventValue) => (
             <TouchableOpacity
               key={eventValue}
