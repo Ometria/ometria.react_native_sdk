@@ -2,7 +2,7 @@
 
 2025-06
 
-- Updated Ometria native SDK to the latest versions - 🍏 1.8.2 iOS & 🤖 1.10.4 Android.
+- Updated Ometria native SDK to the latest versions - 🍏 1.8.2 iOS & 🤖 1.10.3 Android.
 - Added new method `trackProfileIdentifiedEvent`. Tracks the current app user being identified by both email, customerId and optionally a storeId. If you don't have one of the values (email or customerId), you can use the alternate versions of this method: `trackProfileIdentifiedByEmailEvent(email: string)` or `trackProfileIdentifiedByCustomerIdEvent(customerId: string)`.
 
 # 2.6.0
