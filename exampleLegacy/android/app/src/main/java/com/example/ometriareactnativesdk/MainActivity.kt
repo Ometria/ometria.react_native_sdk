@@ -1,4 +1,4 @@
-package com.sampleapp
+package com.example.ometriareactnativesdk
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
