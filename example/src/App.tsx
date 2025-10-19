@@ -11,8 +11,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import messaging, {
+import {
   FirebaseMessagingTypes,
+  getMessaging,
+  getToken,
+  onMessage,
+  onTokenRefresh,
+  getInitialNotification,
+  onNotificationOpenedApp as onNotificationOpenedAppListener,
 } from '@react-native-firebase/messaging';
 import Ometria from 'react-native-ometria';
 import { RESULTS, requestNotifications } from 'react-native-permissions';
@@ -37,7 +43,7 @@ const App = () => {
   const [ometriaIsInitalized, setOmetriaIsInitalized] = useState(false);
 
   const [notificationContent, setNotificationContent] = useState(
-    'Receive or interract with a notification to see its content here.'
+    'Receive or interract with a notification to see its content here.',
   );
 
   /*  METHODS */
@@ -60,19 +66,21 @@ const App = () => {
           console.log('🎉 Ometria has been initialized!');
 
           // Request Push Notifications permission after Ometria SDK initialization
-          await requestNotifications(['alert', 'sound', 'badge']).then(
-            ({ status }) => {
+          await requestNotifications(['alert', 'sound', 'badge'])
+            .then(({ status }) => {
               console.log('🔔 Push Notification permissions status:', status);
               if (status === RESULTS.GRANTED) {
                 handlePushNotifications();
                 console.log('🔔 Push Notification permissions granted!');
               }
-            }
-          );
+            })
+            .catch(error => {
+              console.error('😕 Error requesting PN permissions: ', error);
+            });
         },
-        (error) => {
+        error => {
           throw error;
-        }
+        },
       );
     } catch (error) {
       setAuthModal(false);
@@ -94,32 +102,34 @@ const App = () => {
    */
 
   const handlePushNotifications = () => {
+    const messagingInstance = getMessaging();
+
     // A. Provides Ometria SDK with the FCM token 🍏 & 🤖
-    messaging()
-      .getToken()
+    getToken(messagingInstance)
       .then((pushToken: string) => {
         Ometria.onNewToken(pushToken);
         console.log('🔑 Firebase token:', pushToken);
+      })
+      .catch(error => {
+        console.error('😕 Error getting FCM token: ', error);
       });
 
     // B. Listen for new FCM tokens and provide them to the Ometria SDK 🍏 & 🤖
-    messaging().onTokenRefresh((pushToken: string) =>
-      Ometria.onNewToken(pushToken)
+    onTokenRefresh(messagingInstance, (pushToken: string) =>
+      Ometria.onNewToken(pushToken),
     );
 
     // C. Get the new token and send it when moving to the background, with a frequency of once a week (optional)
     setThrottledBackgroundCallback(async () => {
-      messaging()
-        .getToken()
-        .then((pushToken: string) => {
-          Ometria.onNewToken(pushToken);
-          console.log('🔑 Firebase token in the background:', pushToken);
-        });
+      getToken(messagingInstance).then((pushToken: string) => {
+        Ometria.onNewToken(pushToken);
+        console.log('🔑 Firebase token in the background:', pushToken);
+      });
     });
 
     // D. Function that handles user interaction with push notifications event 🍏 & 🤖
     const onNotificationOpenedApp = async (
-      remoteMessage: FirebaseMessagingTypes.RemoteMessage
+      remoteMessage: FirebaseMessagingTypes.RemoteMessage,
     ) => {
       console.log('🔔 Notification has been interacted with and opened app.');
       setNotificationContent(JSON.stringify(remoteMessage, null, 2));
@@ -137,17 +147,15 @@ const App = () => {
     };
 
     // E. Check for notification that opened the app from a quit state 🍏 & 🤖
-    messaging()
-      .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          console.log('🔔 Notification opened the app from quit state');
-          onNotificationOpenedApp(remoteMessage);
-        }
-      });
+    getInitialNotification(messagingInstance).then(remoteMessage => {
+      if (remoteMessage) {
+        console.log('🔔 Notification opened the app from quit state');
+        onNotificationOpenedApp(remoteMessage);
+      }
+    });
 
     // F. Subscribe to notification that opens the app from a background state 🍏 & 🤖
-    messaging().onNotificationOpenedApp((remoteMessage) => {
+    onNotificationOpenedAppListener(messagingInstance, remoteMessage => {
       if (remoteMessage) {
         console.log('🔔 Notification opened the app from background');
         onNotificationOpenedApp(remoteMessage);
@@ -155,8 +163,9 @@ const App = () => {
     });
 
     // G. Subscribe to foreground PN messages 🍏 & 🤖
-    const unsubscribeFromMessages = messaging().onMessage(
-      async (remoteMessage) => {
+    const unsubscribeFromMessages = onMessage(
+      messagingInstance,
+      async remoteMessage => {
         console.log('📭 Foreground message received:', remoteMessage);
         setNotificationContent(JSON.stringify(remoteMessage, null, 2));
         // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
@@ -166,7 +175,7 @@ const App = () => {
            Read more at: https://rnfirebase.io/messaging/usage#foreground-state-messages
            Don't forget to call onNotificationOpenedApp() if you want to handle the notification interaction event
         */
-      }
+      },
     );
     return unsubscribeFromMessages;
   };
@@ -176,16 +185,16 @@ const App = () => {
    * @param payload {url: String}
    */
   const handleDeepLinking = ({ url }: any) => {
-    Linking.canOpenURL(url).then((supported) => {
+    Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Ometria.processUniversalLink(url).then(
-          (response) => {
+          response => {
             Alert.alert('🔗 URL processed:', response);
           },
-          (error) => {
+          error => {
             console.log(error);
             Alert.alert('🔗 Unable to process URL: ' + url);
-          }
+          },
         );
       }
     });
@@ -206,7 +215,7 @@ const App = () => {
       Ometria.trackProfileIdentifiedEvent(
         method.customerId,
         method.email,
-        updatedStoreId
+        updatedStoreId,
       );
       setAuthModal(false);
       return;
@@ -216,7 +225,7 @@ const App = () => {
     method.customerId &&
       Ometria.trackProfileIdentifiedByCustomerIdEvent(
         method.customerId,
-        updatedStoreId
+        updatedStoreId,
       );
     setAuthModal(false);
   };
@@ -231,7 +240,7 @@ const App = () => {
    */
   const saveNewOmetriaToken = async (
     newToken: string,
-    initializeWithNewToken: (token: string) => Promise<void>
+    initializeWithNewToken: (token: string) => Promise<void>,
   ) => {
     if (newToken === '') {
       Alert.alert('🔐 Token cannot be empty');
@@ -330,12 +339,10 @@ const EventsModal: React.FC<{
   onClose: () => void;
 }> = ({ isVisible, onClose }) => {
   const simulatePushTokenRefresh = () => {
-    messaging()
-      .getToken()
-      .then((pushToken: string) => {
-        Ometria.onNewToken(pushToken);
-        console.log('🔑 Firebase token:', pushToken);
-      });
+    getToken(getMessaging()).then((pushToken: string) => {
+      Ometria.onNewToken(pushToken);
+      console.log('🔑 Firebase token:', pushToken);
+    });
   };
 
   const deleteStoreId = () => {
@@ -435,7 +442,7 @@ const EventsModal: React.FC<{
             },
           })}
         >
-          {Object.values(Events).map((eventValue) => (
+          {Object.values(Events).map(eventValue => (
             <TouchableOpacity
               key={eventValue}
               style={styles.btn}
@@ -490,7 +497,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
           onPress={() =>
             reinitialization.saveNewOmetriaToken(
               reinitialization.ometriaToken,
-              reinitialization.handleOmetriaInit
+              reinitialization.handleOmetriaInit,
             )
           }
         >
