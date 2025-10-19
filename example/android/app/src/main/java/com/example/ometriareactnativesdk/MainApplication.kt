@@ -10,9 +10,11 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 
+// <OmetriaSetup>
 // Manual package import for local SDK development
 // Required when using the local SDK from parent folder instead of published npm package
 import com.ometriareactnativesdk.OmetriaReactNativeSdkPackage
+// </OmetriaSetup>
 
 class MainApplication : Application(), ReactApplication {
 
@@ -20,9 +22,11 @@ class MainApplication : Application(), ReactApplication {
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
+              // <OmetriaSetup>
               // Manual package registration for local SDK development
               // PackageList may not auto-detect the local SDK, so we add it explicitly
               add(OmetriaReactNativeSdkPackage())
+              // </OmetriaSetup>
             }
 
         override fun getJSMainModuleName(): String = "index"

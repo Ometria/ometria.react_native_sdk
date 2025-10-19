@@ -8,26 +8,34 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# <OmetriaSetup>
 # Setup react-native-permissions
 require_relative '../node_modules/react-native-permissions/scripts/setup'
+# </OmetriaSetup>
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
+# <OmetriaSetup>
 # Configure permissions for notifications
 setup_permissions(['Notifications'])
+# </OmetriaSetup>
 
+# <OmetriaSetup>
 # Firebase requires use_frameworks with static linkage
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
+# </OmetriaSetup>
 
 target 'sampleApp' do
   config = use_native_modules!
 
+  # <OmetriaSetup>
   # Manual linking for local SDK development
   # React Native autolinking only scans node_modules, but this example uses the local SDK
   # from the parent folder (via babel/metro config). Therefore, we manually link the iOS pod.
   pod 'ometria-react-native-sdk', :path => '../..', :modular_headers => true
+  # </OmetriaSetup>
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -46,8 +54,10 @@ target 'sampleApp' do
   end
 end
 
+# <OmetriaSetup>
 # Notification Service Extension target
 target 'NotificationsService' do
   use_frameworks! :linkage => :static
   pod 'Ometria', '~> 1.8.2'
 end
+# </OmetriaSetup>
