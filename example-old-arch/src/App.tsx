@@ -18,7 +18,7 @@ import Ometria from 'react-native-ometria';
 import { RESULTS, requestNotifications } from 'react-native-permissions';
 
 import { AuthModalProps } from './models';
-import { version, ometria_sdk_version } from '../package.json';
+import { version, ometria_sdk_version } from '../../package.json';
 import { Events, customOmetriaOptions, demoBasketItems } from './data';
 import {
   getOmetriaTokenFromStorage,

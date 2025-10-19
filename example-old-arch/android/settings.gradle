@@ -1,6 +1,10 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
-rootProject.name = 'sampleApp'
+rootProject.name = 'OmetriaReactNativeSdkExample'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+
+// Added by Ometeria
+include ':ometriareactnativesdk'
+project(':ometriareactnativesdk').projectDir = new File(rootProject.projectDir, '../../android')
