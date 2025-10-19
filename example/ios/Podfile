@@ -1,3 +1,6 @@
+# Disable the new architecture for now
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -5,8 +8,14 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+# Setup react-native-permissions
+require_relative '../node_modules/react-native-permissions/scripts/setup'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+# Configure permissions for notifications
+setup_permissions(['Notifications'])
 
 # Firebase requires use_frameworks with static linkage
 use_frameworks! :linkage => :static
@@ -14,6 +23,11 @@ $RNFirebaseAsStaticFramework = true
 
 target 'sampleApp' do
   config = use_native_modules!
+
+  # Manual linking for local SDK development
+  # React Native autolinking only scans node_modules, but this example uses the local SDK
+  # from the parent folder (via babel/metro config). Therefore, we manually link the iOS pod.
+  pod 'ometria-react-native-sdk', :path => '../..', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],

@@ -2344,7 +2344,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - Ometria (~> 1.8.2)
-  - ometria-react-native-sdk (from `../node_modules/react-native-ometria`)
+  - ometria-react-native-sdk (from `../..`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../node_modules/react-native/Libraries/Required`)
@@ -2449,7 +2449,7 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-07-07-RNv0.81.0-e0fc67142ec0763c6b6153ca2bf96df815539782
   ometria-react-native-sdk:
-    :path: "../node_modules/react-native-ometria"
+    :path: "../.."
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -2676,10 +2676,10 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b44e8a4e798c3e1f56bffccd0f591f674fb9198f
   RNFBApp: 4d2d631b593081c39565f67403f90b188c0f22f7
   RNFBMessaging: 50ae400edc5874bde8720104cdfc4b898be07479
-  RNPermissions: 0b0cdb0dfcc2fabc136a3d596220cc3d91977d79
+  RNPermissions: 8b10202756e7a2caac1313c5387ae636de446343
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 9b30b783a17681321b52ac507a37219d7d795ace
 
-PODFILE CHECKSUM: e6efeaf0ceb515cb45ecd20fb9c806a267fb188a
+PODFILE CHECKSUM: 2cefc1b41f72ec8051c8bb7a6ca7918407e987ca
 
 COCOAPODS: 1.16.2

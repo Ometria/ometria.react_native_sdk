@@ -116,6 +116,11 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Manual linking for local SDK development
+    // This links to the parent folder's Android module (../../android)
+    // Required because autolinking doesn't detect local packages outside node_modules
+    implementation project(':ometriareactnativesdk')
 }
 
 apply plugin: 'com.google.gms.google-services'
