@@ -1,6 +1,10 @@
 {
   "name": "sampleApp",
   "version": "0.0.1",
+  "ometria_sdk_version": {
+    "ios": "1.8.2",
+    "android": "1.10.3"
+  },
   "private": true,
   "scripts": {
     "android": "react-native run-android",
