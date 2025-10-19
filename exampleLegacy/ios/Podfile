@@ -31,3 +31,8 @@ target 'sampleApp' do
     )
   end
 end
+
+# Notification Service Extension target
+target 'NotificationsService' do
+  pod 'Ometria', '~> 1.8.2'
+end
