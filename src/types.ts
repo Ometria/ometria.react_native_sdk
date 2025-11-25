@@ -81,7 +81,7 @@ type OmetriaReactNativeSdkCoreType = {
 
   clear: () => void;
 
-  isLoggingEnabled: (enabled: Boolean) => Promise<void>;
+  isLoggingEnabled: (enabled: boolean) => Promise<void>;
 
   processUniversalLink: (url: string) => Promise<string>;
 
@@ -128,14 +128,14 @@ type OmetriaReactNativeSdkDeprecatedType = {
    * The event is no longer sent to the Ometria backend.
    * Will be removed in the next major version.
    */
-  trackWishlistAddedToEvent(productId: string): () => void;
+  trackWishlistAddedToEvent(productId: string): void;
 
   /**
    * @deprecated Deprecated since version 2.2.0.
    * The event is no longer sent to the Ometria backend.
    * Will be removed in the next major version.
    */
-  trackWishlistRemovedFromEvent(productId: string): () => void;
+  trackWishlistRemovedFromEvent(productId: string): void;
 
   /**
    * @deprecated Deprecated since version 2.3.0.
@@ -152,7 +152,7 @@ type OmetriaReactNativeSdkDeprecatedType = {
    * Call the new method `onNotificationReceived` for Android to let the SDK know that the notification was received.
    * Will be removed in the next major version.
    */
-  onMessageReceived(remoteMessage: string): () => void;
+  onMessageReceived(remoteMessage: FirebaseMessagingTypes.RemoteMessage): void;
 
   /**
    * Only for iOS

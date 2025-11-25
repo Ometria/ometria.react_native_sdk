@@ -39,6 +39,18 @@ const App = () => {
   const [authModal, setAuthModal] = useState(false);
   const [evtsModal, setEvtsModal] = useState(false);
 
+  // In RN 0.76+, the new architecture uses Bridgeless mode (RCTHost)
+  // Check for TurboModule support using multiple methods
+  const isBridgeless = (global as any).RN$Bridgeless === true;
+  const hasTurboModuleProxy = (global as any).__turboModuleProxy != null;
+  const isTurboModuleEnabled = isBridgeless || hasTurboModuleProxy;
+
+  console.log('🔧 Is Bridgeless mode enabled?', isBridgeless);
+  console.log('🔧 Has __turboModuleProxy?', hasTurboModuleProxy);
+  console.log('🔧 Is TurboModule/New Architecture enabled?', isTurboModuleEnabled);
+  console.log('📦 Ometria:', Ometria);
+  console.log('📦 Function type:', typeof Ometria.initializeWithApiToken);
+
   // A flag to prevent the user from sending events before the SDK is initialized in the sample app - not needed in production
   const [ometriaIsInitalized, setOmetriaIsInitalized] = useState(false);
 
@@ -58,6 +70,7 @@ const App = () => {
    */
   const handleOmetriaInit = async (token: string) => {
     try {
+      console.log('About to initialize Ometria SDK...');
       Ometria.initializeWithApiToken(token, customOmetriaOptions).then(
         async () => {
           setOmetriaIsInitalized(true);

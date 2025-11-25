@@ -1,166 +1,296 @@
 import { NativeModules, Platform } from 'react-native';
-
-import type {
-  OmetriaNotificationData,
-  OmetriaOptions,
-  OmetriaBasketItem,
-  OmetriaBasket,
-  OmetriaNotification,
-  OmetriaReactNativeSdkType,
-  MaybeNull,
-} from './types';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
-const OmetriaReactNativeSdk =
-  NativeModules.OmetriaReactNativeSdk as OmetriaReactNativeSdkType;
+import NativeOmetriaReactNativeSdk, {
+  isTurboModuleEnabled,
+  type Spec as NativeOmetriaReactNativeSdkSpec,
+} from './NativeOmetriaReactNativeSdk';
+import type {
+  MaybeNull,
+  OmetriaBasket,
+  OmetriaBasketItem,
+  OmetriaNotification,
+  OmetriaNotificationData,
+  OmetriaOnBackgroundMessagePayload,
+  OmetriaOptions,
+  OmetriaReactNativeSdkType,
+} from './types';
 
-// 🛟 Save original implementations
+type NativeRemoteMessage = FirebaseMessagingTypes.RemoteMessage;
+
+type NativeModuleType = NativeOmetriaReactNativeSdkSpec & {
+  onNotificationInteracted(remoteMessage: unknown): Promise<void>;
+};
+
+const LINKING_ERROR =
+  `The package 'react-native-ometria' is not linked correctly.\n` +
+  `• Make sure you have installed the package dependencies.\n` +
+  `• For iOS, run 'pod install' in the example app directory.\n` +
+  `• For Android, rebuild the app after installing.\n` +
+  `• If you are integrating manually, verify you have added the package modules.`;
+
+const nativeModule = (isTurboModuleEnabled
+  ? NativeOmetriaReactNativeSdk
+  : NativeModules.OmetriaReactNativeSdk) as NativeModuleType | undefined;
+
+if (!nativeModule) {
+  throw new Error(LINKING_ERROR);
+}
+
 const {
-  trackProfileIdentifiedByCustomerIdEvent:
-    _trackProfileIdentifiedByCustomerIdEvent,
-  trackProfileIdentifiedByEmailEvent: _trackProfileIdentifiedByEmailEvent,
-  trackProfileIdentifiedEvent: _trackProfileIdentifiedEvent,
-  trackOrderCompletedEvent: _trackOrderCompletedEvent,
-  trackScreenViewedEvent: _trackScreenViewedEvent,
-  trackCustomEvent: _trackCustomEvent,
-  onNotificationReceived: _onNotificationReceived,
-  initializeWithApiToken: _initializeWithApi,
-  parseNotification: _parseNotification,
-  onNotificationInteracted: _onNotificationInteracted,
-} = OmetriaReactNativeSdk as unknown as OmetriaReactNativeSdkInternalType;
+  initializeWithApiToken: nativeInitializeWithApiToken,
+  trackProfileIdentifiedByCustomerIdEvent: nativeTrackProfileIdentifiedByCustomerIdEvent,
+  trackProfileIdentifiedByEmailEvent: nativeTrackProfileIdentifiedByEmailEvent,
+  trackProfileIdentifiedEvent: nativeTrackProfileIdentifiedEvent,
+  updateStoreId: nativeUpdateStoreId,
+  trackProfileDeidentifiedEvent: nativeTrackProfileDeidentifiedEvent,
+  trackProductViewedEvent: nativeTrackProductViewedEvent,
+  trackProductListingViewedEvent: nativeTrackProductListingViewedEvent,
+  trackWishlistAddedToEvent: nativeTrackWishlistAddedToEvent,
+  trackWishlistRemovedFromEvent: nativeTrackWishlistRemovedFromEvent,
+  trackBasketViewedEvent: nativeTrackBasketViewedEvent,
+  trackBasketUpdatedEvent: nativeTrackBasketUpdatedEvent,
+  trackCheckoutStartedEvent: nativeTrackCheckoutStartedEvent,
+  trackOrderCompletedEvent: nativeTrackOrderCompletedEvent,
+  trackHomeScreenViewedEvent: nativeTrackHomeScreenViewedEvent,
+  trackDeepLinkOpenedEvent: nativeTrackDeepLinkOpenedEvent,
+  trackScreenViewedEvent: nativeTrackScreenViewedEvent,
+  trackCustomEvent: nativeTrackCustomEvent,
+  flush: nativeFlush,
+  clear: nativeClear,
+  isLoggingEnabled,
+  processUniversalLink,
+  onNewToken: nativeOnNewToken,
+  onMessageReceived: nativeOnMessageReceived,
+  onNotificationReceived: nativeOnNotificationReceived,
+  parseNotification: nativeParseNotification,
+  onNotificationInteracted: nativeOnNotificationInteracted,
+  onDeepLinkInteracted,
+} = nativeModule;
 
-// 🛟  Custom implementation for methods that need an optional param for Android
-OmetriaReactNativeSdk.trackProfileIdentifiedByCustomerIdEvent = (
+const coerceStoreId = (storeId: MaybeNull<string>) => storeId ?? null;
+
+const withParsedOmetriaPayload = (
+  remoteMessage: NativeRemoteMessage
+): NativeRemoteMessage => ({
+  ...remoteMessage,
+  data: {
+    ometria: JSON.parse(remoteMessage?.data?.ometria || '{}'),
+  },
+});
+
+
+const trackProfileIdentifiedByCustomerIdEvent = (
   customerId: string,
   storeId: MaybeNull<string> = null
-) => _trackProfileIdentifiedByCustomerIdEvent(customerId, storeId);
+) => {
+  void nativeTrackProfileIdentifiedByCustomerIdEvent(
+    customerId,
+    coerceStoreId(storeId)
+  );
+};
 
-OmetriaReactNativeSdk.trackProfileIdentifiedByEmailEvent = (
+const trackProfileIdentifiedByEmailEvent = (
   email: string,
   storeId: MaybeNull<string> = null
-) => _trackProfileIdentifiedByEmailEvent(email, storeId);
+) => {
+  void nativeTrackProfileIdentifiedByEmailEvent(email, coerceStoreId(storeId));
+};
 
-OmetriaReactNativeSdk.trackProfileIdentifiedEvent = (
+const trackProfileIdentifiedEvent = (
   customerId: string,
   email: string,
   storeId: MaybeNull<string> = null
-) => _trackProfileIdentifiedEvent(customerId, email, storeId);
+) => {
+  void nativeTrackProfileIdentifiedEvent(customerId, email, coerceStoreId(storeId));
+};
 
-OmetriaReactNativeSdk.trackOrderCompletedEvent = (
+const trackOrderCompletedEvent = (
   orderId: string,
   basket: MaybeNull<OmetriaBasket> = null
-) => _trackOrderCompletedEvent(orderId, basket);
+) => {
+  void nativeTrackOrderCompletedEvent(orderId, basket ?? null);
+};
 
-OmetriaReactNativeSdk.trackScreenViewedEvent = (
+const trackScreenViewedEvent = (
   screenName: string,
   additionalInfo: MaybeNull<object> = null
-) => _trackScreenViewedEvent(screenName, additionalInfo);
+) => {
+  void nativeTrackScreenViewedEvent(screenName, additionalInfo ?? null);
+};
 
-OmetriaReactNativeSdk.trackCustomEvent = (
+const trackCustomEvent = (
   customEventType: string,
   additionalInfo: MaybeNull<object> = null
-) => _trackCustomEvent(customEventType, additionalInfo);
-
-// Other custom implementations
-
-// 🛠️ Custom Implementation: initializeWithApiToken()
-OmetriaReactNativeSdk.initializeWithApiToken = (
-  token: string,
-  options?: OmetriaOptions
-) => _initializeWithApi(token, options ?? {});
-
-// 🛠️ Custom Implementation: onNotificationOpenedApp()
-OmetriaReactNativeSdk.onNotificationOpenedApp = async (remoteMessage) => {
-  const iOSRemoteMessage = {
-    ...remoteMessage,
-    data: {
-      ometria: JSON.parse(
-        remoteMessage?.data?.ometria || '{}'
-      ) as OmetriaNotificationData,
-    },
-  };
-
-  _onNotificationInteracted(
-    Platform.OS === 'ios' ? iOSRemoteMessage : remoteMessage
-  );
-  OmetriaReactNativeSdk.flush();
+) => {
+  void nativeTrackCustomEvent(customEventType, additionalInfo ?? null);
 };
 
-// 🛠️ Custom Implementation: onNotificationReceived()
-OmetriaReactNativeSdk.onNotificationReceived = (
+const initializeWithApiToken = (token: string, options?: OmetriaOptions) =>
+  nativeInitializeWithApiToken(token, options ?? {});
+
+const updateStoreId = (storeId: MaybeNull<string>) => {
+  void nativeUpdateStoreId(coerceStoreId(storeId));
+};
+
+const trackProfileDeidentifiedEvent = () => {
+  void nativeTrackProfileDeidentifiedEvent();
+};
+
+const trackProductViewedEvent = (productId: string) => {
+  void nativeTrackProductViewedEvent(productId);
+};
+
+const trackProductListingViewedEvent = (
+  listingType?: MaybeNull<string>,
+  listingAttributes?: MaybeNull<object>
+) => {
+  void nativeTrackProductListingViewedEvent(listingType ?? null, listingAttributes ?? null);
+};
+
+const trackWishlistAddedToEvent = (productId: string) => {
+  if (nativeTrackWishlistAddedToEvent) {
+    void nativeTrackWishlistAddedToEvent(productId);
+  }
+};
+
+const trackWishlistRemovedFromEvent = (productId: string) => {
+  if (nativeTrackWishlistRemovedFromEvent) {
+    void nativeTrackWishlistRemovedFromEvent(productId);
+  }
+};
+
+const trackBasketViewedEvent = () => {
+  void nativeTrackBasketViewedEvent();
+};
+
+const trackBasketUpdatedEvent = (basket: OmetriaBasket) => {
+  void nativeTrackBasketUpdatedEvent(basket);
+};
+
+const trackCheckoutStartedEvent = (orderId: string) => {
+  void nativeTrackCheckoutStartedEvent(orderId);
+};
+
+const trackHomeScreenViewedEvent = () => {
+  void nativeTrackHomeScreenViewedEvent();
+};
+
+const trackDeepLinkOpenedEvent = (link: string, screenName: string) => {
+  void nativeTrackDeepLinkOpenedEvent(link, screenName);
+};
+
+const flush = () => {
+  void nativeFlush();
+};
+
+const clear = () => {
+  void nativeClear();
+};
+
+const onNewToken = (token: string) => {
+  void nativeOnNewToken(token);
+};
+
+const onMessageReceived = (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+  void nativeOnMessageReceived(remoteMessage as unknown as Record<string, unknown>);
+};
+
+const onNotificationReceived = (
   remoteMessage: FirebaseMessagingTypes.RemoteMessage
 ) => {
-  const iOSRemoteMessage = {
-    ...remoteMessage,
-    data: {
-      ometria: JSON.parse(remoteMessage?.data?.ometria || '{}'),
-    },
-  };
-  _onNotificationReceived(
-    Platform.OS === 'ios' ? iOSRemoteMessage : remoteMessage
-  );
+  const payload = Platform.OS === 'ios'
+    ? withParsedOmetriaPayload(remoteMessage)
+    : remoteMessage;
+  void nativeOnNotificationReceived(payload as unknown as Record<string, unknown>);
 };
 
-// 🛠️ Custom Implementation: parseNotification()
-OmetriaReactNativeSdk.parseNotification = async (
+const parseNotification = async (
+  notification: FirebaseMessagingTypes.RemoteMessage
+): Promise<OmetriaNotificationData | undefined> => {
+  if (Platform.OS === 'android') {
+    const parsed = (await nativeParseNotification(
+      notification as unknown as Record<string, unknown>
+    )) as OmetriaNotificationData | null;
+    return parsed ?? undefined;
+  }
+
+  return notification?.data?.ometria
+    ? (JSON.parse(notification.data.ometria) as OmetriaNotificationData)
+    : undefined;
+};
+
+const onNotificationOpenedApp = async (
   notification: FirebaseMessagingTypes.RemoteMessage
 ) => {
-  const parsedNotification =
-    Platform.OS === 'android'
-      ? await _parseNotification(notification)
-      : (Promise.resolve(
-          notification?.data?.ometria
-            ? JSON.parse(notification.data.ometria)
-            : undefined
-        ) as unknown as OmetriaNotificationData);
+  const payload = Platform.OS === 'ios'
+    ? withParsedOmetriaPayload(notification)
+    : notification;
 
-  return parsedNotification;
+  await nativeOnNotificationInteracted(payload as unknown as Record<string, unknown>);
+  await nativeFlush();
 };
 
-// 🛠️ Custom Implementation: 🤖 only - onBackgroundMessage()
-OmetriaReactNativeSdk.onAndroidBackgroundMessage = async ({
-  ometriaToken,
-  remoteMessage,
-  ometriaOptions,
-}) => {
-  Platform.OS === 'android' &&
-    OmetriaReactNativeSdk.initializeWithApiToken(
-      ometriaToken,
-      ometriaOptions
-    ).then(async () => {
-      OmetriaReactNativeSdk.onNotificationReceived(remoteMessage);
-    });
+const onAndroidBackgroundMessage = async (
+  payload: OmetriaOnBackgroundMessagePayload
+) => {
+  if (Platform.OS !== 'android') {
+    return;
+  }
+
+  await initializeWithApiToken(payload.ometriaToken, payload.ometriaOptions);
+  onNotificationReceived(payload.remoteMessage);
 };
 
-// 🛠️ Deprecated Implementations
-OmetriaReactNativeSdk.setBackgroundMessageHandler = async () => {
+const setBackgroundMessageHandler = async (
+  _handler: OmetriaOnBackgroundMessagePayload
+) => {
   console.warn(
     'setBackgroundMessageHandler is deprecated, no longer works and will be removed in the next major version'
   );
-  Promise.resolve();
 };
 
-OmetriaReactNativeSdk.onNotificationInteracted = () => {
+const deprecatedOnNotificationInteracted = (
+  _handler: (response: OmetriaNotificationData) => void
+) => {
   console.warn(
     'onNotificationInteracted is deprecated, no longer works and will be removed in the next major version'
   );
   return () => {};
 };
 
-// 🪦 onNotificationInteracted is a private method that was deprecated for the public API
-type OmetriaReactNativeSdkInternalType = Omit<
-  OmetriaReactNativeSdkType,
-  'onNotificationInteracted'
-> & {
-  onNotificationInteracted: (
-    notification: Omit<FirebaseMessagingTypes.RemoteMessage, 'data'> & {
-      data?:
-        | {
-            ometria: OmetriaNotificationData;
-          }
-        | { [key: string]: string };
-    }
-  ) => void;
+const OmetriaReactNativeSdk: OmetriaReactNativeSdkType = {
+  initializeWithApiToken,
+  trackProfileIdentifiedByCustomerIdEvent,
+  trackProfileIdentifiedByEmailEvent,
+  trackProfileIdentifiedEvent,
+  updateStoreId,
+  trackProfileDeidentifiedEvent,
+  trackProductViewedEvent,
+  trackProductListingViewedEvent,
+  trackWishlistAddedToEvent,
+  trackWishlistRemovedFromEvent,
+  trackBasketViewedEvent,
+  trackBasketUpdatedEvent,
+  trackCheckoutStartedEvent,
+  trackOrderCompletedEvent,
+  trackHomeScreenViewedEvent,
+  trackDeepLinkOpenedEvent,
+  trackScreenViewedEvent,
+  trackCustomEvent,
+  flush,
+  clear,
+  isLoggingEnabled,
+  processUniversalLink,
+  onNewToken,
+  onNotificationReceived,
+  onMessageReceived,
+  parseNotification,
+  onNotificationOpenedApp,
+  onAndroidBackgroundMessage,
+  onNotificationInteracted: deprecatedOnNotificationInteracted,
+  onDeepLinkInteracted,
+  setBackgroundMessageHandler,
 };
 
 export default OmetriaReactNativeSdk;
@@ -168,7 +298,7 @@ export default OmetriaReactNativeSdk;
 export {
   OmetriaBasket,
   OmetriaBasketItem,
+  OmetriaNotification,
   OmetriaNotificationData,
   OmetriaOptions,
-  OmetriaNotification,
 };

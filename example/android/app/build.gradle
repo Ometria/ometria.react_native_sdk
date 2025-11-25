@@ -121,7 +121,8 @@ dependencies {
     // Manual linking for local SDK development
     // This links to the parent folder's Android module (../../android)
     // Required because autolinking doesn't detect local packages outside node_modules
-    implementation project(':ometriareactnativesdk')
+    // Commented out for new architecture testing - using autolinking from node_modules instead
+    // implementation project(':ometriareactnativesdk')
     // implementation files('../../../android/libs/OmetriaSDK-debug.aar') // [DEBUG] Uncomment this line if you are using the local AAR file in release
     /* </OmetriaSetup> */
 }

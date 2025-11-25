@@ -22,7 +22,17 @@ See [Setting up your mobile app with Firebase credentials](https://support.ometr
 
 The easiest way to get Ometria into your ReactNative project is by using `npm install` or `yarn add`.
 
-Please note that this library does not support the new React Native architecture yet. If you created a new project with the new architecture, you need to switch back to the old one by running `RCT_NEW_ARCH_ENABLED=0 pod install` when installing pods on iOS and by setting `newArchEnabled=false` in `android/gradle.properties`.
+This library targets React Native 0.81.4 (the latest release that still allows opting out of the New Architecture). It ships with support for both the classic bridge and the New Architecture.
+- The example app defaults to the classic bridge; enable the New Architecture by running ``RCT_NEW_ARCH_ENABLED=1 pod install`` and ``./gradlew assembleRelease -PnewArchEnabled=true``.
+- In your own apps you can use the same switches, or keep the defaults to stay on the classic bridge.
+
+### Enabling the New Architecture
+
+- iOS: `RCT_NEW_ARCH_ENABLED=1 pod install` (or set the `RCT_NEW_ARCH_ENABLED` environment variable before running pods).
+- Android: `./gradlew assembleDebug -PnewArchEnabled=true` (or set `newArchEnabled=true` in `android/gradle.properties`).
+
+> ℹ️ Android builds now require `compileSdkVersion`/`targetSdkVersion` 36 and `minSdkVersion` 24.
+
 
 1. Install Ometria ReactNative package from `react-native-ometria` using `npm install react-native-ometria` or `yarn add react-native-ometria`
 

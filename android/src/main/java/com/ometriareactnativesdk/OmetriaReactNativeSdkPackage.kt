@@ -1,20 +1,38 @@
 package com.ometriareactnativesdk
 
-import java.util.Arrays
-import java.util.Collections
-
-import com.facebook.react.ReactPackage
+import com.facebook.react.TurboReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
-import com.facebook.react.bridge.JavaScriptModule
 
-class OmetriaReactNativeSdkPackage : ReactPackage {
-    override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-        return Arrays.asList<NativeModule>(OmetriaReactNativeSdkModule(reactContext))
+class OmetriaReactNativeSdkPackage : TurboReactPackage() {
+  override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
+    listOf(OmetriaReactNativeSdkModule(reactContext))
+
+  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> =
+    emptyList()
+
+  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? =
+    if (name == OmetriaReactNativeSdkModule.NAME) {
+      OmetriaReactNativeSdkModule(reactContext)
+    } else {
+      null
     }
 
-    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        return emptyList<ViewManager<*, *>>()
+  override fun getReactModuleInfoProvider(): ReactModuleInfoProvider =
+    ReactModuleInfoProvider {
+      mapOf(
+        OmetriaReactNativeSdkModule.NAME to ReactModuleInfo(
+          OmetriaReactNativeSdkModule.NAME,
+          OmetriaReactNativeSdkModule::class.java.name,
+          false,
+          false,
+          false,
+          false,
+          true
+        )
+      )
     }
 }

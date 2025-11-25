@@ -12,7 +12,11 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "ios:full:new": "cd ios && rm -rf build Pods Podfile.lock && RCT_NEW_ARCH_ENABLED=1 pod install && cd .. && RCT_NEW_ARCH_ENABLED=1 npx react-native run-ios",
+    "ios:full:old": "cd ios && rm -rf build Pods Podfile.lock && RCT_NEW_ARCH_ENABLED=0 pod install && cd .. && RCT_NEW_ARCH_ENABLED=0 npx react-native run-ios",
+    "ios:new": "cd ios && rm -rf build && cd .. && RCT_NEW_ARCH_ENABLED=1 npx react-native run-ios",
+    "ios:old": "cd ios && rm -rf build && cd .. && RCT_NEW_ARCH_ENABLED=0 npx react-native run-ios"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -22,7 +26,8 @@
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-permissions": "^5.4.2",
-    "react-native-safe-area-context": "^5.5.2"
+    "react-native-safe-area-context": "^5.5.2",
+    "react-native-ometria": "file:.."
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

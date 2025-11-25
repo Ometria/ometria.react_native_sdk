@@ -2,15 +2,21 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-ometria": ["./src/index"],
-      "react": ["./node_modules/@types/react"]
+      "react-native-ometria": [
+        "./src/index"
+      ],
+      "react": [
+        "./node_modules/@types/react"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -23,5 +29,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext"
-  }
+  },
+  "exclude": [
+    "example"
+  ]
 }

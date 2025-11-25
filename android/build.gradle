@@ -6,17 +6,20 @@ buildscript {
   repositories {
     google()
     jcenter()
+    mavenCentral()
   }
 
   dependencies {
     classpath "com.android.tools.build:gradle:$gradle_version"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "com.facebook.react:react-native-gradle-plugin"
   }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.facebook.react'
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['OmetriaReactNativeSdk_' + name]
@@ -26,7 +29,14 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['OmetriaReactNativeSdk_' + name]).toInteger()
 }
 
+react {
+  libraryName.set('OmetriaReactNativeSdkSpec')
+  codegenJavaPackageName.set('com.ometriareactnativesdk')
+  jsRootDir.set(file('../src'))
+}
+
 android {
+  namespace 'com.ometriareactnativesdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   buildToolsVersion getExtOrDefault('buildToolsVersion')
   defaultConfig {

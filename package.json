@@ -49,19 +49,19 @@
     "@react-native-firebase/messaging": "^11.2.0",
     "@release-it/conventional-changelog": "^8.0.1",
     "@types/jest": "^29.5.11",
-    "@types/react": "^18.2.6",
-    "@types/react-native": "0.72.8",
+    "@types/react": "^19.1.2",
+    "@types/react-native": "0.73.0",
     "commitlint": "^18.4.3",
     "eslint": "^8.19.0",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "pod-install": "^0.1.39",
     "prettier": "^2.4.1",
-    "react": "18.3.1",
+    "react": "19.1.0",
     "release-it": "^17.0.1",
     "typescript": "5.0.4",
     "@react-native-community/eslint-config": "^3.2.0",
-    "react-native": "0.77.0"
+    "react-native": "0.81.4"
   },
   "peerDependencies": {
     "react": "*",
@@ -124,5 +124,13 @@
     "tabWidth": 2,
     "trailingComma": "es5",
     "useTabs": false
+  },
+  "codegenConfig": {
+    "name": "OmetriaReactNativeSdkSpec",
+    "type": "modules",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.ometriareactnativesdk"
+    }
   }
 }

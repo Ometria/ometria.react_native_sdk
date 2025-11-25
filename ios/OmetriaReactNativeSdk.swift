@@ -1,86 +1,109 @@
 import Ometria
 import Foundation
 import UserNotifications
+import React
+
+#if RCT_NEW_ARCH_ENABLED
+typealias OmetriaReactNativeSdkTurboModule = NativeOmetriaReactNativeSdkSpec
+#else
+@objc protocol OmetriaReactNativeSdkTurboModule: RCTBridgeModule {}
+#endif
 
 @objc(OmetriaReactNativeSdk)
-class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDelegate {
+class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate, OmetriaReactNativeSdkTurboModule {
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
     }
 
-    override static func requiresMainQueueSetup() -> Bool {
+    @objc
+    static func requiresMainQueueSetup() -> Bool {
         return true
     }
 
-    override func constantsToExport() -> [AnyHashable : Any]! {
+    @objc
+    func constantsToExport() -> [AnyHashable : Any]! {
         return [:]
     }
 
-    @objc(initializeWithApiToken:options:resolver:rejecter:)
-    func initialize(apiToken: String, options: [String: String]?, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
+    @objc(initializeWithApiToken:options:resolve:reject:)
+    func initialize(token: String, options: NSDictionary?, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
+        NSLog("🔵 [Ometria Native] initialize called with token: %@", token)
+        NSLog("🔵 [Ometria Native] options: %@", String(describing: options))
+
         OmetriaStorageKeys.rnVersion = "2.6.1"
         DispatchQueue.main.async {
-            let ometriaInit = Ometria.initialize(apiToken: apiToken, enableSwizzling: false, appGroupIdentifier: options?[Constants.appGroupIdentifierKey])
+            NSLog("🔵 [Ometria Native] About to call Ometria.initialize")
+            let appGroupIdentifier = options?[Constants.appGroupIdentifierKey] as? String
+            let ometriaInit = Ometria.initialize(apiToken: token, enableSwizzling: false, appGroupIdentifier: appGroupIdentifier)
+            NSLog("🔵 [Ometria Native] Ometria.initialize returned")
             resolve(ometriaInit)
+            NSLog("🔵 [Ometria Native] Called resolve() - promise should be resolved now")
             Ometria.sharedInstance().notificationInteractionDelegate = self
         }
     }
 
-    @objc(initializeWithApiToken:resolver:rejecter:)
-    func initialize(apiToken: String, resolve: @escaping RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
-        initialize(apiToken: apiToken, options: nil, resolve: resolve, reject: reject)
-    }
-
-    @objc(updateStoreId:resolver:rejecter:)
+    @objc(updateStoreId:resolve:reject:)
     func updateStoreId(storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
       Ometria.sharedInstance().updateStoreId(storeId: storeId)
         resolve(nil)
     }
 
-  @objc(trackProfileIdentifiedByCustomerIdEvent:storeId:resolver:rejecter:)
+  @objc(trackProfileIdentifiedByCustomerIdEvent:storeId:resolve:reject:)
     func trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProfileIdentifiedEvent(customerId: customerId, storeId: storeId)
         resolve(nil)
     }
 
-  @objc(trackProfileIdentifiedByEmailEvent:storeId:resolver:rejecter:)
+  @objc(trackProfileIdentifiedByEmailEvent:storeId:resolve:reject:)
     func trackProfileIdentifiedByEmailEvent(email: String, storeId: String?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProfileIdentifiedEvent(email: email, storeId: storeId)
         resolve(nil)
     }
 
-  @objc(trackProfileIdentifiedEvent:email:storeId:resolver:rejecter:)
+  @objc(trackProfileIdentifiedEvent:email:storeId:resolve:reject:)
   func trackProfileIdentifiedEvent(customerId: String, email: String, storeId: String?, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
       Ometria.sharedInstance().trackProfileIdentifiedEvent(customerId: customerId, email: email, storeId: storeId)
       resolve(nil)
   }
 
-    @objc(trackProfileDeidentifiedEvent:rejecter:)
+    @objc(trackProfileDeidentifiedEvent:reject:)
     func trackProfileDeidentifiedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProfileDeidentifiedEvent()
         resolve(nil)
     }
 
 
-    @objc(trackProductViewedEvent:resolver:rejecter:)
+    @objc(trackProductViewedEvent:resolve:reject:)
     func trackProductViewedEvent(productId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProductViewedEvent(productId: productId)
         resolve(nil)
     }
 
-    @objc(trackProductListingViewedEvent:listingAttributes:resolver:rejecter:)
+    @objc(trackProductListingViewedEvent:listingAttributes:resolve:reject:)
     func trackProductListingViewedEvent(listingType: String?, listingAttributes: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProductListingViewedEvent(listingType: listingType, listingAttributes: listingAttributes)
         resolve(nil)
     }
 
-    @objc(trackBasketViewedEvent:rejecter:)
+    @objc(trackWishlistAddedToEvent:resolve:reject:)
+    func trackWishlistAddedToEvent(productId: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        NSLog("trackWishlistAddedToEvent is deprecated and not supported on iOS")
+        resolve(nil)
+    }
+
+    @objc(trackWishlistRemovedFromEvent:resolve:reject:)
+    func trackWishlistRemovedFromEvent(productId: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+        NSLog("trackWishlistRemovedFromEvent is deprecated and not supported on iOS")
+        resolve(nil)
+    }
+
+    @objc(trackBasketViewedEvent:reject:)
     func trackBasketViewedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackBasketViewedEvent()
         resolve(nil)
     }
 
-    @objc(trackBasketUpdatedEvent:resolver:rejecter:)
+    @objc(trackBasketUpdatedEvent:resolve:reject:)
     func trackBasketUpdatedEvent(basketDictionary: [String: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
 
         let decoder = JSONDecoder()
@@ -95,13 +118,13 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     }
 
 
-    @objc(trackCheckoutStartedEvent:resolver:rejecter:)
+    @objc(trackCheckoutStartedEvent:resolve:reject:)
     func trackCheckoutStartedEvent(orderId: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackCheckoutStartedEvent(orderId: orderId)
         resolve(nil)
     }
 
-    @objc(trackOrderCompletedEvent:basket:resolver:rejecter:)
+    @objc(trackOrderCompletedEvent:basket:resolve:reject:)
     func trackOrderCompletedEvent(orderId: String, basketDictionary: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         guard let basketDictionary = basketDictionary else {
             Ometria.sharedInstance().trackOrderCompletedEvent(orderId: orderId)
@@ -120,25 +143,25 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         }
     }
 
-    @objc(trackDeepLinkOpenedEvent:screenName:resolver:rejecter:)
+    @objc(trackDeepLinkOpenedEvent:screenName:resolve:reject:)
     func trackDeepLinkOpenedEvent(link: String, screenName: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackDeepLinkOpenedEvent(link: link, screenName: screenName)
         resolve(nil)
     }
 
-    @objc(trackHomeScreenViewedEvent:rejecter:)
+    @objc(trackHomeScreenViewedEvent:reject:)
     func trackHomeScreenViewedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackHomeScreenViewedEvent()
         resolve(nil)
     }
 
-    @objc(trackScreenViewedEvent:additionalInfo:resolver:rejecter:)
+    @objc(trackScreenViewedEvent:additionalInfo:resolve:reject:)
     func trackScreenViewedEvent(screenName: String, additionalInfo: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackScreenViewedEvent(screenName: screenName, additionalInfo: additionalInfo ?? [:])
         resolve(nil)
     }
 
-    @objc(onNotificationInteracted:resolver:rejecter:)
+    @objc(onNotificationInteracted:resolve:reject:)
     func onNotificationInteracted(remoteMessage: [AnyHashable: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         let data = remoteMessage["data"] as? [AnyHashable: Any]
         let response:[AnyHashable: Any] = ["aps": ["alert": data]]
@@ -146,7 +169,7 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
         resolve(nil)
     }
 
-    @objc(onNotificationReceived:resolver:rejecter:)
+    @objc(onNotificationReceived:resolve:reject:)
     func onNotificationReceived(remoteMessage: [AnyHashable: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         let data = remoteMessage["data"] as? [AnyHashable: Any]
         let response:[AnyHashable: Any] = ["aps": ["alert": data]]
@@ -155,39 +178,61 @@ class OmetriaReactNativeSdk: RCTEventEmitter, OmetriaNotificationInteractionDele
     }
 
 
-    @objc(trackCustomEvent:additionalInfo:resolver:rejecter:)
+    @objc(trackCustomEvent:additionalInfo:resolve:reject:)
     func trackCustomEvent(customEventType: String, additionalInfo: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackCustomEvent(customEventType: customEventType, additionalInfo: additionalInfo ?? [:])
         resolve(nil)
     }
 
-    @objc(flush:rejecter:)
+    @objc(flush:reject:)
     func flush(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().flush()
         resolve(nil)
     }
 
-    @objc(clear:rejecter:)
+    @objc(clear:reject:)
     func clear(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().clear()
         resolve(nil)
     }
 
-    @objc(isLoggingEnabled:resolver:rejecter:)
+    @objc(isLoggingEnabled:resolve:reject:)
     func isLoggingEnabled(enabled: Bool, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().isLoggingEnabled = enabled
         resolve(nil)
     }
 
-    @objc(onNewToken:resolver:rejecter:)
+    @objc(onNewToken:resolve:reject:)
     func onNewToken(pushToken: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().handleFirebaseTokenChanged(token: pushToken)
         resolve(nil)
     }
 
-    @objc(processUniversalLink:resolver:rejecter:)
-    func processUniversalLink(url: URL, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        Ometria.sharedInstance().processUniversalLink(url) { (url, error) in
+    @objc(onMessageReceived:resolve:reject:)
+    func onMessageReceived(remoteMessage: [String: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        // Deprecated - no-op
+        resolve(nil)
+    }
+
+    @objc(parseNotification:resolve:reject:)
+    func parseNotification(remoteMessage: [String: Any], resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        // iOS handles parsing in JS layer - return null
+        resolve(nil)
+    }
+
+    @objc(onDeepLinkInteracted:reject:)
+    func onDeepLinkInteracted(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        // Deprecated - return empty string
+        resolve("")
+    }
+
+    @objc(processUniversalLink:resolve:reject:)
+    func processUniversalLink(url: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let urlObj = URL(string: url) else {
+            reject("0", "Invalid URL string", nil)
+            return
+        }
+        Ometria.sharedInstance().processUniversalLink(urlObj) { (url, error) in
             if let url = url {
                 resolve(url.absoluteString)
             } else {

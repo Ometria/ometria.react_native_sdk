@@ -3,184 +3,238 @@ package com.ometriareactnativesdk
 import android.app.Application
 import android.os.Handler
 import com.android.ometriasdk.core.Ometria
-import com.android.ometriasdk.notification.OmetriaNotification
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
 import com.android.ometriasdk.notification.OmetriaNotificationInteractionHandler
-import com.facebook.react.bridge.*
-import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.module.annotations.ReactModule
+import java.lang.Runnable
 
+@ReactModule(name = OmetriaReactNativeSdkModule.NAME)
 class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationContext) :
-  ReactContextBaseJavaModule(reactContext), OmetriaNotificationInteractionHandler {
+  NativeOmetriaReactNativeSdkSpec(reactContext),
+  OmetriaNotificationInteractionHandler {
 
-  var deeplinkInteractionPromise: Promise? = null
+  companion object {
+    const val NAME = "OmetriaReactNativeSdk"
+  }
+
+  private val mainThreadHandler = Handler(reactContext.mainLooper)
+  private var deeplinkInteractionPromise: Promise? = null
 
   init {
     StorageController(reactContext.applicationContext).saveSdkVersionRN("2.6.1")
   }
 
-  override fun getName(): String {
-    return "OmetriaReactNativeSdk"
-  }
-
-  // Get a handler that can be used to post to the main thread
-  private val mainThreadHandler = Handler(reactContext.mainLooper)
+  override fun getName(): String = NAME
 
   @ReactMethod
-  fun initializeWithApiToken(apiToken: String, options: ReadableMap ? = null, resolver: Promise) {
-    // run on main thread
+  override fun initializeWithApiToken(apiToken: String, options: ReadableMap?, promise: Promise) {
     val runOnMainThreadTask = Runnable {
       Ometria.initialize(
         application = reactContext.applicationContext as Application,
         apiToken = apiToken,
-        notificationIcon =  reactContext.applicationInfo.icon,
-        notificationChannelName = options?.getString("notificationChannelName")?: " "
+        notificationIcon = reactContext.applicationInfo.icon,
+        notificationChannelName = options?.getString("notificationChannelName") ?: " "
       )
-      resolver.resolve(null)
+      promise.resolve(null)
     }
     mainThreadHandler.post(runOnMainThreadTask)
   }
 
   @ReactMethod
-  fun updateStoreId(storeId: String?) {
+  override fun updateStoreId(storeId: String?, promise: Promise) {
     Ometria.instance().updateStoreId(storeId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedByCustomerIdEvent(customerId: String, storeId: String? = null) {
+  override fun trackProfileIdentifiedByCustomerIdEvent(
+    customerId: String,
+    storeId: String?,
+    promise: Promise
+  ) {
     Ometria.instance().trackProfileIdentifiedByCustomerIdEvent(customerId, storeId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedByEmailEvent(email: String, storeId: String? = null) {
+  override fun trackProfileIdentifiedByEmailEvent(
+    email: String,
+    storeId: String?,
+    promise: Promise
+  ) {
     Ometria.instance().trackProfileIdentifiedByEmailEvent(email, storeId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackProfileIdentifiedEvent(customerId: String, email: String, storeId: String? = null) {
+  override fun trackProfileIdentifiedEvent(
+    customerId: String,
+    email: String,
+    storeId: String?,
+    promise: Promise
+  ) {
     Ometria.instance().trackProfileIdentifiedEvent(customerId, email, storeId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackProfileDeidentifiedEvent() {
+  override fun trackProfileDeidentifiedEvent(promise: Promise) {
     Ometria.instance().trackProfileDeidentifiedEvent()
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackProductViewedEvent(productId: String) {
+  override fun trackProductViewedEvent(productId: String, promise: Promise) {
     Ometria.instance().trackProductViewedEvent(productId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackProductListingViewedEvent(listingType: String? = null,
-                                     listingAttributes: ReadableMap? = null) {
-    Ometria.instance().trackProductListingViewedEvent(listingType,
+  override fun trackProductListingViewedEvent(
+    listingType: String?,
+    listingAttributes: ReadableMap?,
+    promise: Promise
+  ) {
+    Ometria.instance().trackProductListingViewedEvent(
+      listingType,
       listingAttributes?.toHashMap().orEmpty() as Map<String, Any>
     )
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackWishlistAddedToEvent(productId: String) {
+  override fun trackWishlistAddedToEvent(productId: String, promise: Promise) {
     Ometria.instance().trackWishlistAddedToEvent(productId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackWishlistRemovedFromEvent(productId: String) {
+  override fun trackWishlistRemovedFromEvent(productId: String, promise: Promise) {
     Ometria.instance().trackWishlistRemovedFromEvent(productId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackBasketViewedEvent() {
+  override fun trackBasketViewedEvent(promise: Promise) {
     Ometria.instance().trackBasketViewedEvent()
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackBasketUpdatedEvent(basket: ReadableMap) {
+  override fun trackBasketUpdatedEvent(basket: ReadableMap, promise: Promise) {
     Ometria.instance().trackBasketUpdatedEvent(basket.basketFromReadableMap())
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackCheckoutStartedEvent(orderId: String) {
+  override fun trackCheckoutStartedEvent(orderId: String, promise: Promise) {
     Ometria.instance().trackCheckoutStartedEvent(orderId)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackOrderCompletedEvent(orderId: String, basket: ReadableMap? = null) {
+  override fun trackOrderCompletedEvent(orderId: String, basket: ReadableMap?, promise: Promise) {
     Ometria.instance().trackOrderCompletedEvent(orderId, basket?.basketFromReadableMap())
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackHomeScreenViewedEvent() {
+  override fun trackHomeScreenViewedEvent(promise: Promise) {
     Ometria.instance().trackHomeScreenViewedEvent()
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackDeepLinkOpenedEvent(link: String, screenName: String) {
+  override fun trackDeepLinkOpenedEvent(link: String, screenName: String, promise: Promise) {
     Ometria.instance().trackDeepLinkOpenedEvent(link, screenName)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackScreenViewedEvent(screenName: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackScreenViewedEvent(screenName, (additionalInfo?.toHashMap()
-      ?: mutableMapOf()) as Map<String, Any>
+  override fun trackScreenViewedEvent(
+    screenName: String,
+    additionalInfo: ReadableMap?,
+    promise: Promise
+  ) {
+    Ometria.instance().trackScreenViewedEvent(
+      screenName,
+      (additionalInfo?.toHashMap() ?: mutableMapOf()) as Map<String, Any>
     )
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun trackCustomEvent(customEventType: String, additionalInfo: ReadableMap? = null) {
-    Ometria.instance().trackCustomEvent(customEventType, (additionalInfo?.toHashMap()
-      ?: mutableMapOf()) as Map<String, Any>
+  override fun trackCustomEvent(
+    customEventType: String,
+    additionalInfo: ReadableMap?,
+    promise: Promise
+  ) {
+    Ometria.instance().trackCustomEvent(
+      customEventType,
+      (additionalInfo?.toHashMap() ?: mutableMapOf()) as Map<String, Any>
     )
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun flush() {
+  override fun flush(promise: Promise) {
     Ometria.instance().flush()
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun clear() {
+  override fun clear(promise: Promise) {
     Ometria.instance().clear()
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun isLoggingEnabled(enabled: Boolean) {
+  override fun isLoggingEnabled(enabled: Boolean, promise: Promise) {
     Ometria.instance().loggingEnabled(enabled)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun onMessageReceived(remoteMessage: ReadableMap) {
+  override fun onMessageReceived(remoteMessage: ReadableMap, promise: Promise) {
     val message = remoteMessage.remoteMessageFromReadableMap()
     Ometria.instance().onMessageReceived(message)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun onNotificationReceived(remoteMessage: ReadableMap) {
+  override fun onNotificationReceived(remoteMessage: ReadableMap, promise: Promise) {
     val message = remoteMessage.remoteMessageFromReadableMap()
     Ometria.instance().onNotificationReceived(message)
-
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun parseNotification(remoteMessage: ReadableMap, resolver: Promise) {
+  override fun parseNotification(remoteMessage: ReadableMap, promise: Promise) {
     val message = remoteMessage.remoteMessageFromReadableMap()
     val ometriaNotification = Ometria.instance().parseNotification(message)
-    resolver.resolve(ometriaNotification?.toJSON())
+    promise.resolve(ometriaNotification?.toJSON())
   }
 
   @ReactMethod
-  fun onNotificationInteracted(remoteMessage: ReadableMap) {
+  override fun onNotificationInteracted(remoteMessage: ReadableMap, promise: Promise) {
     val message = remoteMessage.remoteMessageFromReadableMap()
     Ometria.instance().onNotificationInteracted(message)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun onNewToken(token: String) {
+  override fun onNewToken(token: String, promise: Promise) {
     Ometria.instance().onNewToken(token)
+    promise.resolve(null)
   }
 
   @ReactMethod
-  fun onDeepLinkInteracted(resolver: Promise) {
-    deeplinkInteractionPromise = resolver
+  override fun onDeepLinkInteracted(promise: Promise) {
+    deeplinkInteractionPromise = promise
     Ometria.instance().notificationInteractionHandler = this
   }
 
@@ -188,17 +242,19 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     deeplinkInteractionPromise?.resolve(deepLink)
   }
 
-
   @ReactMethod
-  fun processUniversalLink(url: String, resolver: Promise) {
-    Ometria.instance().processAppLink(url,object : ProcessAppLinkListener{
-      override fun onProcessFailed(error: String) {
-        resolver.reject(Throwable(error))
-      }
-      override fun onProcessResult(url: String) {
-        resolver.resolve(url)
-      }
-    })
-  }
+  override fun processUniversalLink(url: String, promise: Promise) {
+    Ometria.instance().processAppLink(
+      url,
+      object : ProcessAppLinkListener {
+        override fun onProcessFailed(error: String) {
+          promise.reject(Throwable(error))
+        }
 
+        override fun onProcessResult(url: String) {
+          promise.resolve(url)
+        }
+      }
+    )
+  }
 }

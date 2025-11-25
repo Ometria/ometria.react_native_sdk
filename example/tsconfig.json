@@ -1,4 +1,11 @@
 {
-  "compilerOptions": {},
-  "extends": "../tsconfig.json"
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "react-native-ometria": ["../src"]
+    }
+  },
+  "include": ["src/**/*", "index.ts"],
+  "exclude": []
 }

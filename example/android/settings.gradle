@@ -9,6 +9,7 @@ includeBuild('../node_modules/@react-native/gradle-plugin')
 // Manual linking for local SDK development
 // React Native autolinking only scans node_modules, but this example uses the local SDK
 // from the parent folder (via babel/metro config). Therefore, we manually link the Android module.
-include ':ometriareactnativesdk'
-project(':ometriareactnativesdk').projectDir = new File(rootProject.projectDir, '../../android')
+// Commented out for new architecture testing - using autolinking from node_modules instead
+// include ':ometriareactnativesdk'
+// project(':ometriareactnativesdk').projectDir = new File(rootProject.projectDir, '../../android')
 // </OmetriaSetup>
