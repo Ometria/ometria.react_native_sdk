@@ -67,8 +67,37 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - Ometria (1.8.2):
+  - Ometria (1.8.3):
     - FirebaseMessaging
+  - ometria-react-native-sdk (2.6.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - Ometria (~> 1.8.2)
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - PromisesObjC (2.4.0)
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -2478,6 +2507,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - Ometria (~> 1.8.2)
+  - ometria-react-native-sdk (from `../node_modules/react-native-ometria`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../node_modules/react-native/Libraries/Required`)
@@ -2581,6 +2611,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-07-07-RNv0.81.0-e0fc67142ec0763c6b6153ca2bf96df815539782
+  ometria-react-native-sdk:
+    :path: "../node_modules/react-native-ometria"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -2737,7 +2769,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   hermes-engine: 35c763d57c9832d0eef764316ca1c4d043581394
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  Ometria: 9a097c573b6074a965b3ffceb5fcd67d0a39ea07
+  Ometria: f60e942482b0931d222bc78702df6fbc3923501d
+  ometria-react-native-sdk: a49a60145f3fb8d64e80594d366e3d9c9c3b44af
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: c0ed3249a97243002615517dff789bf4666cf585
@@ -2810,6 +2843,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 9b30b783a17681321b52ac507a37219d7d795ace
 
-PODFILE CHECKSUM: 9ca7fe0e0f20e63d6d8ee1f1a3f9d10d715ef0e4
+PODFILE CHECKSUM: 0330ce06fab3b995b1f418b3e447539cf3f5933a
 
 COCOAPODS: 1.16.2

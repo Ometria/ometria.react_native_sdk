@@ -23,15 +23,46 @@ See [Setting up your mobile app with Firebase credentials](https://support.ometr
 The easiest way to get Ometria into your ReactNative project is by using `npm install` or `yarn add`.
 
 This library targets React Native 0.81.4 (the latest release that still allows opting out of the New Architecture). It ships with support for both the classic bridge and the New Architecture.
-- The example app defaults to the classic bridge; enable the New Architecture by running ``RCT_NEW_ARCH_ENABLED=1 pod install`` and ``./gradlew assembleRelease -PnewArchEnabled=true``.
-- In your own apps you can use the same switches, or keep the defaults to stay on the classic bridge.
 
 ### Enabling the New Architecture
 
-- iOS: `RCT_NEW_ARCH_ENABLED=1 pod install` (or set the `RCT_NEW_ARCH_ENABLED` environment variable before running pods).
-- Android: `./gradlew assembleDebug -PnewArchEnabled=true` (or set `newArchEnabled=true` in `android/gradle.properties`).
+#### iOS Setup
 
-> ℹ️ Android builds now require `compileSdkVersion`/`targetSdkVersion` 36 and `minSdkVersion` 24.
+1. Add the Ometria TurboModule setup to your `Podfile`:
+
+```ruby
+# At the top of your Podfile, add:
+require_relative '../node_modules/react-native-ometria/scripts/ometria_turbomodule'
+
+# In your post_install block, add:
+post_install do |installer|
+  react_native_post_install(installer, ...)
+
+  # Register Ometria TurboModule (required for New Architecture)
+  patch_ometria_turbomodule(installer)
+end
+```
+
+2. Run pod install with the New Architecture flag:
+```bash
+RCT_NEW_ARCH_ENABLED=1 pod install
+```
+
+> ℹ️ **Why is this needed?** The Ometria SDK is written in Swift, but React Native's TurboModule specs use C++ types that Swift cannot directly implement. We use an Objective-C++ wrapper to bridge this gap. The `patch_ometria_turbomodule` function registers this wrapper with React Native's module discovery system. This is a temporary workaround - we are working on a solution that won't require manual Podfile changes.
+
+#### Android Setup
+
+Run your build with the New Architecture flag:
+```bash
+./gradlew assembleDebug -PnewArchEnabled=true
+```
+
+Or set it permanently in `android/gradle.properties`:
+```properties
+newArchEnabled=true
+```
+
+> ℹ️ Android builds require `compileSdkVersion`/`targetSdkVersion` 36 and `minSdkVersion` 24.
 
 
 1. Install Ometria ReactNative package from `react-native-ometria` using `npm install react-native-ometria` or `yarn add react-native-ometria`

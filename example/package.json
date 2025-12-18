@@ -9,12 +9,14 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "ios:pods:new": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && rm -rf ~/Library/Developer/Xcode/DerivedData/sampleApp-* && cd ios && rm -rf build Pods Podfile.lock && RCT_NEW_ARCH_ENABLED=1 pod install",
-    "ios:pods:old": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && rm -rf ~/Library/Developer/Xcode/DerivedData/sampleApp-* && cd ios && rm -rf build Pods Podfile.lock && RCT_NEW_ARCH_ENABLED=0 pod install",
+    "ios:cleanup": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && rm -rf /tmp/metro-* && rm -rf node_modules/.cache ../.cache ../node_modules/.cache 2>/dev/null || true && watchman watch-del-all 2>/dev/null || true && rm -rf ~/Library/Developer/Xcode/DerivedData/* && cd ios && rm -rf build Pods Podfile.lock && rm -rf sampleApp.xcworkspace/xcuserdata sampleApp.xcodeproj/xcuserdata sampleApp.xcodeproj/project.xcworkspace/xcuserdata 2>/dev/null || true",
+    "ios:new:pods": "npm run ios:cleanup && cd ios && RCT_NEW_ARCH_ENABLED=1 pod install",
+    "ios:old:pods": "npm run ios:cleanup && cd ios && RCT_NEW_ARCH_ENABLED=0 pod install",
     "ios:new": "RCT_NEW_ARCH_ENABLED=1 npx react-native run-ios",
     "ios:old": "RCT_NEW_ARCH_ENABLED=0 npx react-native run-ios",
-    "android:new": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && cd android && ./gradlew clean && cd .. && npx react-native run-android --active-arch-only -- -PnewArchEnabled=true",
-    "android:old": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && cd android && ./gradlew clean && cd .. && npx react-native run-android --active-arch-only -- -PnewArchEnabled=false"
+    "android:clean": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && cd android && ./gradlew clean && cd .. ",
+    "android:new": "npm run android:clean && npx react-native run-android --active-arch-only -- -PnewArchEnabled=true",
+    "android:old": "npm run android:clean && npx react-native run-android --active-arch-only -- -PnewArchEnabled=false"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",

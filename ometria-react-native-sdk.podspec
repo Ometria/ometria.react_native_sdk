@@ -30,12 +30,5 @@ Pod::Spec.new do |s|
       s.dependency 'RCTTypeSafety'
       s.dependency 'ReactCommon/turbomodule/core'
     end
-
-    # Post-install script to patch Codegen output
-    s.script_phase = {
-      :name => 'Patch Codegen for TurboModule Registration',
-      :script => 'node "${PODS_TARGET_SRCROOT}/scripts/patch-codegen.js" "${PODS_ROOT}/../"',
-      :execution_position => :after_compile
-    }
   end
 end

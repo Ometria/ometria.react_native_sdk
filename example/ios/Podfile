@@ -1,5 +1,5 @@
-# Enable the new architecture
-ENV['RCT_NEW_ARCH_ENABLED'] = '1'
+# Enable the new architecture (only if not already set by environment)
+ENV['RCT_NEW_ARCH_ENABLED'] ||= '1'
 
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
@@ -11,6 +11,8 @@ require Pod::Executable.execute_command('node', ['-p',
 # <OmetriaSetup>
 # Setup react-native-permissions
 require_relative '../node_modules/react-native-permissions/scripts/setup'
+# Setup Ometria TurboModule registration (required for New Architecture)
+require_relative '../node_modules/react-native-ometria/scripts/ometria_turbomodule'
 # </OmetriaSetup>
 
 platform :ios, min_ios_version_supported
@@ -45,13 +47,10 @@ target 'sampleApp' do
       # :ccache_enabled => true
     )
 
-    # Add RCT_NEW_ARCH_ENABLED to preprocessor definitions for all targets
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_NEW_ARCH_ENABLED=1'
-      end
-    end
+    # <OmetriaSetup>
+    # Register Ometria TurboModule (required for New Architecture)
+    patch_ometria_turbomodule(installer)
+    # </OmetriaSetup>
   end
 end
 
