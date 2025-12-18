@@ -24,7 +24,7 @@ import Ometria from 'react-native-ometria';
 import { RESULTS, requestNotifications } from 'react-native-permissions';
 
 import { AuthModalProps } from './models';
-import { version, ometria_sdk_version } from '../package.json';
+import { version, ometria_sdk_version } from '../../package.json';
 import { Events, customOmetriaOptions, demoBasketItems } from './data';
 import {
   getOmetriaTokenFromStorage,
@@ -44,12 +44,6 @@ const App = () => {
   const isBridgeless = (global as any).RN$Bridgeless === true;
   const hasTurboModuleProxy = (global as any).__turboModuleProxy != null;
   const isTurboModuleEnabled = isBridgeless || hasTurboModuleProxy;
-
-  console.log('🔧 Is Bridgeless mode enabled?', isBridgeless);
-  console.log('🔧 Has __turboModuleProxy?', hasTurboModuleProxy);
-  console.log('🔧 Is TurboModule/New Architecture enabled?', isTurboModuleEnabled);
-  console.log('📦 Ometria:', Ometria);
-  console.log('📦 Function type:', typeof Ometria.initializeWithApiToken);
 
   // A flag to prevent the user from sending events before the SDK is initialized in the sample app - not needed in production
   const [ometriaIsInitalized, setOmetriaIsInitalized] = useState(false);
@@ -305,8 +299,17 @@ const App = () => {
       <Text style={styles.title}>Ometria React Native Demo {version}</Text>
       <Text style={styles.subtitle}>
         {Platform.OS === 'android' ? 'Android' : 'iOS'} SDK version{' '}
-        {ometria_sdk_version[Platform.OS === 'android' ? 'android' : 'ios']}
+        {
+          (ometria_sdk_version || {})[
+            Platform.OS === 'android' ? 'android' : 'ios'
+          ]
+        }
       </Text>
+      <View style={styles.archBadge}>
+        <Text style={styles.archText}>
+          {isTurboModuleEnabled ? '⚡ New Architecture' : '🌉 Old Architecture'}
+        </Text>
+      </View>
       <TouchableOpacity style={styles.btn} onPress={() => setAuthModal(true)}>
         <Text style={styles.text}>Change Login Info 🔐 </Text>
       </TouchableOpacity>
@@ -652,6 +655,19 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     alignItems: 'center',
     backgroundColor: 'grey',
+  },
+  archBadge: {
+    alignSelf: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#e8f5e9',
+    marginBottom: 16,
+  },
+  archText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2e7d32',
   },
   line: {
     height: 1,

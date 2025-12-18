@@ -2,10 +2,6 @@
   "name": "ometria.react-native_sdk-example",
   "version": "0.0.1",
   "description": "Example app for ometria.react-native_sdk",
-  "ometria_sdk_version": {
-    "ios": "1.8.2",
-    "android": "1.10.3"
-  },
   "private": true,
   "scripts": {
     "android": "react-native run-android",
