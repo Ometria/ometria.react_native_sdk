@@ -31,12 +31,16 @@ This library targets React Native 0.81.4 (the latest release that still allows o
 1. Add the Ometria TurboModule setup to your `Podfile`:
 
 ```ruby
-# At the top of your Podfile, add:
+# At the top of your Podfile (after other require statements), add:
 require_relative '../node_modules/react-native-ometria/scripts/ometria_turbomodule'
 
-# In your post_install block, add:
+# In your post_install block, add patch_ometria_turbomodule(installer):
 post_install do |installer|
-  react_native_post_install(installer, ...)
+  react_native_post_install(
+    installer,
+    config[:reactNativePath],
+    :mac_catalyst_enabled => false
+  )
 
   # Register Ometria TurboModule (required for New Architecture)
   patch_ometria_turbomodule(installer)
@@ -48,7 +52,15 @@ end
 RCT_NEW_ARCH_ENABLED=1 pod install
 ```
 
-> ℹ️ **Why is this needed?** The Ometria SDK is written in Swift, but React Native's TurboModule specs use C++ types that Swift cannot directly implement. We use an Objective-C++ wrapper to bridge this gap. The `patch_ometria_turbomodule` function registers this wrapper with React Native's module discovery system. This is a temporary workaround - we are working on a solution that won't require manual Podfile changes.
+> **Why is this needed?**
+>
+> The Ometria SDK is written in Swift, but React Native's TurboModule specs use C++ types that Swift cannot directly implement. We use an Objective-C++ wrapper (`OmetriaReactNativeSdkTurboModule`) to bridge this gap.
+>
+> React Native's codegen generates a file called `RCTModuleProviders.mm` that maps module names to their implementation classes. However, codegen doesn't know about our custom wrapper class - it only generates an empty mapping.
+>
+> The `patch_ometria_turbomodule` function adds a build phase to the `ReactCodegen` target that patches `RCTModuleProviders.mm` to include our module mapping. This happens during each build, after codegen generates the file but before it's compiled.
+>
+> **This is a temporary workaround** - we are actively working on a solution that won't require manual Podfile changes.
 
 #### Android Setup
 
