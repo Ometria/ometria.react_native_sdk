@@ -16,7 +16,9 @@
     "ios:full:new": "cd ios && rm -rf build Pods Podfile.lock && RCT_NEW_ARCH_ENABLED=1 pod install && cd .. && RCT_NEW_ARCH_ENABLED=1 npx react-native run-ios",
     "ios:full:old": "cd ios && rm -rf build Pods Podfile.lock && RCT_NEW_ARCH_ENABLED=0 pod install && cd .. && RCT_NEW_ARCH_ENABLED=0 npx react-native run-ios",
     "ios:new": "cd ios && rm -rf build && cd .. && RCT_NEW_ARCH_ENABLED=1 npx react-native run-ios",
-    "ios:old": "cd ios && rm -rf build && cd .. && RCT_NEW_ARCH_ENABLED=0 npx react-native run-ios"
+    "ios:old": "cd ios && rm -rf build && cd .. && RCT_NEW_ARCH_ENABLED=0 npx react-native run-ios",
+    "android:new": "cd android && ./gradlew clean && cd .. && npx react-native run-android --active-arch-only -- -PnewArchEnabled=true",
+    "android:old": "cd android && ./gradlew clean && cd .. && npx react-native run-android --active-arch-only -- -PnewArchEnabled=false"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
