@@ -3,14 +3,14 @@ import Foundation
 import UserNotifications
 import React
 
-#if RCT_NEW_ARCH_ENABLED
-typealias OmetriaReactNativeSdkTurboModule = NativeOmetriaReactNativeSdkSpec
-#else
-@objc protocol OmetriaReactNativeSdkTurboModule: RCTBridgeModule {}
-#endif
+// Architecture-specific setup:
+// - New Arch: OmetriaReactNativeSdkWrapper.mm is the TurboModule that conforms to
+//   NativeOmetriaReactNativeSdkSpec and forwards calls to this Swift class at runtime.
+// - Old Arch: OmetriaReactNativeSdk.m uses RCT_EXTERN_MODULE to export this class.
+// In both cases, the React Native protocol conformance is handled externally.
 
 @objc(OmetriaReactNativeSdk)
-class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate, OmetriaReactNativeSdkTurboModule {
+class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
     }

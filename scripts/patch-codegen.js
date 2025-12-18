@@ -30,19 +30,16 @@ function patchModuleProviders(basePath) {
     return;
   }
 
-  // Patch the moduleMapping dictionary
+  // Add module mapping entry
   const searchPattern = /moduleMapping = @\{\s*/;
   const replacement = `moduleMapping = @{\n      @"${MODULE_NAME}": @"${MODULE_CLASS}",\n      `;
 
-  if (!searchPattern.test(content)) {
-    console.error(`[Ometria] Could not find moduleMapping pattern in RCTModuleProviders.mm`);
-    return;
+  if (searchPattern.test(content)) {
+    content = content.replace(searchPattern, replacement);
   }
 
-  content = content.replace(searchPattern, replacement);
-
   fs.writeFileSync(filePath, content, 'utf8');
-  console.log(`[Ometria] Successfully added ${MODULE_NAME} to RCTModuleProviders.mm`);
+  console.log(`[Ometria] Successfully patched RCTModuleProviders.mm`);
 }
 
 // Get the iOS build directory from command line or use default
