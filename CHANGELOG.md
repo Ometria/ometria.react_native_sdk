@@ -5,6 +5,7 @@
 - Updated ReactNative to 0.81.x in the sample app.
 - Implements support for both React Native architectures (Old and New Architecture).
 - Updated Ometria native SDK to the latest versions - 🍏 1.8.2 iOS & 🤖 1.11.0 Android.
+- Fixed Android `trackProfileIdentifiedEvent` parameter order bug where `customerId` and `email` were swapped when passed to the native SDK.
 
 # 2.6.1
 

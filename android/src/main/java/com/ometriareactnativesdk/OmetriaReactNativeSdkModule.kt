@@ -77,7 +77,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
     storeId: String?,
     promise: Promise
   ) {
-    Ometria.instance().trackProfileIdentifiedEvent(customerId, email, storeId)
+    Ometria.instance().trackProfileIdentifiedEvent(email, customerId, storeId)
     promise.resolve(null)
   }
 
