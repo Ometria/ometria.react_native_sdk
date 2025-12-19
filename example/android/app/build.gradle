@@ -25,7 +25,11 @@ react {
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
-    // nodeExecutableAndArgs = ["node"]
+    //   Detect node from common locations (nvm, homebrew, system)
+    def nodePath = ["bash", "-c", "which node"].execute().text.trim()
+    if (nodePath) {
+        nodeExecutableAndArgs = [nodePath]
+    }
     //
     //   The command to run when bundling. By default is 'bundle'
     // bundleCommand = "ram-bundle"
