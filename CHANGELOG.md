@@ -4,7 +4,7 @@
 
 - Updated ReactNative to 0.81.x in the sample app.
 - Implements support for both React Native architectures (Old and New Architecture).
-- Updated Ometria native SDK to the latest versions - 🍏 1.8.3 iOS & 🤖 1.11.0 Android.
+- Updated Ometria native SDK to the latest versions - 🍏 1.8.2 iOS & 🤖 1.11.0 Android.
 
 # 2.6.1
 
