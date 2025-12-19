@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "Ometria", '~> 1.8.2'
+  s.dependency "Ometria", '~> 1.8.3'
 
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1'
     if respond_to?(:install_modules_dependencies, true)

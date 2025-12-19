@@ -58,6 +58,6 @@ end
 # Notification Service Extension target
 target 'NotificationsService' do
   use_frameworks! :linkage => :static
-  pod 'Ometria', '~> 1.8.2'
+  pod 'Ometria', '~> 1.8.3'
 end
 # </OmetriaSetup>

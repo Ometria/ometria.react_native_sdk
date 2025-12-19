@@ -30,7 +30,7 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         NSLog("🔵 [Ometria Native] initialize called with token: %@", token)
         NSLog("🔵 [Ometria Native] options: %@", String(describing: options))
 
-        OmetriaStorageKeys.rnVersion = "2.6.1"
+        OmetriaStorageKeys.rnVersion = "2.7.0"
         DispatchQueue.main.async {
             NSLog("🔵 [Ometria Native] About to call Ometria.initialize")
             let appGroupIdentifier = options?[Constants.appGroupIdentifierKey] as? String
