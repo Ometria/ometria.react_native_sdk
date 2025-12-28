@@ -7,6 +7,7 @@
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
+  "app.plugin": "./plugin/build/index.js",
   "ometria_sdk_version": {
     "ios": "1.8.4",
     "android": "1.11.0"
@@ -17,6 +18,8 @@
     "android",
     "ios",
     "cpp",
+    "scripts",
+    "plugin/build",
     "ometria-react-native-sdk.podspec",
     "!lib/typescript/example",
     "!**/__tests__",
@@ -30,12 +33,19 @@
     "release": "release-it",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
-    "bootstrap": "yarn example && yarn && yarn pods"
+    "bootstrap": "yarn example && yarn && yarn pods",
+    "build:plugin": "cd plugin && npm run build",
+    "clean:plugin": "cd plugin && npm run clean",
+    "prepare": "npm run build:plugin"
   },
   "keywords": [
     "react-native",
+    "expo",
+    "expo-plugin",
     "ios",
-    "android"
+    "android",
+    "push-notifications",
+    "analytics"
   ],
   "repository": "https://github.com/Ometria/ometria.react-native_sdk",
   "author": "Ometria <support@ometria.com> (https://github.com/Ometria)",
@@ -46,6 +56,7 @@
   "homepage": "https://github.com/Ometria/ometria.react-native_sdk#readme",
   "devDependencies": {
     "@commitlint/config-conventional": "^18.4.3",
+    "@expo/config-plugins": "^9.0.0",
     "@react-native-firebase/messaging": "^11.2.0",
     "@release-it/conventional-changelog": "^8.0.1",
     "@types/jest": "^29.5.11",
@@ -65,7 +76,13 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "expo": ">=53.0.0"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
   },
   "jest": {
     "preset": "react-native",

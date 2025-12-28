@@ -1,0 +1,224 @@
+import {
+  ConfigPlugin,
+  withXcodeProject,
+  withDangerousMod,
+  IOSConfig,
+} from '@expo/config-plugins';
+import * as fs from 'fs';
+import * as path from 'path';
+import type { OmetriaPluginProps } from './index';
+
+const NSE_TARGET_NAME = 'OmetriaNotificationServiceExtension';
+const NSE_FOLDER_NAME = 'OmetriaNotificationServiceExtension';
+
+type IosPluginProps = OmetriaPluginProps & {
+  ometriaIosSdkVersion: string;
+};
+
+/**
+ * Creates the Notification Service Extension files
+ */
+const withNSEFiles: ConfigPlugin<IosPluginProps> = (config, props) => {
+  return withDangerousMod(config, [
+    'ios',
+    async (config) => {
+      const iosPath = path.join(config.modRequest.projectRoot, 'ios');
+      const nsePath = path.join(iosPath, NSE_FOLDER_NAME);
+
+      // Create NSE directory
+      if (!fs.existsSync(nsePath)) {
+        fs.mkdirSync(nsePath, { recursive: true });
+      }
+
+      // Create NotificationService.swift
+      const swiftContent = generateNotificationServiceSwift(
+        props.appGroupIdentifier
+      );
+      fs.writeFileSync(
+        path.join(nsePath, 'NotificationService.swift'),
+        swiftContent
+      );
+
+      // Create Info.plist
+      const infoPlistContent = generateInfoPlist();
+      fs.writeFileSync(path.join(nsePath, 'Info.plist'), infoPlistContent);
+
+      // Create Entitlements
+      const entitlementsContent = generateEntitlements(props.appGroupIdentifier);
+      fs.writeFileSync(
+        path.join(nsePath, `${NSE_TARGET_NAME}.entitlements`),
+        entitlementsContent
+      );
+
+      return config;
+    },
+  ]);
+};
+
+/**
+ * Adds the NSE target to the Xcode project
+ */
+const withNSETarget: ConfigPlugin<IosPluginProps> = (config, props) => {
+  return withXcodeProject(config, (config) => {
+    const xcodeProject = config.modResults;
+    const appName = config.modRequest.projectName || 'App';
+
+    // Check if target already exists
+    const existingTarget = xcodeProject.pbxTargetByName(NSE_TARGET_NAME);
+    if (existingTarget) {
+      console.log(`[Ometria] ${NSE_TARGET_NAME} target already exists`);
+      return config;
+    }
+
+    // Get the main app target to copy settings from
+    const mainTarget = xcodeProject.pbxTargetByName(appName);
+    if (!mainTarget) {
+      console.warn(
+        `[Ometria] Could not find main app target: ${appName}`
+      );
+      return config;
+    }
+
+    // Add NSE target
+    const nseTarget = xcodeProject.addTarget(
+      NSE_TARGET_NAME,
+      'app_extension',
+      NSE_TARGET_NAME,
+      `${config.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`
+    );
+
+    // Add NSE source files to the target
+    const nsePath = NSE_FOLDER_NAME;
+    const nseGroup = xcodeProject.addPbxGroup(
+      [
+        'NotificationService.swift',
+        'Info.plist',
+        `${NSE_TARGET_NAME}.entitlements`,
+      ],
+      NSE_TARGET_NAME,
+      nsePath
+    );
+
+    // Add group to main group
+    const mainGroup = xcodeProject.getFirstProject().firstProject.mainGroup;
+    xcodeProject.addToPbxGroup(nseGroup.uuid, mainGroup);
+
+    // Add source file to build phase
+    const buildPhase = xcodeProject.addBuildPhase(
+      ['NotificationService.swift'],
+      'PBXSourcesBuildPhase',
+      'Sources',
+      nseTarget.uuid,
+      'app_extension',
+      ''
+    );
+
+    // Configure build settings for the NSE target
+    const configurations = xcodeProject.pbxXCBuildConfigurationSection();
+    const targetUuid = nseTarget.uuid;
+
+    Object.keys(configurations).forEach((key) => {
+      const config = configurations[key];
+      if (
+        config.buildSettings &&
+        config.name &&
+        xcodeProject.getBuildProperty('PRODUCT_NAME', config.name, targetUuid)
+      ) {
+        // Set deployment target
+        config.buildSettings.IPHONEOS_DEPLOYMENT_TARGET = '13.0';
+
+        // Set Swift version
+        config.buildSettings.SWIFT_VERSION = '5.0';
+
+        // Set code signing
+        config.buildSettings.CODE_SIGN_ENTITLEMENTS = `${NSE_FOLDER_NAME}/${NSE_TARGET_NAME}.entitlements`;
+        config.buildSettings.CODE_SIGN_STYLE = 'Automatic';
+
+        // Set product bundle identifier
+        config.buildSettings.PRODUCT_BUNDLE_IDENTIFIER = `${
+          config.ios?.bundleIdentifier || '$(PRODUCT_BUNDLE_IDENTIFIER)'
+        }.${NSE_TARGET_NAME}`;
+
+        // Set infoplist file
+        config.buildSettings.INFOPLIST_FILE = `${NSE_FOLDER_NAME}/Info.plist`;
+
+        // Enable modules
+        config.buildSettings.CLANG_ENABLE_MODULES = 'YES';
+
+        // Set targeted device family (iPhone + iPad)
+        config.buildSettings.TARGETED_DEVICE_FAMILY = '"1,2"';
+
+        // Skip install for extensions
+        config.buildSettings.SKIP_INSTALL = 'YES';
+      }
+    });
+
+    return config;
+  });
+};
+
+function generateNotificationServiceSwift(appGroupIdentifier: string): string {
+  return `//
+//  NotificationService.swift
+//  ${NSE_TARGET_NAME}
+//
+//  Generated by react-native-ometria Expo plugin
+//
+
+import UserNotifications
+import Ometria
+
+class NotificationService: OmetriaNotificationServiceExtension {
+    override func instantiateOmetria() -> Ometria? {
+        return Ometria.initializeForExtension(appGroupIdentifier: "${appGroupIdentifier}")
+    }
+}
+`;
+}
+
+function generateInfoPlist(): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSExtension</key>
+    <dict>
+        <key>NSExtensionPointIdentifier</key>
+        <string>com.apple.usernotifications.service</string>
+        <key>NSExtensionPrincipalClass</key>
+        <string>$(PRODUCT_MODULE_NAME).NotificationService</string>
+    </dict>
+</dict>
+</plist>
+`;
+}
+
+function generateEntitlements(appGroupIdentifier: string): string {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.application-groups</key>
+    <array>
+        <string>${appGroupIdentifier}</string>
+    </array>
+</dict>
+</plist>
+`;
+}
+
+/**
+ * Main NSE configuration for Ometria
+ */
+export const withNotificationServiceExtension: ConfigPlugin<IosPluginProps> = (
+  config,
+  props
+) => {
+  // Create NSE files
+  config = withNSEFiles(config, props);
+
+  // Add NSE target to Xcode project
+  config = withNSETarget(config, props);
+
+  return config;
+};
