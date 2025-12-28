@@ -7,7 +7,7 @@
   "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
-  "app.plugin": "./plugin/build/index.js",
+  "app.plugin": "./app.plugin.js",
   "ometria_sdk_version": {
     "ios": "1.8.4",
     "android": "1.11.0"
@@ -20,6 +20,7 @@
     "cpp",
     "scripts",
     "plugin/build",
+    "app.plugin.js",
     "ometria-react-native-sdk.podspec",
     "!lib/typescript/example",
     "!**/__tests__",

@@ -8,17 +8,17 @@ import {
  * Adds Google Services classpath to project-level build.gradle
  */
 const withGoogleServicesClasspath: ConfigPlugin = (config) => {
-  return withProjectBuildGradle(config, (config) => {
-    if (config.modResults.language === 'groovy') {
-      config.modResults.contents = addGoogleServicesClasspath(
-        config.modResults.contents
+  return withProjectBuildGradle(config, (modConfig) => {
+    if (modConfig.modResults.language === 'groovy') {
+      modConfig.modResults.contents = addGoogleServicesClasspath(
+        modConfig.modResults.contents
       );
     } else {
       throw new Error(
         'Cannot configure Google Services classpath in Kotlin build.gradle'
       );
     }
-    return config;
+    return modConfig;
   });
 };
 
@@ -26,17 +26,17 @@ const withGoogleServicesClasspath: ConfigPlugin = (config) => {
  * Adds Google Services plugin to app-level build.gradle
  */
 const withGoogleServicesPlugin: ConfigPlugin = (config) => {
-  return withAppBuildGradle(config, (config) => {
-    if (config.modResults.language === 'groovy') {
-      config.modResults.contents = addGoogleServicesPlugin(
-        config.modResults.contents
+  return withAppBuildGradle(config, (modConfig) => {
+    if (modConfig.modResults.language === 'groovy') {
+      modConfig.modResults.contents = addGoogleServicesPlugin(
+        modConfig.modResults.contents
       );
     } else {
       throw new Error(
         'Cannot configure Google Services plugin in Kotlin build.gradle'
       );
     }
-    return config;
+    return modConfig;
   });
 };
 

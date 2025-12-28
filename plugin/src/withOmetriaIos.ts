@@ -2,10 +2,7 @@ import {
   ConfigPlugin,
   withEntitlementsPlist,
   withPodfile,
-  withDangerousMod,
 } from '@expo/config-plugins';
-import * as fs from 'fs';
-import * as path from 'path';
 import { withNotificationServiceExtension } from './withNotificationServiceExtension';
 import type { OmetriaPluginProps } from './index';
 
@@ -20,23 +17,24 @@ const withOmetriaEntitlements: ConfigPlugin<IosPluginProps> = (
   config,
   props
 ) => {
-  return withEntitlementsPlist(config, (config) => {
+  return withEntitlementsPlist(config, (modConfig) => {
     // Add push notification entitlement
-    config.modResults['aps-environment'] = 'development';
+    modConfig.modResults['aps-environment'] = 'development';
 
     // Add app group entitlement
-    const appGroups = config.modResults['com.apple.security.application-groups'];
+    const appGroups =
+      modConfig.modResults['com.apple.security.application-groups'];
     if (Array.isArray(appGroups)) {
       if (!appGroups.includes(props.appGroupIdentifier)) {
         appGroups.push(props.appGroupIdentifier);
       }
     } else {
-      config.modResults['com.apple.security.application-groups'] = [
+      modConfig.modResults['com.apple.security.application-groups'] = [
         props.appGroupIdentifier,
       ];
     }
 
-    return config;
+    return modConfig;
   });
 };
 
@@ -44,8 +42,8 @@ const withOmetriaEntitlements: ConfigPlugin<IosPluginProps> = (
  * Modifies the Podfile to add Ometria-specific configurations
  */
 const withOmetriaPodfile: ConfigPlugin<IosPluginProps> = (config, props) => {
-  return withPodfile(config, (config) => {
-    let podfile = config.modResults.contents;
+  return withPodfile(config, (modConfig) => {
+    let podfile = modConfig.modResults.contents;
 
     // Add TurboModule script require at the top (after other requires)
     podfile = addTurboModuleRequire(podfile);
@@ -59,11 +57,11 @@ const withOmetriaPodfile: ConfigPlugin<IosPluginProps> = (config, props) => {
     // Add patch_ometria_turbomodule call in post_install
     podfile = addTurboModulePatch(podfile);
 
-    // Add NotificationsService target
+    // Add NSE target for rich push notifications
     podfile = addNotificationServiceTarget(podfile, props.ometriaIosSdkVersion);
 
-    config.modResults.contents = podfile;
-    return config;
+    modConfig.modResults.contents = podfile;
+    return modConfig;
   });
 };
 
@@ -78,8 +76,7 @@ function addTurboModuleRequire(podfile: string): string {
   // Find a good place to insert - after platform declaration or after other requires
   const platformMatch = podfile.match(/platform :ios.*\n/);
   if (platformMatch) {
-    const insertIndex =
-      (platformMatch.index || 0) + platformMatch[0].length;
+    const insertIndex = (platformMatch.index || 0) + platformMatch[0].length;
     return (
       podfile.slice(0, insertIndex) +
       `\n# [Ometria] TurboModule registration for New Architecture\n${requireStatement}\n` +
@@ -93,8 +90,9 @@ function addTurboModuleRequire(podfile: string): string {
 
 function addUseFrameworks(podfile: string): string {
   // Check if use_frameworks! is already present with static linkage
-  if (podfile.includes("use_frameworks! :linkage => :static")) {
-    return podfile;
+  if (podfile.includes('use_frameworks! :linkage => :static')) {
+    // Still need to ensure modular headers is present
+    return addModularHeaders(podfile);
   }
 
   // If use_frameworks! exists without static, we need to be careful
@@ -103,7 +101,8 @@ function addUseFrameworks(podfile: string): string {
       '[Ometria] use_frameworks! already exists in Podfile. ' +
         'Ensure it uses :linkage => :static for Firebase compatibility.'
     );
-    return podfile;
+    // Still add modular headers for Firebase/Ometria compatibility
+    return addModularHeaders(podfile);
   }
 
   // Add before the main target
@@ -111,7 +110,36 @@ function addUseFrameworks(podfile: string): string {
   if (targetMatch && targetMatch.index !== undefined) {
     return (
       podfile.slice(0, targetMatch.index) +
-      "# [Ometria] Firebase requires static frameworks\nuse_frameworks! :linkage => :static\n$RNFirebaseAsStaticFramework = true\n\n" +
+      '# [Ometria] Firebase requires static frameworks with modular headers\nuse_frameworks! :linkage => :static\nuse_modular_headers!\n$RNFirebaseAsStaticFramework = true\n\n' +
+      podfile.slice(targetMatch.index)
+    );
+  }
+
+  return podfile;
+}
+
+function addModularHeaders(podfile: string): string {
+  if (podfile.includes('use_modular_headers!')) {
+    return podfile;
+  }
+
+  // Add after use_frameworks! line
+  const useFrameworksMatch = podfile.match(/use_frameworks!.*\n/);
+  if (useFrameworksMatch && useFrameworksMatch.index !== undefined) {
+    const insertIndex = useFrameworksMatch.index + useFrameworksMatch[0].length;
+    return (
+      podfile.slice(0, insertIndex) +
+      '# [Ometria] Required for Firebase/Ometria static framework compatibility\nuse_modular_headers!\n' +
+      podfile.slice(insertIndex)
+    );
+  }
+
+  // Fallback: add before the main target
+  const targetMatch = podfile.match(/target ['"].*['"] do/);
+  if (targetMatch && targetMatch.index !== undefined) {
+    return (
+      podfile.slice(0, targetMatch.index) +
+      '# [Ometria] Required for Firebase/Ometria static framework compatibility\nuse_modular_headers!\n\n' +
       podfile.slice(targetMatch.index)
     );
   }
@@ -146,8 +174,7 @@ function addTurboModulePatch(podfile: string): string {
   // Find post_install block and add the patch call
   const postInstallMatch = podfile.match(/post_install do \|installer\|/);
   if (postInstallMatch && postInstallMatch.index !== undefined) {
-    const insertIndex =
-      postInstallMatch.index + postInstallMatch[0].length;
+    const insertIndex = postInstallMatch.index + postInstallMatch[0].length;
     return (
       podfile.slice(0, insertIndex) +
       '\n    # [Ometria] Register TurboModule for New Architecture\n    patch_ometria_turbomodule(installer)\n' +
@@ -170,15 +197,19 @@ function addNotificationServiceTarget(
     return podfile;
   }
 
+  // Use a standalone target with inherit! :search_paths
+  // This tells CocoaPods to inherit search paths from the implicit parent
+  // without requiring strict host target verification in the Xcode project
   const nseTarget = `
 # [Ometria] Notification Service Extension for rich push notifications
 target 'OmetriaNotificationServiceExtension' do
-  use_frameworks! :linkage => :static
-  pod 'Ometria', '${sdkVersion}'
+  inherit! :search_paths
+  use_modular_headers!
+  pod 'Ometria', '~> ${sdkVersion}'
 end
 `;
 
-  // Add at the end of the file
+  // Add at the end of the file (outside main target)
   return podfile + nseTarget;
 }
 
