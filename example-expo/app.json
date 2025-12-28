@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "example-expo",
-    "slug": "example-expo",
+    "name": "Ometria Expo Example",
+    "slug": "ometria-expo-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.ometriareactnativesdk",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,10 +23,20 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.example.ometriareactnativesdk",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "react-native-ometria",
+        {
+          "appGroupIdentifier": "group.com.tapptitude.ometria.sampleRN"
+        }
+      ]
+    ]
   }
 }
