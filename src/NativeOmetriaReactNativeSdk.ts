@@ -1,11 +1,13 @@
-import type {TurboModule} from 'react-native';
-import {TurboModuleRegistry} from 'react-native';
-import type {UnsafeObject} from 'react-native/Libraries/Types/CodegenTypes';
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
+import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 
 declare const global: { __turboModuleProxy?: object };
 
 export type NullableString = string | null | undefined;
 
+// These types must be defined inline for codegen compatibility
+// (codegen cannot resolve imported types)
 export type OmetriaBasketItem = {
   productId: string;
   sku?: string;
@@ -27,23 +29,20 @@ export type OmetriaOptions = {
   appGroupIdentifier?: string;
 };
 
-export type OmetriaNotificationData = {
-  campaignType?: string;
-  deepLinkActionUrl?: string;
-  externalCustomerId?: string;
-  imageUrl?: string;
-  sendId?: string;
-  tracking?: UnsafeObject;
-};
-
 export interface Spec extends TurboModule {
-  initializeWithApiToken(token: string, options?: OmetriaOptions | null): Promise<void>;
+  initializeWithApiToken(
+    token: string,
+    options?: OmetriaOptions | null
+  ): Promise<void>;
   updateStoreId(storeId?: NullableString): Promise<void>;
   trackProfileIdentifiedByCustomerIdEvent(
     customerId: string,
     storeId?: NullableString
   ): Promise<void>;
-  trackProfileIdentifiedByEmailEvent(email: string, storeId?: NullableString): Promise<void>;
+  trackProfileIdentifiedByEmailEvent(
+    email: string,
+    storeId?: NullableString
+  ): Promise<void>;
   trackProfileIdentifiedEvent(
     customerId: string,
     email: string,
@@ -58,14 +57,20 @@ export interface Spec extends TurboModule {
   trackBasketViewedEvent(): Promise<void>;
   trackBasketUpdatedEvent(basket: OmetriaBasket): Promise<void>;
   trackCheckoutStartedEvent(orderId: string): Promise<void>;
-  trackOrderCompletedEvent(orderId: string, basket?: OmetriaBasket | null): Promise<void>;
+  trackOrderCompletedEvent(
+    orderId: string,
+    basket?: OmetriaBasket | null
+  ): Promise<void>;
   trackHomeScreenViewedEvent(): Promise<void>;
   trackDeepLinkOpenedEvent(link: string, screenName: string): Promise<void>;
   trackScreenViewedEvent(
     screenName: string,
     additionalInfo?: UnsafeObject | null
   ): Promise<void>;
-  trackCustomEvent(customEventType: string, additionalInfo?: UnsafeObject | null): Promise<void>;
+  trackCustomEvent(
+    customEventType: string,
+    additionalInfo?: UnsafeObject | null
+  ): Promise<void>;
   flush(): Promise<void>;
   clear(): Promise<void>;
   isLoggingEnabled(enabled: boolean): Promise<void>;

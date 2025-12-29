@@ -1,5 +1,11 @@
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
+import type { Spec as NativeOmetriaReactNativeSdkSpec } from './NativeOmetriaReactNativeSdk';
+
+export type NativeModuleType = NativeOmetriaReactNativeSdkSpec & {
+  onNotificationInteracted(remoteMessage: unknown): Promise<void>;
+};
+
 type OmetriaReactNativeSdkCoreType = {
   /**
    * Initializes the Ometria SDK with the API token.
