@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.ometriareactnativesdk",
+      "bundleIdentifier": "com.tapptitude.ometria.sampleRN",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -35,6 +35,12 @@
         "react-native-ometria",
         {
           "appGroupIdentifier": "group.com.tapptitude.ometria.sampleRN"
+        }
+      ],
+      [
+        "react-native-permissions",
+        {
+          "iosPermissions": ["Notifications"]
         }
       ]
     ]

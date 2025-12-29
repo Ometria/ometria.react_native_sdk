@@ -1,20 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform } from 'react-native';
+import Ometria from 'react-native-ometria';
+import {
+  getMessaging,
+  setBackgroundMessageHandler,
+} from '@react-native-firebase/messaging';
+import App from './src/App';
+import { getOmetriaTokenFromStorage } from './src/utils';
+import { customOmetriaOptions } from './src/data';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+// Android background message handler (must be at top level)
+// TODO: Update RNFB RemoteMessage type that changed in 18.5.0
+Platform.OS === 'android' &&
+  setBackgroundMessageHandler(getMessaging(), async (remoteMessage) => {
+    Ometria.onAndroidBackgroundMessage({
+      ometriaToken: await getOmetriaTokenFromStorage(),
+      ometriaOptions: customOmetriaOptions,
+      remoteMessage: remoteMessage as any,
+    });
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
