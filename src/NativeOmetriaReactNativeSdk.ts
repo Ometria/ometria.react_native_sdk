@@ -55,8 +55,6 @@ export interface Spec extends TurboModule {
     listingType?: NullableString,
     listingAttributes?: UnsafeObject | null
   ): Promise<void>;
-  trackWishlistAddedToEvent(productId: string): Promise<void>;
-  trackWishlistRemovedFromEvent(productId: string): Promise<void>;
   trackBasketViewedEvent(): Promise<void>;
   trackBasketUpdatedEvent(basket: OmetriaBasket): Promise<void>;
   trackCheckoutStartedEvent(orderId: string): Promise<void>;

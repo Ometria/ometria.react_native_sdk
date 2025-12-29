@@ -85,18 +85,6 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         resolve(nil)
     }
 
-    @objc(trackWishlistAddedToEvent:resolve:reject:)
-    func trackWishlistAddedToEvent(productId: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        NSLog("trackWishlistAddedToEvent is deprecated and not supported on iOS")
-        resolve(nil)
-    }
-
-    @objc(trackWishlistRemovedFromEvent:resolve:reject:)
-    func trackWishlistRemovedFromEvent(productId: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        NSLog("trackWishlistRemovedFromEvent is deprecated and not supported on iOS")
-        resolve(nil)
-    }
-
     @objc(trackBasketViewedEvent:reject:)
     func trackBasketViewedEvent(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackBasketViewedEvent()

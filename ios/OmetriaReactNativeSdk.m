@@ -48,14 +48,6 @@ RCT_EXTERN_METHOD(trackProductListingViewedEvent:(NSString *)listingType
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(trackWishlistAddedToEvent:(NSString *)productId
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(trackWishlistRemovedFromEvent:(NSString *)productId
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(trackBasketViewedEvent:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 

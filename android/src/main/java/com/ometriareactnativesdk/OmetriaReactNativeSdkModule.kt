@@ -107,18 +107,6 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
-  override fun trackWishlistAddedToEvent(productId: String, promise: Promise) {
-    Ometria.instance().trackWishlistAddedToEvent(productId)
-    promise.resolve(null)
-  }
-
-  @ReactMethod
-  override fun trackWishlistRemovedFromEvent(productId: String, promise: Promise) {
-    Ometria.instance().trackWishlistRemovedFromEvent(productId)
-    promise.resolve(null)
-  }
-
-  @ReactMethod
   override fun trackBasketViewedEvent(promise: Promise) {
     Ometria.instance().trackBasketViewedEvent()
     promise.resolve(null)
