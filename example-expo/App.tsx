@@ -15,7 +15,7 @@ Platform.OS === 'android' &&
     Ometria.onAndroidBackgroundMessage({
       ometriaToken: await getOmetriaTokenFromStorage(),
       ometriaOptions: customOmetriaOptions,
-      remoteMessage: remoteMessage as any,
+      remoteMessage: remoteMessage,
     });
   });
 
