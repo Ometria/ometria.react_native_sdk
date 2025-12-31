@@ -322,7 +322,7 @@ const App = () => {
 
       <View>
         <Text style={styles.textBold}>🔔 Notification Content: </Text>
-        <Text>{notificationContent}</Text>
+        <Text style={styles.textDefault}>{notificationContent}</Text>
       </View>
 
       <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
@@ -521,7 +521,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         </TouchableOpacity>
         {ometriaIsInitialized && (
           <>
-            <Text>Customer Id:</Text>
+            <Text style={styles.textDefault}>Customer Id:</Text>
             <TextInput
               style={styles.input}
               value={userId}
@@ -529,7 +529,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               placeholderTextColor="#000"
               onChangeText={setUserId}
             />
-            <Text>Email:</Text>
+            <Text style={styles.textDefault}>Email:</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -537,7 +537,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               placeholderTextColor="#000"
               onChangeText={setUserEmail}
             />
-            <Text>Store Id (optional):</Text>
+            <Text style={styles.textDefault}>Store Id (optional):</Text>
             <TextInput
               style={styles.input}
               placeholder="Store Id"
@@ -623,11 +623,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#000',
   },
   subtitle: {
     fontSize: 14,
     marginBottom: 20,
     textAlign: 'center',
+    color: '#000',
   },
   text: {
     color: '#FFF',
@@ -635,6 +637,10 @@ const styles = StyleSheet.create({
   textBold: {
     fontWeight: 'bold',
     paddingVertical: 4,
+    color: '#000',
+  },
+  textDefault: {
+    color: '#000',
   },
   input: {
     marginTop: 4,
