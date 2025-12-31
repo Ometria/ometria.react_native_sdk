@@ -6,7 +6,7 @@ import type {
   OmetriaNotificationData,
   OmetriaOnBackgroundMessagePayload,
 } from '../types';
-import { withParsedOmetriaPayload } from '../utils';
+import { withParsedOmetriaPayload, parseOmetriaData } from '../utils';
 
 export const createNotificationMethods = (OmetriaSDK: NativeModuleType) => {
   const onNotificationReceived = (
@@ -32,7 +32,7 @@ export const createNotificationMethods = (OmetriaSDK: NativeModuleType) => {
     }
 
     return notification?.data?.ometria
-      ? (JSON.parse(notification.data.ometria) as OmetriaNotificationData)
+      ? (parseOmetriaData(notification.data.ometria) as OmetriaNotificationData)
       : undefined;
   };
 
