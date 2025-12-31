@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "tsc": "tsc --noEmit",
     "ios:cleanup": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && rm -rf /tmp/metro-* && rm -rf node_modules/.cache ../.cache ../node_modules/.cache 2>/dev/null || true && watchman watch-del-all 2>/dev/null || true && rm -rf ~/Library/Developer/Xcode/DerivedData/* && cd ios && rm -rf build Pods Podfile.lock && rm -rf sampleApp.xcworkspace/xcuserdata sampleApp.xcodeproj/xcuserdata sampleApp.xcodeproj/project.xcworkspace/xcuserdata 2>/dev/null || true",
     "ios:new:pods": "npm run ios:cleanup && cd ios && RCT_NEW_ARCH_ENABLED=1 pod install",
     "ios:old:pods": "npm run ios:cleanup && cd ios && RCT_NEW_ARCH_ENABLED=0 pod install",
@@ -26,7 +27,7 @@
     "react-native": "0.81.5",
     "react-native-permissions": "^5.4.4",
     "react-native-safe-area-context": "^5.6.2",
-    "react-native-ometria": "file:.."
+    "react-native-ometria": "link:.."
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
