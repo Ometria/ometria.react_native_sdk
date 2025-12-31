@@ -2,6 +2,7 @@
  * Metro configuration for Expo
  *
  * This config enables local development with the symlinked react-native-ometria package.
+ * This is not needed if using the published versions of react-native-ometria package
  *
  * - watchFolders: Enables hot reloading when library source files change
  * - blockList: Prevents Metro from using peer dependencies from the root's node_modules
@@ -26,10 +27,12 @@ const config = getDefaultConfig(__dirname);
 // Watch the parent directory for hot reloading during local development
 config.watchFolders = [root];
 
-// Block peer dependencies from root's node_modules to avoid duplicates
-config.resolver.blockList = modules.map(
-  (m) => new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`)
-);
+// Block ALL of library's node_modules to prevent duplicate dependencies
+// Critical for old architecture: NativeModules is per-bundle, so importing from
+// a duplicate react-native results in empty NativeModules and app freeze
+config.resolver.blockList = [
+  new RegExp(`^${escape(path.join(root, 'node_modules'))}\\/.*$`),
+];
 
 // Redirect peer dependencies to example-expo's node_modules
 config.resolver.extraNodeModules = modules.reduce((acc, name) => {
