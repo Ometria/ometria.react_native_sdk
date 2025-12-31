@@ -57,6 +57,9 @@ const withOmetriaPodfile: ConfigPlugin<IosPluginProps> = (config, props) => {
     // Add patch_ometria_turbomodule call in post_install
     podfile = addTurboModulePatch(podfile);
 
+    // Add old architecture modulemap fix in post_install
+    podfile = addOldArchModulemapFix(podfile);
+
     // Add NSE target for rich push notifications
     podfile = addNotificationServiceTarget(podfile, props.ometriaIosSdkVersion);
 
@@ -185,6 +188,84 @@ function addTurboModulePatch(podfile: string): string {
   console.warn(
     '[Ometria] Could not find post_install block in Podfile. ' +
       'TurboModule patch may need to be added manually.'
+  );
+  return podfile;
+}
+
+/**
+ * Adds modulemap fix for old architecture compatibility with use_modular_headers!
+ *
+ * Problem: When using use_modular_headers! + old architecture + RN 0.81+,
+ * multiple modulemaps in the same directory define identical module names with
+ * umbrella headers, causing "Redefinition of module" build errors.
+ *
+ * Solution: Replace conflicting modulemaps with empty modules (different names, no umbrella)
+ * This fix is only applied when newArchEnabled is false.
+ */
+function addOldArchModulemapFix(podfile: string): string {
+  if (podfile.includes('react_jsitooling') && podfile.includes('react_runtimeapple')) {
+    return podfile;
+  }
+
+  const modulemapFix = `
+    # [Ometria] Fix modulemap redefinition errors when using use_modular_headers! + old arch + RN 0.81+
+    # Problem: Multiple modulemaps in same directory define identical module names with umbrella headers
+    # Solution: Replace conflicting modulemaps with empty modules (different names, no umbrella)
+    if podfile_properties['newArchEnabled'] == 'false'
+      # Fix 1: react_runtime module redefinition (React-jsitooling vs React-RuntimeCore)
+      jsitooling_path = "#{installer.sandbox.root}/Target Support Files/React-jsitooling/React-jsitooling.modulemap"
+      if File.exist?(jsitooling_path)
+        File.write(jsitooling_path, "module react_jsitooling {\\n}\\n")
+        puts "[Ometria] Fixed React-jsitooling.modulemap (react_runtime conflict)"
+      end
+
+      # Fix 2: ReactCommon module redefinition (React-RuntimeApple vs ReactCommon)
+      runtimeapple_path = "#{installer.sandbox.root}/Target Support Files/React-RuntimeApple/React-RuntimeApple.modulemap"
+      if File.exist?(runtimeapple_path)
+        File.write(runtimeapple_path, "module react_runtimeapple {\\n}\\n")
+        puts "[Ometria] Fixed React-RuntimeApple.modulemap (ReactCommon conflict)"
+      end
+    end
+`;
+
+  // Find react_native_post_install and its closing parenthesis
+  // The function call spans multiple lines, so we need to find the matching closing )
+  const postInstallStart = podfile.indexOf('react_native_post_install(');
+  if (postInstallStart !== -1) {
+    // Count parentheses to find the matching closing )
+    let depth = 0;
+    let foundStart = false;
+    let endIndex = -1;
+
+    for (let i = postInstallStart; i < podfile.length; i++) {
+      if (podfile[i] === '(') {
+        depth++;
+        foundStart = true;
+      } else if (podfile[i] === ')') {
+        depth--;
+        if (foundStart && depth === 0) {
+          endIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (endIndex !== -1) {
+      // Find the end of the line after the closing )
+      const lineEnd = podfile.indexOf('\n', endIndex);
+      if (lineEnd !== -1) {
+        return (
+          podfile.slice(0, lineEnd + 1) +
+          modulemapFix +
+          podfile.slice(lineEnd + 1)
+        );
+      }
+    }
+  }
+
+  console.warn(
+    '[Ometria] Could not find react_native_post_install in Podfile. ' +
+      'Old architecture modulemap fix may need to be added manually.'
   );
   return podfile;
 }
