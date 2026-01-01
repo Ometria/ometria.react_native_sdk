@@ -1,0 +1,186 @@
+/**
+ * Ometria branded theme for Docusaurus
+ */
+
+/* Light mode */
+:root {
+  /* Primary navy blue */
+  --ifm-color-primary: #1E1E3F;
+  --ifm-color-primary-dark: #1a1a38;
+  --ifm-color-primary-darker: #171731;
+  --ifm-color-primary-darkest: #111126;
+  --ifm-color-primary-light: #252550;
+  --ifm-color-primary-lighter: #2c2c5e;
+  --ifm-color-primary-lightest: #38387a;
+
+  /* Coral accent for links */
+  --ifm-link-color: #FF6B6B;
+  --ifm-link-hover-color: #e55a5a;
+
+  /* Background and text */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f8f8fa;
+  --ifm-font-color-base: #1E1E3F;
+
+  /* Navbar */
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-navbar-link-color: #1E1E3F;
+  --ifm-navbar-link-hover-color: #FF6B6B;
+
+  /* Sidebar */
+  --ifm-menu-color: #1E1E3F;
+  --ifm-menu-color-active: #ffffff;
+  --ifm-menu-color-background-active: #1E1E3F;
+
+  /* Code */
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 107, 107, 0.1);
+
+  /* Footer */
+  --ifm-footer-background-color: #1E1E3F;
+  --ifm-footer-color: #ffffff;
+  --ifm-footer-link-color: #FF6B6B;
+  --ifm-footer-link-hover-color: #ffffff;
+
+  /* Other */
+  --ifm-heading-color: #1E1E3F;
+  --ifm-font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ifm-border-radius: 8px;
+}
+
+/* Dark mode */
+[data-theme='dark'] {
+  --ifm-color-primary: #FF6B6B;
+  --ifm-color-primary-dark: #e55a5a;
+  --ifm-color-primary-darker: #d94a4a;
+  --ifm-color-primary-darkest: #c43a3a;
+  --ifm-color-primary-light: #ff8585;
+  --ifm-color-primary-lighter: #ff9999;
+  --ifm-color-primary-lightest: #ffb3b3;
+
+  --ifm-link-color: #FF6B6B;
+  --ifm-link-hover-color: #ff8585;
+
+  --ifm-background-color: #1a1a2e;
+  --ifm-background-surface-color: #16162a;
+  --ifm-font-color-base: #f5f5f5;
+
+  --ifm-navbar-background-color: #1a1a2e;
+  --ifm-navbar-link-color: #f5f5f5;
+  --ifm-navbar-link-hover-color: #FF6B6B;
+
+  --ifm-menu-color: #f5f5f5;
+  --ifm-menu-color-active: #ffffff;
+  --ifm-menu-color-background-active: #FF6B6B;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 107, 107, 0.2);
+
+  --ifm-footer-background-color: #16162a;
+  --ifm-footer-color: #f5f5f5;
+  --ifm-footer-link-color: #FF6B6B;
+  --ifm-footer-link-hover-color: #ffffff;
+
+  --ifm-heading-color: #f5f5f5;
+}
+
+/* Navbar styling */
+.navbar {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.navbar__title {
+  font-weight: 600;
+}
+
+/* Sidebar active item (leaf pages) */
+.menu__link--active:not(.menu__link--sublist) {
+  background-color: var(--ifm-menu-color-background-active);
+  color: var(--ifm-menu-color-active);
+  border-radius: var(--ifm-border-radius);
+}
+
+/* Sidebar category labels (expandable sections) */
+.menu__link--sublist {
+  color: var(--ifm-menu-color) !important;
+  font-weight: 600;
+}
+
+.menu__link--sublist:hover {
+  color: var(--ifm-link-color) !important;
+  background-color: transparent;
+}
+
+/* Expanded category */
+.menu__list-item--collapsed .menu__link--sublist,
+.menu__link--sublist-caret {
+  color: var(--ifm-menu-color) !important;
+}
+
+/* Links in content */
+article a {
+  color: var(--ifm-link-color);
+  text-decoration: none;
+}
+
+article a:hover {
+  color: var(--ifm-link-hover-color);
+  text-decoration: underline;
+}
+
+/* Breadcrumbs */
+.breadcrumbs__link {
+  color: var(--ifm-link-color);
+}
+
+/* Code blocks */
+.prism-code {
+  border-radius: var(--ifm-border-radius);
+}
+
+/* Admonitions/callouts */
+.alert--info {
+  --ifm-alert-background-color: rgba(30, 30, 63, 0.1);
+  --ifm-alert-border-color: #1E1E3F;
+}
+
+.alert--warning {
+  --ifm-alert-background-color: rgba(255, 107, 107, 0.1);
+  --ifm-alert-border-color: #FF6B6B;
+}
+
+[data-theme='dark'] .alert--info {
+  --ifm-alert-background-color: rgba(255, 107, 107, 0.1);
+  --ifm-alert-border-color: #FF6B6B;
+}
+
+/* Table styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table th {
+  background-color: var(--ifm-background-surface-color);
+}
+
+/* Footer */
+.footer {
+  padding: 1rem 0;
+}
+
+.footer__copyright {
+  margin-top: 0;
+}
+
+.footer__link-item {
+  color: var(--ifm-footer-link-color);
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-footer-link-hover-color);
+}
+
+/* Smooth transitions */
+a, .menu__link, .navbar__link {
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
