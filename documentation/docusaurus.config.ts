@@ -11,9 +11,9 @@ const config: Config = {
     v4: true,
   },
 
-  // GitHub Pages deployment config
-  url: 'https://ometria.github.io',
-  baseUrl: '/react-native-ometria/',
+  // GitHub Pages deployment config (set by deploy.sh based on remote)
+  url: process.env.SITE_URL || 'https://ometria.github.io',
+  baseUrl: process.env.BASE_URL || '/react-native-ometria/',
   organizationName: 'Ometria',
   projectName: 'ometria.react_native_sdk',
   trailingSlash: false,
@@ -32,8 +32,6 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           routeBasePath: '/', // Docs at root instead of /docs
-          editUrl:
-            'https://github.com/Ometria/ometria.react_native_sdk/tree/main/documentation/',
         },
         blog: false, // Disable blog
         theme: {
