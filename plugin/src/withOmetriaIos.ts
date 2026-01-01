@@ -1,19 +1,27 @@
 import {
   ConfigPlugin,
   withEntitlementsPlist,
+  withInfoPlist,
   withPodfile,
 } from '@expo/config-plugins';
 import { withNotificationServiceExtension } from './withNotificationServiceExtension';
-import type { OmetriaPluginProps } from './index';
 
-type IosPluginProps = OmetriaPluginProps & {
+type IosPluginProps = {
+  customAppGroupIdentifier?: string;
   ometriaIosSdkVersion: string;
+  skipNSE: boolean;
+};
+
+type InternalPluginProps = {
+  appGroupIdentifier: string | undefined;
+  ometriaIosSdkVersion: string;
+  skipNSE: boolean;
 };
 
 /**
  * Adds push notification and app group entitlements to the main app
  */
-const withOmetriaEntitlements: ConfigPlugin<IosPluginProps> = (
+const withOmetriaEntitlements: ConfigPlugin<InternalPluginProps> = (
   config,
   props
 ) => {
@@ -21,17 +29,19 @@ const withOmetriaEntitlements: ConfigPlugin<IosPluginProps> = (
     // Add push notification entitlement
     modConfig.modResults['aps-environment'] = 'development';
 
-    // Add app group entitlement
-    const appGroups =
-      modConfig.modResults['com.apple.security.application-groups'];
-    if (Array.isArray(appGroups)) {
-      if (!appGroups.includes(props.appGroupIdentifier)) {
-        appGroups.push(props.appGroupIdentifier);
+    // Add app group entitlement only if appGroupIdentifier is provided (for NSE)
+    if (props.appGroupIdentifier) {
+      const appGroups =
+        modConfig.modResults['com.apple.security.application-groups'];
+      if (Array.isArray(appGroups)) {
+        if (!appGroups.includes(props.appGroupIdentifier)) {
+          appGroups.push(props.appGroupIdentifier);
+        }
+      } else {
+        modConfig.modResults['com.apple.security.application-groups'] = [
+          props.appGroupIdentifier,
+        ];
       }
-    } else {
-      modConfig.modResults['com.apple.security.application-groups'] = [
-        props.appGroupIdentifier,
-      ];
     }
 
     return modConfig;
@@ -39,9 +49,27 @@ const withOmetriaEntitlements: ConfigPlugin<IosPluginProps> = (
 };
 
 /**
+ * Writes the default appGroupIdentifier to Info.plist for Expo apps.
+ * The native SDK reads this as a fallback when no appGroupIdentifier is passed at runtime.
+ */
+const withOmetriaInfoPlist: ConfigPlugin<InternalPluginProps> = (
+  config,
+  props
+) => {
+  return withInfoPlist(config, (modConfig) => {
+    // Only write if NSE is enabled and we have an appGroupIdentifier
+    if (!props.skipNSE && props.appGroupIdentifier) {
+      modConfig.modResults['OmetriaExpoDefaultAppGroupIdentifier'] =
+        props.appGroupIdentifier;
+    }
+    return modConfig;
+  });
+};
+
+/**
  * Modifies the Podfile to add Ometria-specific configurations
  */
-const withOmetriaPodfile: ConfigPlugin<IosPluginProps> = (config, props) => {
+const withOmetriaPodfile: ConfigPlugin<InternalPluginProps> = (config, props) => {
   return withPodfile(config, (modConfig) => {
     let podfile = modConfig.modResults.contents;
 
@@ -60,8 +88,13 @@ const withOmetriaPodfile: ConfigPlugin<IosPluginProps> = (config, props) => {
     // Add old architecture modulemap fix in post_install
     podfile = addOldArchModulemapFix(podfile);
 
-    // Add NSE target for rich push notifications
-    podfile = addNotificationServiceTarget(podfile, props.ometriaIosSdkVersion);
+    // Add NSE target for rich push notifications (only if not skipped)
+    if (!props.skipNSE) {
+      podfile = addNotificationServiceTarget(
+        podfile,
+        props.ometriaIosSdkVersion
+      );
+    }
 
     modConfig.modResults.contents = podfile;
     return modConfig;
@@ -203,7 +236,10 @@ function addTurboModulePatch(podfile: string): string {
  * This fix is only applied when newArchEnabled is false.
  */
 function addOldArchModulemapFix(podfile: string): string {
-  if (podfile.includes('react_jsitooling') && podfile.includes('react_runtimeapple')) {
+  if (
+    podfile.includes('react_jsitooling') &&
+    podfile.includes('react_runtimeapple')
+  ) {
     return podfile;
   }
 
@@ -298,14 +334,49 @@ end
  * Main iOS configuration for Ometria
  */
 export const withOmetriaIos: ConfigPlugin<IosPluginProps> = (config, props) => {
+  const { skipNSE, ometriaIosSdkVersion } = props;
+
+  if (skipNSE) {
+    console.warn(
+      '⚠️  [react-native-ometria] skipNSE is enabled. Rich push notification content (images, etc.) will not work on iOS.'
+    );
+  }
+
+  // Use custom appGroupIdentifier if provided, otherwise auto-generate from bundleIdentifier
+  const bundleIdentifier = config.ios?.bundleIdentifier;
+  if (!bundleIdentifier && !skipNSE && !props.customAppGroupIdentifier) {
+    throw new Error(
+      '[react-native-ometria] ios.bundleIdentifier is required in app.json/app.config.js for NSE setup. ' +
+        'Either set ios.bundleIdentifier, provide customAppGroupIdentifier, or use skipNSE: true to skip rich notifications.'
+    );
+  }
+
+  const appGroupIdentifier =
+    props.customAppGroupIdentifier ??
+    (bundleIdentifier ? `group.${bundleIdentifier}` : undefined);
+
+  const internalProps = {
+    appGroupIdentifier,
+    ometriaIosSdkVersion,
+    skipNSE,
+  };
+
   // Add entitlements
-  config = withOmetriaEntitlements(config, props);
+  config = withOmetriaEntitlements(config, internalProps);
+
+  // Write default appGroupIdentifier to Info.plist for Expo auto-configuration
+  config = withOmetriaInfoPlist(config, internalProps);
 
   // Modify Podfile
-  config = withOmetriaPodfile(config, props);
+  config = withOmetriaPodfile(config, internalProps);
 
-  // Add Notification Service Extension
-  config = withNotificationServiceExtension(config, props);
+  // Add Notification Service Extension (only if not skipped and appGroupIdentifier is available)
+  if (!skipNSE && appGroupIdentifier) {
+    config = withNotificationServiceExtension(config, {
+      appGroupIdentifier,
+      ometriaIosSdkVersion,
+    });
+  }
 
   return config;
 };

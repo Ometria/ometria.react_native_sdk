@@ -13,6 +13,7 @@ import React
 class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
+        static let expoDefaultAppGroupIdentifierKey = "OmetriaExpoDefaultAppGroupIdentifier"
     }
 
     @objc
@@ -33,7 +34,14 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         OmetriaStorageKeys.rnVersion = "2.7.0"
         DispatchQueue.main.async {
             NSLog("🔵 [Ometria Native] About to call Ometria.initialize")
-            let appGroupIdentifier = options?[Constants.appGroupIdentifierKey] as? String
+            // Use provided appGroupIdentifier, or fallback to Expo plugin default from Info.plist
+            var appGroupIdentifier = options?[Constants.appGroupIdentifierKey] as? String
+            if appGroupIdentifier == nil {
+                appGroupIdentifier = Bundle.main.object(forInfoDictionaryKey: Constants.expoDefaultAppGroupIdentifierKey) as? String
+                if let expoDefault = appGroupIdentifier {
+                    NSLog("🔵 [Ometria Native] Using Expo default appGroupIdentifier: %@", expoDefault)
+                }
+            }
             let ometriaInit = Ometria.initialize(apiToken: token, enableSwizzling: false, appGroupIdentifier: appGroupIdentifier)
             NSLog("🔵 [Ometria Native] Ometria.initialize returned")
             resolve(ometriaInit)

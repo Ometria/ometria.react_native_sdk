@@ -28,12 +28,7 @@
       "googleServicesFile": "./google-services.json"
     },
     "plugins": [
-      [
-        "react-native-ometria",
-        {
-          "appGroupIdentifier": "group.com.tapptitude.ometria.sampleRN"
-        }
-      ],
+      ["react-native-ometria"],
       [
         "react-native-permissions",
         {

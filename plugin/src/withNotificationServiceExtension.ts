@@ -5,19 +5,19 @@ import {
 } from '@expo/config-plugins';
 import * as fs from 'fs';
 import * as path from 'path';
-import type { OmetriaPluginProps } from './index';
 
 const NSE_TARGET_NAME = 'OmetriaNotificationServiceExtension';
 const NSE_FOLDER_NAME = 'OmetriaNotificationServiceExtension';
 
-type IosPluginProps = OmetriaPluginProps & {
+export type NSEPluginProps = {
+  appGroupIdentifier: string;
   ometriaIosSdkVersion: string;
 };
 
 /**
  * Creates the Notification Service Extension files
  */
-const withNSEFiles: ConfigPlugin<IosPluginProps> = (config, props) => {
+const withNSEFiles: ConfigPlugin<NSEPluginProps> = (config, props) => {
   return withDangerousMod(config, [
     'ios',
     async (modConfig) => {
@@ -62,7 +62,7 @@ const withNSEFiles: ConfigPlugin<IosPluginProps> = (config, props) => {
 /**
  * Adds the NSE target to the Xcode project using proper xcode library methods
  */
-const withNSETarget: ConfigPlugin<IosPluginProps> = (config) => {
+const withNSETarget: ConfigPlugin<NSEPluginProps> = (config) => {
   return withXcodeProject(config, (_config) => {
     const xcodeProject = _config.modResults;
     const appName = _config.modRequest.projectName || 'App';
@@ -554,7 +554,7 @@ function generateEntitlements(appGroupIdentifier: string): string {
 /**
  * Main NSE configuration for Ometria
  */
-export const withNotificationServiceExtension: ConfigPlugin<IosPluginProps> = (
+export const withNotificationServiceExtension: ConfigPlugin<NSEPluginProps> = (
   config,
   props
 ) => {
