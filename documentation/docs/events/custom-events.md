@@ -16,6 +16,7 @@ Custom events are useful when:
 - Users interact with promotional content or special features
 
 **Examples:**
+
 - User signs up for a promotion
 - User completes onboarding
 - User enables notifications
@@ -33,10 +34,10 @@ Ometria.trackCustomEvent('promotion_signup', {
 
 ### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `eventType` | `string` | Yes | Custom event type identifier |
-| `additionalInfo` | `object` | No | Additional data about the event |
+| Parameter        | Type     | Required | Description                     |
+| ---------------- | -------- | -------- | ------------------------------- |
+| `eventType`      | `string` | Yes      | Custom event type identifier    |
+| `additionalInfo` | `object` | No       | Additional data about the event |
 
 ## Examples
 
@@ -76,20 +77,3 @@ Ometria.trackCustomEvent('survey_completed', {
   score: 9,
 });
 ```
-
-## Deep Link Opened
-
-Track when a user opens a deep link from a notification:
-
-```js
-Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
-```
-
-See [Handling Notification URLs](../push-notifications/setup#handling-notification-urls) for more details.
-
-## Best Practices
-
-1. **Coordinate with marketing** - Check what events they need for automation campaigns
-2. **Use consistent naming** - Establish a naming convention for event types
-3. **Include relevant data** - Pass any information that helps segment users
-4. **Don't over-track** - Focus on actionable events, not every tap

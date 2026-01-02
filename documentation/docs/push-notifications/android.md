@@ -7,6 +7,10 @@ title: Android Setup
 
 Additional Android setup for background notification tracking.
 
+:::tip Expo Users
+If you're using Expo with the Ometria config plugin, the Google Services classpath and plugin are added automatically. You still need to set up the background message handler as described below.
+:::
+
 ## Background Message Handler
 
 To track notifications received when the app is in quit or background state, set up a background message handler in `index.js`:

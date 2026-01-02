@@ -7,6 +7,23 @@ title: iOS Setup
 
 Additional iOS setup for rich notifications and background tracking.
 
+:::tip Expo Users
+If you're using Expo with the Ometria config plugin, the Notification Service Extension is created automatically during `npx expo prebuild`. You can skip this entire page!
+
+The plugin automatically:
+- Generates `appGroupIdentifier` as `group.{ios.bundleIdentifier}`
+- Sets up all entitlements
+- Creates the Notification Service Extension
+- Configures `Info.plist` so the native SDK reads the value automatically
+
+**No configuration needed** - just add `["react-native-ometria"]` to your plugins and run prebuild.
+
+If you need a custom app group, use:
+```json
+["react-native-ometria", { "customAppGroupIdentifier": "group.com.custom.identifier" }]
+```
+:::
+
 ## Notification Service Extension
 
 The Notification Service Extension enables:
@@ -19,6 +36,12 @@ The Notification Service Extension enables:
 1. Go to **File > New > Target**
 2. Select **Notification Service Extension > Next**
 3. Name it (e.g., `NotificationService`)
+
+![Notification Service Extension](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/notification_service_extension.png)
+
+A new item will appear in your target list:
+
+![Project Targets](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/project_targets.png)
 
 ### Update Podfile
 
@@ -48,8 +71,13 @@ Both the main app and extension need to share data via an App Group.
 1. In Xcode, select your project
 2. Go to **Signing & Capabilities**
 3. Click **+ Capability** and add **App Groups**
+
+![Add Capability](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/dd8cd6e7-ff00-41be-9573-2589436a4616)
+
 4. Add a group identifier (e.g., `group.com.yourcompany.yourapp`)
 5. Repeat for the **NotificationService** target
+
+![App Groups](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/3d9d0500-3832-4312-a918-e5b05404886d)
 
 ### Update NotificationService
 
@@ -84,3 +112,7 @@ With the Notification Service Extension configured, notifications received when 
 2. Display rich content (images)
 
 No additional code is needed in your React Native app for iOS background handling.
+
+:::tip Sample App
+For a complete example and use case, see the [Sample app](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example/src/App.tsx).
+:::

@@ -48,14 +48,14 @@ Ometria.trackOrderCompletedEvent('order_123', {
 });
 ```
 
-### Parameters
+**Parameters**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `orderId` | `string` | Yes | Unique order identifier |
-| `basket` | `OmetriaBasket` | No | Optional basket object with order details |
+| Parameter | Type            | Required | Description                               |
+| --------- | --------------- | -------- | ----------------------------------------- |
+| `orderId` | `string`        | Yes      | Unique order identifier                   |
+| `basket`  | `OmetriaBasket` | No       | Optional basket object with order details |
 
-## Example: Complete Checkout Flow
+**Example: Complete Checkout Flow**
 
 ```js
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';

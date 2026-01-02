@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: Deep Linking
+title: Deep Linking (draft)
 ---
 
 # App Links & Deep Linking
@@ -22,7 +22,7 @@ You need an SSL-enabled Ometria tracking domain. Contact your Ometria representa
 
 ### Create apple-app-site-association
 
-Create an `apple-app-site-association` file and send it to your Ometria contact:
+Create an `apple-app-site-association` file:
 
 ```json
 {
@@ -37,6 +37,19 @@ Create an `apple-app-site-association` file and send it to your Ometria contact:
   }
 }
 ```
+
+Replace `TEAM_ID` with your Apple Developer Team ID (found in your Apple Developer account under Membership) and `com.yourcompany.yourapp` with your app's bundle identifier.
+
+#### Hosting the File
+
+The `apple-app-site-association` file must be:
+
+- Hosted at `https://your-tracking-domain.com/.well-known/apple-app-site-association`
+- Served with `Content-Type: application/json`
+- Accessible without redirects
+- Available over HTTPS
+
+**Send this file to your Ometria contact** who will host it on your tracking domain.
 
 ### Update AppDelegate
 
@@ -123,10 +136,20 @@ See [Linking push notifications to app screens](https://support.ometria.com/hc/e
 
 You need to implement the mapping between your website URLs and app screens. Common patterns:
 
-| URL Pattern | App Screen |
-|-------------|------------|
-| `/product/:id` | Product detail |
+| URL Pattern     | App Screen       |
+| --------------- | ---------------- |
+| `/product/:id`  | Product detail   |
 | `/category/:id` | Category listing |
-| `/cart` | Shopping cart |
-| `/account` | User profile |
-| `/orders/:id` | Order detail |
+| `/cart`         | Shopping cart    |
+| `/account`      | User profile     |
+| `/orders/:id`   | Order detail     |
+
+## Deep Link Opened
+
+Track when a user opens a deep link from a notification:
+
+```js
+Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
+```
+
+See [Handling Notification URLs](../push-notifications/setup#handling-notification-urls) for more details.

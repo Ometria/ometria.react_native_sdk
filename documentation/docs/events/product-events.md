@@ -15,11 +15,45 @@ Track when a user shows interest in a specific product (clicks, taps, views, or 
 Ometria.trackProductViewedEvent('product_id');
 ```
 
-**When to use:** User selects a product from search results, browses a category and clicks on a specific item, or views a product detail page.
+**Parameters:**
+
+| Parameter   | Type     | Description                           |
+| ----------- | -------- | ------------------------------------- |
+| `productId` | `string` | The unique identifier for the product |
+
+**When to use:**
+
+- User selects a product from search results
+- User browses a category and clicks on a specific item
+- User views a product detail page
 
 ## Product Listing Viewed
 
-Track when a user views a list of products:
+Track when a user clicks, taps, views, or otherwise shows interest in a product listing. This includes search results, listings of products in a group, category, collection, or any other screen that presents a list of products.
+
+For example, if a store sells clothing and the visitor taps on "Women's Footwear" to see products in that category, or searches for "blue jumper" and sees matching results.
+
+```js
+Ometria.trackProductListingViewedEvent(listingType, listingAttributes);
+```
+
+**Parameters:**
+
+| Parameter           | Type     | Description                                                                                                                                                    |
+| ------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `listingType`       | `string` | Any string to identify the listing page type. We recommend "category" for category pages or "search" for search results. Helps identify what kind of page was viewed. |
+| `listingAttributes` | `object` | Object with `type` and `id` fields (see below).                                                                                                                |
+
+**Listing Attributes:**
+
+| Field  | Type     | Description                                                                        |
+| ------ | -------- | ---------------------------------------------------------------------------------- |
+| `type` | `string` | An attribute that exists in the Ometria database (e.g., "shoe-colour", "category") |
+| `id`   | `string` | The attribute `their_id` that exists in the Ometria database (e.g., "red")         |
+
+Both `type` and `id` are required to correctly specify attributes.
+
+**Example:**
 
 ```js
 Ometria.trackProductListingViewedEvent('category', {
@@ -28,60 +62,9 @@ Ometria.trackProductListingViewedEvent('category', {
 });
 ```
 
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `listingType` | `string` | Type of listing (e.g., "category", "search"). Helps identify the page type. |
-| `listingAttributes` | `object` | Object with `type` and `id` that match attributes in your Ometria database. |
-
-### Examples
-
-**Category page:**
-
-```js
-Ometria.trackProductListingViewedEvent('category', {
-  type: 'category',
-  id: 'womens-footwear',
-});
-```
-
-**Search results:**
-
-```js
-Ometria.trackProductListingViewedEvent('search', {
-  type: 'search-term',
-  id: 'blue-jumper',
-});
-```
-
 **When to use:**
+
 - Search results pages
 - Category listings
 - Collection pages
 - Any screen showing multiple products
-
-## Home Screen Viewed
-
-Track when a user views the app's home page or landing screen:
-
-```js
-Ometria.trackHomeScreenViewedEvent();
-```
-
-## Screen Viewed
-
-Track views of custom screens that are useful for marketing engagement:
-
-```js
-Ometria.trackScreenViewedEvent('OnboardingScreen', { step: '3', variant: 'B' });
-```
-
-### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `screenName` | `string` | Name of the screen |
-| `additionalInfo` | `object` | Optional additional data about the screen |
-
-**When to use:** Promotion screens, onboarding flows, feature highlights, or any screen where marketing might want to track engagement.

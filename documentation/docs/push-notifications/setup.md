@@ -7,6 +7,23 @@ title: Firebase Setup
 
 Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications.
 
+:::tip Expo Users
+If you're using Expo with the Ometria config plugin, the Google Services configuration for Android is handled automatically. You still need to:
+1. Add your Firebase configuration files (`GoogleService-Info.plist` for iOS, `google-services.json` for Android)
+2. Install the Firebase messaging package
+3. Follow the code setup below
+:::
+
+## Overview
+
+When correctly set up, Ometria can send personalised notifications for your mobile application. Follow these steps:
+
+1. Enable your app to receive push notifications by creating an appId and enabling the push notifications entitlement
+2. Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria
+3. Enable Cloud Messaging on your Firebase account and provide your application's **SSL push certificate**
+4. Configure push notifications in your application
+5. Add a **Notification Service Extension** to your app (iOS) to enable rich content notifications and track notifications received in quit state
+
 ## Prerequisites
 
 1. Ometria SDK initialized
@@ -17,6 +34,13 @@ Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-m
 
 ```bash
 npm install @react-native-firebase/app @react-native-firebase/messaging
+```
+
+You will use Firebase in your app with the following imports:
+
+```js
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
 ```
 
 ### Android Setup
@@ -60,6 +84,8 @@ await requestNotifications(['alert', 'sound', 'badge']).then(({ status }) => {
 });
 ```
 
+Find more about [Notification runtime permissions on Android](https://developer.android.com/develop/ui/views/notifications/notification-permission).
+
 ## Forward Push Token to Ometria
 
 After initialization, forward the Firebase token:
@@ -93,7 +119,9 @@ messaging().onMessage(async (remoteMessage) => {
 ```
 
 :::note
-Foreground notifications are **not** automatically shown to the user. You need to trigger a local notification or update the UI.
+Foreground notifications are **not** automatically shown to the user. You need to trigger a local notification or update the UI. Read more about [foreground state messages](https://rnfirebase.io/messaging/usage#foreground-state-messages).
+
+If you implement a custom solution, don't forget to call `Ometria.onNotificationOpenedApp` when handling the notification interaction event.
 :::
 
 ## Handle Notification Interaction
@@ -115,6 +143,10 @@ messaging().onNotificationOpenedApp((remoteMessage) =>
   Ometria.onNotificationOpenedApp(remoteMessage)
 );
 ```
+
+:::info Deprecated Methods
+As of version 2.4.0, `Ometria.onNotificationInteracted` is deprecated. Use `Ometria.onNotificationOpenedApp` instead.
+:::
 
 ## Handling Notification URLs
 

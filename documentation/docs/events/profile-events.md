@@ -5,40 +5,70 @@ title: Profile Events
 
 # Profile Events
 
-Profile events identify users and link their app behaviour to their Ometria profile.
+Profile events identify users and link their app behaviour to their Ometria profile. These events are pivotal to the functioning of the SDK, so send them as early as possible.
 
 ## Profile Identified
 
 Track when a user logs in or identifies themselves.
 
-### By Customer ID
+| Method                                                          | Use Case                                       |
+| --------------------------------------------------------------- | ---------------------------------------------- |
+| `trackProfileIdentifiedEvent(customerId, email, storeId?)`      | Both identifiers available (recommended)       |
+| `trackProfileIdentifiedByCustomerIdEvent(customerId, storeId?)` | Only customer ID available                     |
+| `trackProfileIdentifiedByEmailEvent(email, storeId?)`           | Only email available (e.g., newsletter signup) |
 
 ```js
-Ometria.trackProfileIdentifiedByCustomerIdEvent('customer_id');
-```
+// Recommended unified method
+Ometria.trackProfileIdentifiedEvent(
+  'customer_id',
+  'user@example.com',
+  'store_uk' // optional
+);
 
-### By Email
+// Customer ID only
+Ometria.trackProfileIdentifiedByCustomerIdEvent(
+  'customer_id',
+  'store_uk' // optional
+);
 
-When a user only provides their email without logging in:
-
-```js
-Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
-```
-
-### By Both (Recommended)
-
-For the most robust profile matching:
-
-```js
-Ometria.trackProfileIdentifiedEvent('customer_id', 'user@example.com');
+// Email only
+Ometria.trackProfileIdentifiedByEmailEvent(
+  'user@example.com',
+  'store_uk' // optional
+);
 ```
 
 :::tip
-Having a **customerId** makes profile matching more robust. Send either event as soon as you have the information.
+Having a **customerId** makes profile matching more robust. Send either event as soon as you have the information - they're not mutually exclusive.
 :::
 
-:::warning
-These identifiers must match those in your e-commerce platform and Ometria data API. A common error is generating new customer IDs on each login instead of using consistent server-generated IDs.
+#### Store Identifier
+
+The optional `storeId` parameter identifies which store the customer belongs to. Ometria supports multiple stores for the same platform (e.g., different countries or brands).
+
+```js
+// Pass with profile events
+Ometria.trackProfileIdentifiedEvent(
+  'customer_id',
+  'user@example.com',
+  'store_uk'
+);
+
+// Or set separately
+Ometria.updateStoreId('store_uk');
+Ometria.updateStoreId(null); // reset
+```
+
+:::warning Identifier Consistency
+If your business already integrates with Ometria, the identifiers sent here must correspond to those in other integrations.
+
+Events are merged on Ometria's side into one cross-channel view of customer behaviour. Inconsistent email/customer IDs could result in duplicate profiles or data loss.
+
+- The `customerId` and `email` must match what you send via the Ometria Data API
+- If you specify both, **both must match**
+- A typical error: the app generates a new customer ID on each login instead of using the server-generated ID stored in Ometria
+
+**Recommendation:** Generate IDs centrally on your servers and send consistent ones through both the Ometria mobile SDK and Data API. If consistent IDs are impractical, use only email to identify contacts.
 :::
 
 ## Profile Deidentified
@@ -49,32 +79,4 @@ Track when a user logs out:
 Ometria.trackProfileDeidentifiedEvent();
 ```
 
-This clears the stored email and customer ID from local storage. It also resets the store identifier.
-
-## Store Identifier
-
-Ometria supports multiple stores (e.g., different countries). You can set the store identifier in three ways:
-
-### 1. With Profile Events
-
-Pass an optional `storeId` parameter:
-
-```js
-Ometria.trackProfileIdentifiedByEmailEvent('user@example.com', 'store_uk');
-Ometria.trackProfileIdentifiedByCustomerIdEvent('customer_id', 'store_us');
-Ometria.trackProfileIdentifiedEvent('customer_id', 'user@example.com', 'store_eu');
-```
-
-### 2. Separate Method
-
-```js
-// Set store identifier
-Ometria.updateStoreId('store_uk');
-
-// Reset store identifier
-Ometria.updateStoreId(null);
-```
-
-### 3. Profile Deidentified
-
-Calling `trackProfileDeidentifiedEvent()` automatically resets the store identifier along with the customer ID and email.
+This clears the stored email, customer ID, and store identifier from local storage.

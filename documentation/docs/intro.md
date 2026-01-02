@@ -4,58 +4,82 @@ slug: /
 title: Getting Started
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Ometria React Native SDK
 
-Ometria helps your marketing department understand and better engage with your customers by delivering personalised emails and push notifications.
+Ometria helps your marketing department understand and better engage with your customers by delivering personalised emails and push notifications. The app has two key objectives:
 
-The SDK has two key objectives:
+- **Getting information about customers** (what do they like?)
+- **Reaching out to customers** (saying the right thing to the right people)
 
-1. **Tracking customer behaviour** through events - a subset of events is automatically handled by the Ometria SDK, but you can customize it to your needs
-2. **Sending and displaying push notifications** - requires app developer integration
+For your mobile app, this means:
 
-## Before You Begin
+- **Tracking customer behaviour** through events - a subset of events is automatically handled by the Ometria SDK, but you have to customize it to your needs [↗](https://support.ometria.com/hc/en-gb/articles/360018440917-Creating-an-event-tracking-plan-for-your-mobile-app)
+- **Sending and displaying push notifications** - requires app developer integration
 
-See [Setting up your mobile app with Firebase credentials](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials) in the Ometria help centre to get an API key.
+You can also look at the sample apps we have included for reference implementations. [↗](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo)
+
+**Before you begin** you need to get an API key from Ometria. [↗](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
 
 ## Quick Start
 
-### 1. Install the package
+This is the recommended setup for new projects using Expo with the New Architecture.
 
-```bash
-npm install react-native-ometria
-# or
-yarn add react-native-ometria
+#### 1. Install the package
+
+<Tabs>
+  <TabItem value="pnpm" label="pnpm" default>
+    ```bash
+    pnpm add react-native-ometria
+    ```
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+    ```bash
+    yarn add react-native-ometria
+    ```
+  </TabItem>
+  <TabItem value="npm" label="npm" >
+    ```bash
+    npm install react-native-ometria
+    ```
+  </TabItem>
+</Tabs>
+
+#### 2. Add the Expo plugin to your `app.json` or `app.config.ts`
+
+```json
+{
+  "expo": {
+    "plugins": [
+      // add the Ometria plugin
+      ["react-native-ometria"]
+    ]
+  }
+}
 ```
 
-### 2. Install iOS dependencies
-
-```bash
-cd ios && pod install
-```
-
-### 3. Initialize the SDK
+#### 3. Start using the SDK
 
 ```js
 import Ometria from 'react-native-ometria';
 
-await Ometria.initializeWithApiToken('YOUR_API_KEY', {
-  notificationChannelName: 'Example Channel Name', // optional, Android only
-  appGroupIdentifier: 'group.com.yourapp', // optional, iOS only
-});
-```
+...
 
-### 4. Track user identity
+Ometria.initializeWithApiToken('YOUR_API_KEY');
 
-```js
-// When user logs in
-Ometria.trackProfileIdentifiedByCustomerIdEvent('customer_id');
-// or
+// Track user identity
 Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
 ```
 
 ## What's Next?
 
-- [Installation](./installation) - Detailed installation guide including New Architecture setup
+- [Installation](./installation) - Detailed installation guide including bare React Native setup
 - [Event Tracking](./events/overview) - Track customer behaviour
 - [Push Notifications](./push-notifications/setup) - Set up Firebase and push notifications
 - [Deep Linking](./deep-linking) - Handle app links from emails
+
+:::tip
+For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo) directory in the SDK repository.
+:::

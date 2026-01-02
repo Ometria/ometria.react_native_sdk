@@ -9,7 +9,7 @@ Track shopping cart interactions to understand purchase intent.
 
 ## Basket Viewed
 
-Track when a user views their shopping cart:
+Track when a user views a dedicated page, screen, or modal with the contents of their shopping basket:
 
 ```js
 Ometria.trackBasketViewedEvent();
@@ -54,25 +54,25 @@ Always send the **full current basket** - not just the updated parts. This helps
 
 ### OmetriaBasket
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `id` | `string` | No | Unique identifier for this basket |
-| `currency` | `string` | Yes | ISO 4217 currency code (e.g., "USD", "GBP") |
-| `totalPrice` | `number` | Yes | Total basket price |
-| `items` | `OmetriaBasketItem[]` | Yes | Array of basket items |
-| `link` | `string` | No | Deep link to the basket page. Useful for abandoned cart notifications. |
+| Property     | Type                  | Required | Description                                                            |
+| ------------ | --------------------- | -------- | ---------------------------------------------------------------------- |
+| `id`         | `string`              | No       | Unique identifier for this basket                                      |
+| `currency`   | `string`              | Yes      | ISO 4217 currency code (e.g., "USD", "GBP")                            |
+| `totalPrice` | `number`              | Yes      | Total basket price                                                     |
+| `items`      | `OmetriaBasketItem[]` | Yes      | Array of basket items                                                  |
+| `link`       | `string`              | No       | Deep link to the basket page. Useful for abandoned cart notifications. |
 
 ### OmetriaBasketItem
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `productId` | `string` | Yes | Unique product identifier |
-| `sku` | `string` | No | Stock keeping unit |
-| `quantity` | `number` | Yes | Number of items |
-| `price` | `number` | Yes | Price per item (currency from parent basket) |
-| `variantId` | `string` | No | Variant product identifier |
+| Property    | Type     | Required | Description                                  |
+| ----------- | -------- | -------- | -------------------------------------------- |
+| `productId` | `string` | Yes      | Unique product identifier                    |
+| `sku`       | `string` | No       | Stock keeping unit                           |
+| `quantity`  | `number` | Yes      | Number of items                              |
+| `price`     | `number` | Yes      | Price per item (currency from parent basket) |
+| `variantId` | `string` | No       | Variant product identifier                   |
 
-## Example: Complete Basket Flow
+**Example: Complete Basket Flow**
 
 ```js
 import Ometria, { OmetriaBasketItem } from 'react-native-ometria';
