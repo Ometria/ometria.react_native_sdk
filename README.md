@@ -59,8 +59,7 @@ RCT_NEW_ARCH_ENABLED=1 pod install
 > React Native's codegen generates a file called `RCTModuleProviders.mm` that maps module names to their implementation classes. However, codegen doesn't know about our custom wrapper class - it only generates an empty mapping.
 >
 > The `patch_ometria_turbomodule` function adds a build phase to the `ReactCodegen` target that patches `RCTModuleProviders.mm` to include our module mapping. This happens during each build, after codegen generates the file but before it's compiled.
->
-> **This is a temporary workaround** - we are actively working on a solution that won't require manual Podfile changes.
+
 
 #### Android Setup
 
@@ -562,7 +561,7 @@ messaging().onMessage(async (remoteMessage) => {
 });
 ```
 
-⚠️ Keep in mind that foreground notifications are **not** shown to the user. Instead, you could trigger a local notification or update the in-app UI to signal a new notification. Read more [here](https://rnfirebase.io/messaging/usage#foreground-state-messages).
+⚠️ Keep in mind that foreground notifications are **not** displayed by the operating system. This is a [known Firebase limitation](https://rnfirebase.io/messaging/notifications): when the app is in the foreground, the notification data is delivered via an event but no visible notification is shown. However, since the app receives the notification data, you can display your own notification (custom UI or local system notification) when a notification is received in the foreground. Read more [here](https://rnfirebase.io/messaging/usage#foreground-state-messages).
 
 ℹ️ If you implement such a custom solution, don't forget to call `Ometria.onNotificationOpenedApp` to let the SDK the notification has been interacted with when handling the notification interaction event for foreground notifications.
 

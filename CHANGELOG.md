@@ -1,6 +1,6 @@
 # 2.7.0
 
-2025-12
+2026-01
 
 - Updated ReactNative to 0.81.x in the sample app.
 - Implements support for both React Native architectures (Old and New Architecture).
