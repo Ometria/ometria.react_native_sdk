@@ -14,6 +14,8 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
         static let expoDefaultAppGroupIdentifierKey = "OmetriaExpoDefaultAppGroupIdentifier"
+        static let rnSdkVersionKey = "OmetriaRNSdkVersion"
+        static let bareRnSdkVersion = "2.7.0"
     }
 
     @objc
@@ -31,7 +33,7 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         NSLog("🔵 [Ometria Native] initialize called with token: %@", token)
         NSLog("🔵 [Ometria Native] options: %@", String(describing: options))
 
-        OmetriaStorageKeys.rnVersion = "2.7.0"
+        OmetriaStorageKeys.rnVersion = Bundle.main.object(forInfoDictionaryKey: Constants.rnSdkVersionKey) as? String ?? Constants.bareRnSdkVersion
         DispatchQueue.main.async {
             NSLog("🔵 [Ometria Native] About to call Ometria.initialize")
             // Use provided appGroupIdentifier, or fallback to Expo plugin default from Info.plist

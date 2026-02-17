@@ -1,6 +1,7 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
+import android.content.pm.PackageManager
 import android.os.Handler
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
@@ -19,13 +20,24 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   companion object {
     const val NAME = "OmetriaReactNativeSdk"
+    private const val RN_SDK_VERSION_META_KEY = "OmetriaRNSdkVersion"
+    private const val BARE_RN_SDK_VERSION = "2.7.0"
   }
 
   private val mainThreadHandler = Handler(reactContext.mainLooper)
   private var deeplinkInteractionPromise: Promise? = null
 
   init {
-    StorageController(reactContext.applicationContext).saveSdkVersionRN("2.7.0")
+    val rnSdkVersion = try {
+      val appInfo = reactContext.packageManager.getApplicationInfo(
+        reactContext.packageName,
+        PackageManager.GET_META_DATA
+      )
+      appInfo.metaData?.getString(RN_SDK_VERSION_META_KEY) ?: BARE_RN_SDK_VERSION
+    } catch (e: Exception) {
+      BARE_RN_SDK_VERSION
+    }
+    StorageController(reactContext.applicationContext).saveSdkVersionRN(rnSdkVersion)
   }
 
   override fun getName(): String = NAME

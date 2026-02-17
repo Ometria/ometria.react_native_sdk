@@ -2,6 +2,7 @@ import {
   ConfigPlugin,
   withProjectBuildGradle,
   withAppBuildGradle,
+  withAndroidManifest,
 } from '@expo/config-plugins';
 
 /**
@@ -79,11 +80,47 @@ function addGoogleServicesPlugin(buildGradle: string): string {
   return `${buildGradle}\n// [Ometria] Google Services plugin for Firebase\n${googleServicesPlugin}\n`;
 }
 
+type AndroidPluginProps = {
+  rnSdkVersion: string;
+};
+
+/**
+ * Writes the RN SDK version to AndroidManifest.xml as meta-data
+ * so the native module can read it instead of using a hardcoded value.
+ */
+const withOmetriaRnSdkVersion: ConfigPlugin<AndroidPluginProps> = (
+  config,
+  props
+) => {
+  return withAndroidManifest(config, (modConfig) => {
+    const mainApplication =
+      modConfig.modResults.manifest.application?.[0];
+    if (mainApplication) {
+      mainApplication['meta-data'] = mainApplication['meta-data'] || [];
+      // Remove existing entry if present
+      mainApplication['meta-data'] = mainApplication['meta-data'].filter(
+        (item: any) => item.$?.['android:name'] !== 'OmetriaRNSdkVersion'
+      );
+      mainApplication['meta-data'].push({
+        $: {
+          'android:name': 'OmetriaRNSdkVersion',
+          'android:value': props.rnSdkVersion,
+        },
+      });
+    }
+    return modConfig;
+  });
+};
+
 /**
  * Main Android configuration for Ometria
  */
-export const withOmetriaAndroid: ConfigPlugin = (config) => {
+export const withOmetriaAndroid: ConfigPlugin<AndroidPluginProps> = (
+  config,
+  props
+) => {
   config = withGoogleServicesClasspath(config);
   config = withGoogleServicesPlugin(config);
+  config = withOmetriaRnSdkVersion(config, props);
   return config;
 };

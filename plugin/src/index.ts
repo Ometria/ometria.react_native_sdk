@@ -25,17 +25,18 @@ const withOmetria: ConfigPlugin<OmetriaPluginProps | undefined> = (
   config,
   props
 ) => {
-  const ometriaIosSdkVersion = pkg.ometria_sdk_version?.ios || '1.8.4';
+  const ometriaIosSdkVersion = pkg.ometria_sdk_version?.ios || '';
 
   // Apply iOS modifications
   config = withOmetriaIos(config, {
     customAppGroupIdentifier: props?.customAppGroupIdentifier,
     skipNSE: props?.skipNSE ?? false,
     ometriaIosSdkVersion,
+    rnSdkVersion: pkg.version,
   });
 
   // Apply Android modifications
-  config = withOmetriaAndroid(config);
+  config = withOmetriaAndroid(config, { rnSdkVersion: pkg.version });
 
   return config;
 };

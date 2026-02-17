@@ -10,12 +10,14 @@ type IosPluginProps = {
   customAppGroupIdentifier?: string;
   ometriaIosSdkVersion: string;
   skipNSE: boolean;
+  rnSdkVersion: string;
 };
 
 type InternalPluginProps = {
   appGroupIdentifier: string | undefined;
   ometriaIosSdkVersion: string;
   skipNSE: boolean;
+  rnSdkVersion: string;
 };
 
 /**
@@ -62,6 +64,8 @@ const withOmetriaInfoPlist: ConfigPlugin<InternalPluginProps> = (
       modConfig.modResults['OmetriaExpoDefaultAppGroupIdentifier'] =
         props.appGroupIdentifier;
     }
+    // Write RN SDK version so native code can read it instead of using a hardcoded value
+    modConfig.modResults['OmetriaRNSdkVersion'] = props.rnSdkVersion;
     return modConfig;
   });
 };
@@ -359,6 +363,7 @@ export const withOmetriaIos: ConfigPlugin<IosPluginProps> = (config, props) => {
     appGroupIdentifier,
     ometriaIosSdkVersion,
     skipNSE,
+    rnSdkVersion: props.rnSdkVersion,
   };
 
   // Add entitlements
