@@ -7,6 +7,17 @@ title: Changelog
 
 All notable changes to this project are documented here.
 
+## 2.8.0
+
+**February 2026**
+
+- Added Expo plugin support with automatic Notification Service Extension setup
+- Added Expo sample app
+- Removed deprecated `trackWishlistAddedToEvent` and `trackWishlistRemovedFromEvent` methods
+- `onMessageReceived` and `onDeepLinkInteracted` are now fully deprecated no-ops. Use `onNotificationReceived` and your own notification interaction handling instead
+- Refactored library architecture into modular method files
+- Expo plugin auto-injects RN SDK version via Info.plist / AndroidManifest meta-data
+
 ## 2.7.0
 
 **December 2025**
