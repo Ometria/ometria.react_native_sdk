@@ -67,8 +67,8 @@ const withNSETarget: ConfigPlugin<NSEPluginProps> = (config) => {
     const xcodeProject = _config.modResults;
     const appName = _config.modRequest.projectName || 'App';
     const bundleIdentifier = _config.ios?.bundleIdentifier || 'com.example.app';
-    const bundleShortVersion = _config.ios?.buildNumber || '1';
-    const bundleVersion = _config.version || '1.0.0';
+    const buildNumber = _config.ios?.buildNumber || '1';
+    const marketingVersion = _config.version || '1.0.0';
 
     // Get deployment target from project build settings (synced with main app)
     let deploymentTarget = '15.1'; // Default minimum for Ometria SDK
@@ -110,11 +110,11 @@ const withNSETarget: ConfigPlugin<NSEPluginProps> = (config) => {
       CLANG_ENABLE_MODULES: 'YES',
       CODE_SIGN_ENTITLEMENTS: `${NSE_FOLDER_NAME}/${NSE_TARGET_NAME}.entitlements`,
       CODE_SIGN_STYLE: 'Automatic',
-      CURRENT_PROJECT_VERSION: bundleShortVersion,
+      CURRENT_PROJECT_VERSION: buildNumber,
       GENERATE_INFOPLIST_FILE: 'NO',
       INFOPLIST_FILE: `${NSE_FOLDER_NAME}/${NSE_TARGET_NAME}-Info.plist`,
       IPHONEOS_DEPLOYMENT_TARGET: deploymentTarget,
-      MARKETING_VERSION: bundleVersion,
+      MARKETING_VERSION: marketingVersion,
       PRODUCT_BUNDLE_IDENTIFIER: `${bundleIdentifier}.${NSE_TARGET_NAME}`,
       PRODUCT_NAME: `"$(TARGET_NAME)"`,
       SKIP_INSTALL: 'YES',
