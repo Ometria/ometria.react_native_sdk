@@ -11,7 +11,7 @@ export const createCoercedMethods = (OmetriaSDK: NativeModuleType) => {
     customerId: string,
     storeId: MaybeNull<string> = null
   ) => {
-    OmetriaSDK.trackProfileIdentifiedByCustomerIdEvent(
+    void OmetriaSDK.trackProfileIdentifiedByCustomerIdEvent(
       customerId,
       coerce(storeId)
     );
@@ -21,7 +21,7 @@ export const createCoercedMethods = (OmetriaSDK: NativeModuleType) => {
     email: string,
     storeId: MaybeNull<string> = null
   ) => {
-    OmetriaSDK.trackProfileIdentifiedByEmailEvent(email, coerce(storeId));
+    void OmetriaSDK.trackProfileIdentifiedByEmailEvent(email, coerce(storeId));
   };
 
   const trackProfileIdentifiedEvent = (
@@ -29,42 +29,42 @@ export const createCoercedMethods = (OmetriaSDK: NativeModuleType) => {
     email: string,
     storeId: MaybeNull<string> = null
   ) => {
-    OmetriaSDK.trackProfileIdentifiedEvent(customerId, email, coerce(storeId));
+    void OmetriaSDK.trackProfileIdentifiedEvent(customerId, email, coerce(storeId));
   };
 
   const trackOrderCompletedEvent = (
     orderId: string,
     basket: MaybeNull<OmetriaBasket> = null
   ) => {
-    OmetriaSDK.trackOrderCompletedEvent(orderId, coerce(basket));
+    void OmetriaSDK.trackOrderCompletedEvent(orderId, coerce(basket));
   };
 
   const trackScreenViewedEvent = (
     screenName: string,
     additionalInfo: MaybeNull<object> = null
   ) => {
-    OmetriaSDK.trackScreenViewedEvent(screenName, coerce(additionalInfo));
+    void OmetriaSDK.trackScreenViewedEvent(screenName, coerce(additionalInfo));
   };
 
   const trackCustomEvent = (
     customEventType: string,
     additionalInfo: MaybeNull<object> = null
   ) => {
-    OmetriaSDK.trackCustomEvent(customEventType, coerce(additionalInfo));
+    void OmetriaSDK.trackCustomEvent(customEventType, coerce(additionalInfo));
   };
 
   const initializeWithApiToken = (token: string, options?: OmetriaOptions) =>
     OmetriaSDK.initializeWithApiToken(token, options ?? {});
 
   const updateStoreId = (storeId: MaybeNull<string>) => {
-    OmetriaSDK.updateStoreId(coerce(storeId));
+    void OmetriaSDK.updateStoreId(coerce(storeId));
   };
 
   const trackProductListingViewedEvent = (
     listingType?: MaybeNull<string>,
     listingAttributes?: MaybeNull<object>
   ) => {
-    OmetriaSDK.trackProductListingViewedEvent(
+    void OmetriaSDK.trackProductListingViewedEvent(
       coerce(listingType),
       coerce(listingAttributes)
     );

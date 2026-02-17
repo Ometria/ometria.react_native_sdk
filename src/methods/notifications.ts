@@ -16,7 +16,7 @@ export const createNotificationMethods = (OmetriaSDK: NativeModuleType) => {
       Platform.OS === 'ios'
         ? withParsedOmetriaPayload(remoteMessage)
         : remoteMessage;
-    OmetriaSDK.onNotificationReceived(
+    void OmetriaSDK.onNotificationReceived(
       payload as unknown as Record<string, unknown>
     );
   };
