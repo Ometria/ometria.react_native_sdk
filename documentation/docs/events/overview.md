@@ -17,7 +17,7 @@ These events are tracked automatically once the SDK is initialized:
 | **Application launched**     | App was launched                                                                                                          |
 | **Application foregrounded** | App brought to foreground from background                                                                                 |
 | **Application backgrounded** | App sent to background                                                                                                    |
-| **Notification received**    | Push notification received in quit state (iOS only, requires [Notification Service Extension](../push-notifications/ios)) |
+| **Notification received**    | Push notification received in quit state (iOS only, requires [Notification Service Extension](../push-notifications/notification-service-extension)) |
 
 ## Manually Tracked Events
 
