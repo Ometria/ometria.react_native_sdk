@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import com.ometriareactnativesdk.BuildConfig
 
 class OmetriaReactNativeSdkPackage : TurboReactPackage() {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> =
@@ -31,7 +32,7 @@ class OmetriaReactNativeSdkPackage : TurboReactPackage() {
           false,
           false,
           false,
-          true
+          BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
         )
       )
     }
