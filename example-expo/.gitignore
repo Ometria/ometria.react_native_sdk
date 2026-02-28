@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+# EAS project identity (owner + projectId) — keep out of public repo
+# Remove if you use app.config.js and want to commit it
+app.config.js
