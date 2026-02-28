@@ -70,7 +70,10 @@ def patch_ometria_turbomodule(installer)
           echo "[Ometria] Already patched"
         fi
       else
-        echo "[Ometria] RCTModuleProviders.mm not found, skipping"
+        echo "error: [Ometria] RCTModuleProviders.mm not found at $PROVIDERS_FILE." >&2
+        echo "error: [Ometria] Ensure a full Xcode build has run so ReactCodegen generates the file before this phase." >&2
+        echo "error: [Ometria] If your project uses a custom CONFIGURATION_BUILD_DIR, set OMETRIA_CODEGEN_PATH to the correct path in your environment." >&2
+        exit 1
       fi
     SCRIPT
 
