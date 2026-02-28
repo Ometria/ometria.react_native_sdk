@@ -45,15 +45,27 @@ function resolveApsEnvironment(
     return overrideEnv;
   }
 
+  let unrecongnisedProfile: string | undefined;
   for (const envVar of ['EAS_BUILD_PROFILE', 'EXPO_PUBLIC_APP_ENV']) {
     const value = process.env[envVar]?.toLowerCase();
     if (!value) continue;
     if (PRODUCTION_PROFILES.has(value)) return 'production';
     if (DEVELOPMENT_PROFILES.has(value)) return 'development';
+    unrecongnisedProfile = value;
   }
 
+  // Not on EAS — local prebuild. Xcode overrides aps-environment from the
+  // provisioning profile at build time, so the value here doesn't matter.
+  // Default silently to development.
+  if (!process.env.EAS_BUILD) {
+    return 'development';
+  }
+
+  const profileHint = unrecongnisedProfile
+    ? ` (unrecognised EAS profile: "${unrecongnisedProfile}")`
+    : '';
   console.warn(
-    '[react-native-ometria] Could not determine APNs environment from build context. ' +
+    `[react-native-ometria] Could not determine APNs environment from build context${profileHint}. ` +
       'Defaulting aps-environment to "production". ' +
       'Set apsEnvironment in the plugin config or OMETRIA_APS_ENVIRONMENT env var to silence this warning.'
   );
@@ -169,23 +181,30 @@ function addTurboModuleRequire(podfile: string): string {
 }
 
 function addUseFrameworks(podfile: string): string {
-  // Check if use_frameworks! is already present with static linkage
-  if (podfile.includes('use_frameworks! :linkage => :static')) {
-    // Still need to ensure modular headers is present
+  // Check if an unconditional static use_frameworks! is already present
+  // (i.e. not guarded by a trailing `if ...` — the Expo-generated conditional
+  //  line evaluates to a no-op when ios.useFrameworks is unset and must NOT
+  //  be treated as "already handled")
+  const unconditionalStatic = /^use_frameworks! :linkage => :static\s*$/m;
+  if (unconditionalStatic.test(podfile)) {
+    // Already set correctly — just ensure modular headers is present
     return addModularHeaders(podfile);
   }
 
-  // If use_frameworks! exists without static, we need to be careful
-  if (podfile.includes('use_frameworks!')) {
+  // Check for any other unconditional use_frameworks! (non-static or bare)
+  // Conditional lines (ending with `if <expr>`) are Expo-generated no-ops and
+  // do not satisfy the static-linkage requirement.
+  const unconditionalUseFrameworks = /^use_frameworks!(?! .*\bif\b).*$/m;
+  if (unconditionalUseFrameworks.test(podfile)) {
     console.warn(
       '[Ometria] use_frameworks! already exists in Podfile. ' +
         'Ensure it uses :linkage => :static for Firebase compatibility.'
     );
-    // Still add modular headers for Firebase/Ometria compatibility
     return addModularHeaders(podfile);
   }
 
-  // Add before the main target
+  // No unconditional use_frameworks! found — insert the required static directive
+  // before the main target block.
   const targetMatch = podfile.match(/target ['"].*['"] do/);
   if (targetMatch && targetMatch.index !== undefined) {
     return (
