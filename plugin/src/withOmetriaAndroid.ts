@@ -10,13 +10,13 @@ import {
  */
 const withGoogleServicesClasspath: ConfigPlugin = (config) => {
   return withProjectBuildGradle(config, (modConfig) => {
-    if (modConfig.modResults.language === 'groovy') {
+    if (modConfig.modResults.language === 'groovy' || modConfig.modResults.language === 'kt') {
       modConfig.modResults.contents = addGoogleServicesClasspath(
         modConfig.modResults.contents
       );
     } else {
-      throw new Error(
-        'Cannot configure Google Services classpath in Kotlin build.gradle'
+      console.warn(
+        '[Ometria] Unsupported build.gradle language; Google Services classpath was not added automatically.'
       );
     }
     return modConfig;
@@ -32,9 +32,13 @@ const withGoogleServicesPlugin: ConfigPlugin = (config) => {
       modConfig.modResults.contents = addGoogleServicesPlugin(
         modConfig.modResults.contents
       );
+    } else if (modConfig.modResults.language === 'kt') {
+      modConfig.modResults.contents = addGoogleServicesPluginKts(
+        modConfig.modResults.contents
+      );
     } else {
-      throw new Error(
-        'Cannot configure Google Services plugin in Kotlin build.gradle'
+      console.warn(
+        '[Ometria] Unsupported build.gradle language; Google Services plugin was not added automatically.'
       );
     }
     return modConfig;
@@ -70,6 +74,18 @@ function addGoogleServicesClasspath(buildGradle: string): string {
 
 function addGoogleServicesPlugin(buildGradle: string): string {
   const googleServicesPlugin = "apply plugin: 'com.google.gms.google-services'";
+
+  // Check if already added
+  if (buildGradle.includes('com.google.gms.google-services')) {
+    return buildGradle;
+  }
+
+  // Add at the end of the file
+  return `${buildGradle}\n// [Ometria] Google Services plugin for Firebase\n${googleServicesPlugin}\n`;
+}
+
+function addGoogleServicesPluginKts(buildGradle: string): string {
+  const googleServicesPlugin = 'apply(plugin = "com.google.gms.google-services")';
 
   // Check if already added
   if (buildGradle.includes('com.google.gms.google-services')) {
