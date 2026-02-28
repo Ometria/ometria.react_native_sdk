@@ -11,6 +11,7 @@ type IosPluginProps = {
   ometriaIosSdkVersion: string;
   skipNSE: boolean;
   rnSdkVersion: string;
+  apsEnvironment?: 'development' | 'production';
 };
 
 type InternalPluginProps = {
@@ -18,7 +19,46 @@ type InternalPluginProps = {
   ometriaIosSdkVersion: string;
   skipNSE: boolean;
   rnSdkVersion: string;
+  apsEnvironment: 'development' | 'production';
 };
+
+const PRODUCTION_PROFILES = new Set([
+  'production',
+  'release',
+  'staging',
+  'preview',
+  'qa',
+  'testflight',
+]);
+
+const DEVELOPMENT_PROFILES = new Set(['development', 'dev', 'debug', 'local']);
+
+function resolveApsEnvironment(
+  explicit: 'development' | 'production' | undefined
+): 'development' | 'production' {
+  if (explicit) {
+    return explicit;
+  }
+
+  const overrideEnv = process.env.OMETRIA_APS_ENVIRONMENT;
+  if (overrideEnv === 'development' || overrideEnv === 'production') {
+    return overrideEnv;
+  }
+
+  for (const envVar of ['EAS_BUILD_PROFILE', 'EXPO_PUBLIC_APP_ENV']) {
+    const value = process.env[envVar]?.toLowerCase();
+    if (!value) continue;
+    if (PRODUCTION_PROFILES.has(value)) return 'production';
+    if (DEVELOPMENT_PROFILES.has(value)) return 'development';
+  }
+
+  console.warn(
+    '[react-native-ometria] Could not determine APNs environment from build context. ' +
+      'Defaulting aps-environment to "production". ' +
+      'Set apsEnvironment in the plugin config or OMETRIA_APS_ENVIRONMENT env var to silence this warning.'
+  );
+  return 'production';
+}
 
 /**
  * Adds push notification and app group entitlements to the main app
@@ -29,7 +69,7 @@ const withOmetriaEntitlements: ConfigPlugin<InternalPluginProps> = (
 ) => {
   return withEntitlementsPlist(config, (modConfig) => {
     // Add push notification entitlement
-    modConfig.modResults['aps-environment'] = 'development';
+    modConfig.modResults['aps-environment'] = props.apsEnvironment;
 
     // Add app group entitlement only if appGroupIdentifier is provided (for NSE)
     if (props.appGroupIdentifier) {
@@ -364,6 +404,7 @@ export const withOmetriaIos: ConfigPlugin<IosPluginProps> = (config, props) => {
     ometriaIosSdkVersion,
     skipNSE,
     rnSdkVersion: props.rnSdkVersion,
+    apsEnvironment: resolveApsEnvironment(props.apsEnvironment),
   };
 
   // Add entitlements
