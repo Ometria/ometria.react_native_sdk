@@ -71,6 +71,8 @@ const withNSETarget: ConfigPlugin<NSEPluginProps> = (config) => {
     const marketingVersion = _config.version || '1.0.0';
 
     // Get deployment target from project build settings (synced with main app)
+    const MIN_DEPLOYMENT_TARGET = 15.1;
+    let highestDeploymentTarget = MIN_DEPLOYMENT_TARGET;
     let deploymentTarget = '15.1'; // Default minimum for Ometria SDK
     const buildConfigs =
       xcodeProject.hash.project.objects.XCBuildConfiguration || {};
@@ -80,10 +82,11 @@ const withNSETarget: ConfigPlugin<NSEPluginProps> = (config) => {
       if (configObj.buildSettings?.IPHONEOS_DEPLOYMENT_TARGET) {
         const target =
           configObj.buildSettings.IPHONEOS_DEPLOYMENT_TARGET.replace(/"/g, '');
-        // Use the highest deployment target found (at least 15.1 for Ometria)
-        if (parseFloat(target) >= 15.1) {
+        const parsed = parseFloat(target);
+        // Use the highest deployment target found across all configurations (at least 15.1 for Ometria)
+        if (!isNaN(parsed) && parsed > highestDeploymentTarget) {
+          highestDeploymentTarget = parsed;
           deploymentTarget = target;
-          break;
         }
       }
     }
