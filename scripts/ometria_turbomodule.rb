@@ -61,9 +61,20 @@ def patch_ometria_turbomodule(installer)
     # Add our patch script to run before compile
     patch_script = target.new_shell_script_build_phase('[Ometria] Patch TurboModule Registration')
     patch_script.shell_script = <<~SCRIPT
-      DEFAULT_PATH="${PODS_ROOT}/../build/generated/ios/RCTModuleProviders.mm"
-      PROVIDERS_FILE="${OMETRIA_CODEGEN_PATH:-$DEFAULT_PATH}"
-      if [ -f "$PROVIDERS_FILE" ]; then
+      # Locate RCTModuleProviders.mm — the subdirectory varies by RN version and build config:
+      #   RN / bare workflow:  build/generated/ios/RCTModuleProviders.mm
+      #   Expo / prebuilt RN:  build/generated/ios/ReactCodegen/RCTModuleProviders.mm
+      if [ -n "$OMETRIA_CODEGEN_PATH" ]; then
+        PROVIDERS_FILE="$OMETRIA_CODEGEN_PATH"
+      elif [ -f "${PODS_ROOT}/../build/generated/ios/RCTModuleProviders.mm" ]; then
+        PROVIDERS_FILE="${PODS_ROOT}/../build/generated/ios/RCTModuleProviders.mm"
+      elif [ -f "${PODS_ROOT}/../build/generated/ios/ReactCodegen/RCTModuleProviders.mm" ]; then
+        PROVIDERS_FILE="${PODS_ROOT}/../build/generated/ios/ReactCodegen/RCTModuleProviders.mm"
+      else
+        PROVIDERS_FILE=""
+      fi
+
+      if [ -n "$PROVIDERS_FILE" ] && [ -f "$PROVIDERS_FILE" ]; then
         if ! grep -q "OmetriaReactNativeSdk" "$PROVIDERS_FILE"; then
           sed -i '' 's/moduleMapping = @{/moduleMapping = @{ @"OmetriaReactNativeSdk": @"OmetriaReactNativeSdkTurboModule",/' "$PROVIDERS_FILE"
           echo "[Ometria] Patched RCTModuleProviders.mm"
@@ -71,7 +82,7 @@ def patch_ometria_turbomodule(installer)
           echo "[Ometria] Already patched"
         fi
       else
-        echo "error: [Ometria] RCTModuleProviders.mm not found at $PROVIDERS_FILE." >&2
+        echo "error: [Ometria] RCTModuleProviders.mm not found in build/generated/ios/ or build/generated/ios/ReactCodegen/." >&2
         echo "error: [Ometria] Ensure a full Xcode build has run so ReactCodegen generates the file before this phase." >&2
         echo "error: [Ometria] If your project uses a nonstandard build directory, set OMETRIA_CODEGEN_PATH to the full path of RCTModuleProviders.mm in your environment or Xcode scheme." >&2
         exit 1
