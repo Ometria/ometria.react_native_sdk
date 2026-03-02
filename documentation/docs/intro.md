@@ -47,14 +47,24 @@ This is the recommended setup for new projects using Expo with the New Architect
   </TabItem>
 </Tabs>
 
-#### 2. Add the Expo plugin to your `app.json` or `app.config.ts`
+#### 2. Add the Expo and Firebase plugins to your `app.json` or `app.config.ts`
 
 ```json
 {
   "expo": {
     "plugins": [
-      // add the Ometria plugin
-      ["react-native-ometria"]
+      ["react-native-ometria"],
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+          }
+        }
+      ]
     ]
   }
 }
