@@ -1,6 +1,6 @@
 const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
-const escape = require('escape-string-regexp');
+const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const pak = require('../package.json');
 
 const root = path.resolve(__dirname, '..');
@@ -31,6 +31,10 @@ const config = {
       acc[name] = path.join(__dirname, 'node_modules', name);
       return acc;
     }, {}),
+
+    // When resolving from root source files (outside example/), ensure
+    // example/node_modules is searched so transitive deps like @babel/runtime resolve.
+    nodeModulesPaths: [path.join(__dirname, 'node_modules')],
   },
 
   transformer: {
