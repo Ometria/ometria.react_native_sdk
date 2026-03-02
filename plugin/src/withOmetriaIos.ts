@@ -4,6 +4,8 @@ import {
   withInfoPlist,
   withPodfile,
 } from '@expo/config-plugins';
+import * as fs from 'fs';
+import * as path from 'path';
 import { withNotificationServiceExtension } from './withNotificationServiceExtension';
 
 type IosPluginProps = {
@@ -127,16 +129,28 @@ const withOmetriaInfoPlist: ConfigPlugin<InternalPluginProps> = (
  */
 const withOmetriaPodfile: ConfigPlugin<InternalPluginProps> = (config, props) => {
   return withPodfile(config, (modConfig) => {
+    // Warn if Firebase is detected — user must configure it via expo-build-properties
+    const projectRoot = (config as any)._internal?.projectRoot ?? process.cwd();
+    const pkgPath = path.join(projectRoot, 'package.json');
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) ?? {};
+      const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+      if (deps['@react-native-firebase/app']) {
+        console.warn(
+          '[react-native-ometria] Firebase detected. Add expo-build-properties with ' +
+          '"useFrameworks": "static" and "forceStaticLinking" for RNFB pods to your app.json, ' +
+          'and add "@react-native-firebase/app" to your plugins array. ' +
+          'See: https://rnfirebase.io (Expo setup section).'
+        );
+      }
+    } catch {
+      // ignore — package.json unreadable
+    }
+
     let podfile = modConfig.modResults.contents;
 
     // Add TurboModule script require at the top (after other requires)
     podfile = addTurboModuleRequire(podfile);
-
-    // Add use_frameworks! :linkage => :static if not present
-    podfile = addUseFrameworks(podfile);
-
-    // Add $RNFirebaseAsStaticFramework = true
-    podfile = addFirebaseStaticFramework(podfile);
 
     // Add patch_ometria_turbomodule call in post_install
     podfile = addTurboModulePatch(podfile);
@@ -178,91 +192,6 @@ function addTurboModuleRequire(podfile: string): string {
 
   // Fallback: add at the beginning
   return `# [Ometria] TurboModule registration for New Architecture\n${requireStatement}\n\n${podfile}`;
-}
-
-function addUseFrameworks(podfile: string): string {
-  // Check if an unconditional static use_frameworks! is already present
-  // (i.e. not guarded by a trailing `if ...` — the Expo-generated conditional
-  //  line evaluates to a no-op when ios.useFrameworks is unset and must NOT
-  //  be treated as "already handled")
-  const unconditionalStatic = /^use_frameworks! :linkage => :static\s*$/m;
-  if (unconditionalStatic.test(podfile)) {
-    // Already set correctly — just ensure modular headers is present
-    return addModularHeaders(podfile);
-  }
-
-  // Check for any other unconditional use_frameworks! (non-static or bare)
-  // Conditional lines (ending with `if <expr>`) are Expo-generated no-ops and
-  // do not satisfy the static-linkage requirement.
-  const unconditionalUseFrameworks = /^use_frameworks!(?! .*\bif\b).*$/m;
-  if (unconditionalUseFrameworks.test(podfile)) {
-    console.warn(
-      '[Ometria] use_frameworks! already exists in Podfile. ' +
-        'Ensure it uses :linkage => :static for Firebase compatibility.'
-    );
-    return addModularHeaders(podfile);
-  }
-
-  // No unconditional use_frameworks! found — insert the required static directive
-  // before the main target block.
-  const targetMatch = podfile.match(/target ['"].*['"] do/);
-  if (targetMatch && targetMatch.index !== undefined) {
-    return (
-      podfile.slice(0, targetMatch.index) +
-      '# [Ometria] Firebase requires static frameworks with modular headers\nuse_frameworks! :linkage => :static\nuse_modular_headers!\n$RNFirebaseAsStaticFramework = true\n\n' +
-      podfile.slice(targetMatch.index)
-    );
-  }
-
-  return podfile;
-}
-
-function addModularHeaders(podfile: string): string {
-  if (podfile.includes('use_modular_headers!')) {
-    return podfile;
-  }
-
-  // Add after use_frameworks! line
-  const useFrameworksMatch = podfile.match(/use_frameworks!.*\n/);
-  if (useFrameworksMatch && useFrameworksMatch.index !== undefined) {
-    const insertIndex = useFrameworksMatch.index + useFrameworksMatch[0].length;
-    return (
-      podfile.slice(0, insertIndex) +
-      '# [Ometria] Required for Firebase/Ometria static framework compatibility\nuse_modular_headers!\n' +
-      podfile.slice(insertIndex)
-    );
-  }
-
-  // Fallback: add before the main target
-  const targetMatch = podfile.match(/target ['"].*['"] do/);
-  if (targetMatch && targetMatch.index !== undefined) {
-    return (
-      podfile.slice(0, targetMatch.index) +
-      '# [Ometria] Required for Firebase/Ometria static framework compatibility\nuse_modular_headers!\n\n' +
-      podfile.slice(targetMatch.index)
-    );
-  }
-
-  return podfile;
-}
-
-function addFirebaseStaticFramework(podfile: string): string {
-  if (podfile.includes('$RNFirebaseAsStaticFramework')) {
-    return podfile;
-  }
-
-  // This is typically added with use_frameworks, so check if it was added there
-  // If not, add it before the target
-  const targetMatch = podfile.match(/target ['"].*['"] do/);
-  if (targetMatch && targetMatch.index !== undefined) {
-    return (
-      podfile.slice(0, targetMatch.index) +
-      '# [Ometria] Firebase static framework flag\n$RNFirebaseAsStaticFramework = true\n\n' +
-      podfile.slice(targetMatch.index)
-    );
-  }
-
-  return podfile;
 }
 
 function addTurboModulePatch(podfile: string): string {
@@ -380,11 +309,15 @@ function addNotificationServiceTarget(
   // Use a standalone target with inherit! :search_paths
   // This tells CocoaPods to inherit search paths from the implicit parent
   // without requiring strict host target verification in the Xcode project
+  //
+  // Mirror the main target's use_frameworks! setting so CocoaPods doesn't
+  // complain that the host and extension targets don't match.
   const nseTarget = `
 # [Ometria] Notification Service Extension for rich push notifications
 target 'OmetriaNotificationServiceExtension' do
   inherit! :search_paths
   use_modular_headers!
+  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   pod 'Ometria', '~> ${sdkVersion}'
 end
 `;
