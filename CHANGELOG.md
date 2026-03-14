@@ -1,3 +1,10 @@
+# 2.7.1
+
+2026-03
+
+- Fixed `scripts` directory not being included in the npm package, causing iOS setup to fail when installing via npm.
+- Removed deprecated `jcenter()` repository from Android build configuration.
+
 # 2.7.0
 
 2026-01

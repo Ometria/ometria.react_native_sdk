@@ -1,6 +1,6 @@
 {
   "name": "react-native-ometria",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "We help retailers create marketing experiences their customers will love",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -16,7 +16,7 @@
     "lib",
     "android",
     "ios",
-    "cpp",
+    "scripts",
     "ometria-react-native-sdk.podspec",
     "!lib/typescript/example",
     "!**/__tests__",
