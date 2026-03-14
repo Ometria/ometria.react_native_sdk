@@ -1,6 +1,6 @@
 {
   "name": "react-native-ometria",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "We help retailers create marketing experiences their customers will love",
   "main": "src/index.tsx",
   "module": "src/index.tsx",
@@ -17,7 +17,6 @@
     "lib",
     "android",
     "ios",
-    "cpp",
     "scripts",
     "plugin/build",
     "app.plugin.js",
