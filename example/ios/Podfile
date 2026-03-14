@@ -337,6 +337,6 @@ end
 # Notification Service Extension target
 target 'NotificationsService' do
   use_frameworks! :linkage => :static
-  pod 'Ometria', '1.8.4' # Keep in sync with ometria_sdk_version.ios in package.json
+  pod 'Ometria', '1.8.9' # Keep in sync with ometria_sdk_version.ios in package.json
 end
 # </OmetriaSetup>

@@ -21,7 +21,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   companion object {
     const val NAME = "OmetriaReactNativeSdk"
     private const val RN_SDK_VERSION_META_KEY = "OmetriaRNSdkVersion"
-    private const val BARE_RN_SDK_VERSION = "2.7.0"
+    private const val BARE_RN_SDK_VERSION = "2.8.0"
   }
 
   private val mainThreadHandler = Handler(reactContext.mainLooper)

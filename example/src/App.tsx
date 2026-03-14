@@ -189,19 +189,21 @@ const App = () => {
    * @param payload {url: String}
    */
   const handleDeepLinking = ({ url }: any) => {
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) {
-        Ometria.processUniversalLink(url).then(
-          response => {
-            Alert.alert('🔗 URL processed:', response);
-          },
-          error => {
-            console.log(error);
-            Alert.alert('🔗 Unable to process URL: ' + url);
-          },
-        );
-      }
-    });
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      Ometria.processUniversalLink(url).then(
+        response => {
+          Alert.alert('🔗 URL processed:', response);
+        },
+        error => {
+          console.log(error);
+          Alert.alert('🔗 Unable to process URL: ' + url);
+        },
+      );
+    } else {
+      Linking.openURL(url).catch(() => {
+        Alert.alert('🔗 Unable to open URL: ' + url);
+      });
+    }
   };
 
   /**
