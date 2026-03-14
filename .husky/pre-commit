@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Husky runs in a non-interactive shell that doesn't source shell profiles.
+# Load node from whichever version manager the developer uses, if not already in PATH.
+if ! command -v node >/dev/null 2>&1; then
+  [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"                           # nvm
+  [ -s "$HOME/.volta/bin/volta" ] && export PATH="$HOME/.volta/bin:$PATH"        # volta
+  command -v fnm >/dev/null 2>&1 && eval "$(fnm env)"                            # fnm
+fi
+
+# Load pnpm if not already in PATH (macOS: ~/Library/pnpm, Linux: ~/.local/share/pnpm).
+if ! command -v pnpm >/dev/null 2>&1; then
+  [ -d "$HOME/Library/pnpm" ] && export PATH="$HOME/Library/pnpm:$PATH"
+  [ -d "$HOME/.local/share/pnpm" ] && export PATH="$HOME/.local/share/pnpm:$PATH"
+fi
+
+pnpm typescript
+cd example && npx tsc --noEmit
+cd ../example-expo && npx tsc --noEmit

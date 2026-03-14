@@ -14,29 +14,23 @@
   },
   "files": [
     "src",
-    "lib",
     "android",
     "ios",
     "scripts",
     "plugin/build",
     "app.plugin.js",
     "ometria-react-native-sdk.podspec",
-    "!lib/typescript/example",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
   "scripts": {
-    "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "eslint --fix \"**/*.{js,ts,tsx}\"",
-    "release": "release-it",
-    "example": "yarn --cwd example",
+    "example": "pnpm --filter example",
     "pods": "cd example && pod-install --quiet",
-    "bootstrap": "yarn example && yarn && yarn pods",
-    "build:plugin": "cd plugin && npm run build",
-    "clean:plugin": "cd plugin && npm run clean",
-    "prepare": "npm run build:plugin"
+    "build:plugin": "cd plugin && pnpm run build",
+    "prepare": "husky && pnpm run build:plugin"
   },
   "keywords": [
     "react-native",
@@ -55,61 +49,27 @@
   },
   "homepage": "https://github.com/Ometria/ometria.react-native_sdk#readme",
   "devDependencies": {
-    "@commitlint/config-conventional": "^18.4.3",
     "@expo/config-plugins": "^9.0.0",
+    "@react-native-community/eslint-config": "^3.2.0",
     "@react-native-firebase/messaging": "^23.7.0",
-    "@types/jest": "^29.5.11",
     "@types/react": "^19.1.2",
     "@types/react-native": "0.73.0",
-    "commitlint": "^18.4.3",
     "eslint": "^8.19.0",
-    "husky": "^4.2.5",
-    "jest": "^26.0.1",
+    "husky": "^9.1.7",
     "pod-install": "^0.1.39",
     "prettier": "^2.4.1",
     "react": "19.1.0",
-    "release-it": "^17.0.1",
-    "typescript": "5.0.4",
-    "@react-native-community/eslint-config": "^3.2.0",
-    "react-native": "0.81.5"
+    "react-native": "0.81.5",
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
+    "expo": ">=53.0.0",
     "react": "*",
-    "react-native": "*",
-    "expo": ">=53.0.0"
+    "react-native": "*"
   },
   "peerDependenciesMeta": {
     "expo": {
       "optional": true
-    }
-  },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
     }
   },
   "eslintConfig": {
