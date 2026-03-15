@@ -9,7 +9,7 @@ All notable changes to this project are documented here.
 
 ## 2.8.0
 
-**February 2026**
+**April 2026**
 
 - Added Expo plugin support with automatic Notification Service Extension setup
 - Added Expo sample app
@@ -17,6 +17,17 @@ All notable changes to this project are documented here.
 - `onMessageReceived` and `onDeepLinkInteracted` are now fully deprecated no-ops. Use `onNotificationReceived` and your own notification interaction handling instead
 - Refactored library architecture into modular method files
 - Expo plugin auto-injects RN SDK version via Info.plist / AndroidManifest meta-data
+- Updated Ometria native SDK to the latest versions - iOS 1.8.9 & Android 1.11.1
+- Fixed deep link handling in sample app to use `Linking.openURL()` instead of `Linking.canOpenURL()`, which requires scheme whitelisting
+
+
+
+## 2.7.1
+
+**March 2026**
+
+- Fixed `scripts` directory not being included in the npm package, causing iOS setup to fail when installing via npm
+- Removed deprecated `jcenter()` repository from Android build configuration
 
 ## 2.7.0
 

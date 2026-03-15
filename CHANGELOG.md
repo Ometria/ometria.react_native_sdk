@@ -1,3 +1,16 @@
+# 2.8.0
+
+2026-03
+
+- Added Expo plugin support with automatic Notification Service Extension setup.
+- Added Expo sample app.
+- Removed deprecated `trackWishlistAddedToEvent` and `trackWishlistRemovedFromEvent` methods.
+- `onMessageReceived` and `onDeepLinkInteracted` are now fully deprecated no-ops. Use `onNotificationReceived` and your own notification interaction handling instead.
+- Refactored library architecture into modular method files.
+- Expo plugin auto-injects RN SDK version via Info.plist / AndroidManifest meta-data.
+- Updated Ometria native SDK to the latest versions - 🍏 1.8.9 iOS & 🤖 1.11.1 Android.
+- Fixed deep link handling in sample app to use `Linking.openURL()` instead of `Linking.canOpenURL()`, which requires scheme whitelisting.
+
 # 2.7.1
 
 2026-03

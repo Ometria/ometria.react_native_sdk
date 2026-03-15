@@ -107,7 +107,7 @@ If you clone just the `example-expo` folder for standalone use:
 
 1. Change the dependency to the published npm version:
    ```json
-   "react-native-ometria": "^2.7.0"
+   "react-native-ometria": "^2.8.0"
    ```
 
 2. The `watchFolders` in metro.config.js is harmless - non-existent directories are safely ignored.
