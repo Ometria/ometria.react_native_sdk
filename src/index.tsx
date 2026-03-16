@@ -5,7 +5,7 @@ import NativeOmetriaReactNativeSdk, {
   isTurboModuleEnabled,
 } from './NativeOmetriaReactNativeSdk';
 import {
-  createCoercedMethods,
+  createNativeMethods,
   createNotificationMethods,
   deprecatedMethods,
 } from './methods';
@@ -30,9 +30,7 @@ if (!OmetriaSDK) {
 }
 
 const OmetriaReactNativeSdk: OmetriaReactNativeSdkType = {
-  // Native, coerced, notifications and deprecated methods
-  ...OmetriaSDK,
-  ...createCoercedMethods(OmetriaSDK),
+  ...createNativeMethods(OmetriaSDK),
   ...createNotificationMethods(OmetriaSDK),
   ...deprecatedMethods,
 };
