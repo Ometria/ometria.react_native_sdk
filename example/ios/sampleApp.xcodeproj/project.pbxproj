@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -527,7 +527,7 @@
 				CODE_SIGN_ENTITLEMENTS = sampleApp/sampleApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 51;
+				CURRENT_PROJECT_VERSION = 52;
 				DEVELOPMENT_TEAM = NF6484JE8F;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = sampleApp/Info.plist;
@@ -560,7 +560,7 @@
 				CODE_SIGN_ENTITLEMENTS = sampleApp/sampleApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 51;
+				CURRENT_PROJECT_VERSION = 52;
 				DEVELOPMENT_TEAM = NF6484JE8F;
 				INFOPLIST_FILE = sampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
