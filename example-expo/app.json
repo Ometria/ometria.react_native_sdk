@@ -15,7 +15,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.tapptitude.ometria.sampleRN",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "52",
+      "buildNumber": "52"
     },
     "android": {
       "adaptiveIcon": {
