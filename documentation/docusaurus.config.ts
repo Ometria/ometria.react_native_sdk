@@ -84,7 +84,7 @@ const config: Config = {
         { to: '/android', label: 'Android', position: 'left' },
         { to: '/react-native', label: 'React Native', position: 'left' },
         {
-          href: 'https://github.com/Ometria/ometria.react_native_sdk',
+          type: 'custom-sdkGithubLink',
           label: 'GitHub',
           position: 'right',
         },
