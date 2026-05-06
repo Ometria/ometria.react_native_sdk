@@ -13,28 +13,28 @@ This library includes built-in support for the React Native New Architecture. Wh
 ## 1. Install the library
 
 <Tabs>
-  <TabItem value="expo" label="Expo"  default>
+<TabItem value="expo" label="Expo"  default>
 
 The easiest way to integrate Ometria is using Expo with the config plugin. This automatically handles all native configuration.
 
 #### 1. Install the package
 
 <Tabs>
-  <TabItem value="pnpm" label="pnpm" default>
+<TabItem value="pnpm" label="pnpm" default>
     ```bash
     pnpm add react-native-ometria
     ```
-  </TabItem>
-  <TabItem value="yarn" label="yarn">
+</TabItem>
+<TabItem value="yarn" label="yarn">
     ```bash
     yarn add react-native-ometria
     ```
-  </TabItem>
-  <TabItem value="npm" label="npm">
+</TabItem>
+<TabItem value="npm" label="npm">
     ```bash
     npm install react-native-ometria
     ```
-  </TabItem>
+</TabItem>
 </Tabs>
 
 #### 2. Configure the plugin
@@ -79,35 +79,35 @@ Add to your `app.json` or `app.config.js`:
 npx expo prebuild
 ```
 
-  </TabItem>
-  <TabItem value="bare" label="Bare React Native">
+</TabItem>
+<TabItem value="bare" label="Bare React Native">
 
 For projects not using Expo, follow the manual setup below.
 
 #### 1. Install the Package
 
 <Tabs>
-  <TabItem value="pnpm2" label="pnpm" default>
+<TabItem value="pnpm2" label="pnpm" default>
     ```bash
     pnpm add react-native-ometria
     ```
-  </TabItem>
-  <TabItem value="yarn2" label="yarn">
+</TabItem>
+<TabItem value="yarn2" label="yarn">
     ```bash
     yarn add react-native-ometria
     ```
-  </TabItem>
-  <TabItem value="npm2" label="npm">
+</TabItem>
+<TabItem value="npm2" label="npm">
     ```bash
     npm install react-native-ometria
     ```
-  </TabItem>
+</TabItem>
 </Tabs>
 
 #### 2. Native Setup
 
 <Tabs>
-  <TabItem value="new-arch" label="New Architecture" default>
+<TabItem value="new-arch" label="New Architecture" default>
 
 #### 🍏 iOS
 
@@ -166,8 +166,8 @@ Android builds require:
 - `minSdkVersion`: 24
 :::
 
-  </TabItem>
-  <TabItem value="old-arch" label="Old Architecture">
+</TabItem>
+<TabItem value="old-arch" label="Old Architecture">
 
 #### 🍏 iOS
 
@@ -192,9 +192,9 @@ Set in `android/gradle.properties`:
 newArchEnabled=false
 ```
 
-    </TabItem>
+</TabItem>
 
-  </Tabs>
+</Tabs>
 
 ### Xcode 26 + Firebase compatibility
 
@@ -401,9 +401,9 @@ end
 | 5. FBReactNativeSpec framework | Old arch only | Creates `FBReactNativeSpec.framework/Headers/` to satisfy `#import <FBReactNativeSpec/...>` |
 | 6. ReactCommon headers + system header removal | Old arch only | Populates `ReactCommon.framework/Headers/` and removes shadowing system headers (e.g. `float.h`) |
 
-      </TabItem>
+</TabItem>
 
-    </Tabs>
+</Tabs>
 
 ---
 
