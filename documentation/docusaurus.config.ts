@@ -3,8 +3,8 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Ometria React Native SDK',
-  tagline: 'Mobile SDK for Ometria marketing automation platform',
+  title: 'Ometria SDKs',
+  tagline: 'Mobile SDKs for the Ometria marketing automation platform',
   favicon: 'img/logo.svg',
 
   future: {
@@ -29,15 +29,42 @@ const config: Config = {
     [
       'classic',
       {
-        docs: {
-          sidebarPath: './sidebars.ts',
-          routeBasePath: '/', // Docs at root instead of /docs
-        },
-        blog: false, // Disable blog
+        docs: false,
+        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
       } satisfies Preset.Options,
+    ],
+  ],
+
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'ios',
+        path: 'docs-ios',
+        routeBasePath: 'ios',
+        sidebarPath: './sidebars/ios.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'android',
+        path: 'docs-android',
+        routeBasePath: 'android',
+        sidebarPath: './sidebars/android.ts',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'react-native',
+        path: 'docs-react-native',
+        routeBasePath: 'react-native',
+        sidebarPath: './sidebars/react-native.ts',
+      },
     ],
   ],
 
@@ -47,12 +74,15 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Ometria React Native SDK',
+      title: 'Ometria SDKs',
       logo: {
         alt: 'Ometria Logo',
         src: 'img/logo.svg',
       },
       items: [
+        { to: '/ios', label: 'iOS', position: 'left' },
+        { to: '/android', label: 'Android', position: 'left' },
+        { to: '/react-native', label: 'React Native', position: 'left' },
         {
           href: 'https://github.com/Ometria/ometria.react_native_sdk',
           label: 'GitHub',
