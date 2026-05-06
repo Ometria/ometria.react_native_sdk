@@ -33,7 +33,7 @@ Then run `pod install` again.
 
 This is a [known Firebase behaviour](https://rnfirebase.io/messaging/notifications), not an Ometria issue. When the app is in the foreground, the OS does not display notifications — the data is delivered via `onMessage` instead.
 
-You need to display your own notification UI. See [Handle Foreground Notifications](./push-notifications/setup#4-handle-foreground-notifications) for details.
+You need to display your own notification UI. See [Handle Foreground Notifications](./push-notifications/setup.md#4-handle-foreground-notifications) for details.
 
 ## Android
 

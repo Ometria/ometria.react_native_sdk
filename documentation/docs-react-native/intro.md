@@ -85,10 +85,10 @@ Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
 
 ## What's Next?
 
-- [Installation](./installation) - Detailed installation guide including bare React Native setup
-- [Event Tracking](./events/overview) - Track customer behaviour
-- [Push Notifications](./push-notifications/setup) - Set up Firebase and push notifications
-- [Deep Linking](./deep-linking) - Handle app links from emails
+- [Installation](./installation.md) - Detailed installation guide including bare React Native setup
+- [Event Tracking](./events/overview.md) - Track customer behaviour
+- [Push Notifications](./push-notifications/setup.md) - Set up Firebase and push notifications
+- [Deep Linking](./deep-linking.md) - Handle app links from emails
 
 :::tip
 For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo) directory in the SDK repository.

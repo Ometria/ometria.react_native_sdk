@@ -200,7 +200,7 @@ messaging().onTokenRefresh((pushToken) => Ometria.onNewToken(pushToken));
 ```
 
 :::note
-The `appGroupIdentifier` must match the App Group you configure in Xcode for both the main app and the Notification Service Extension. See [Notification Service Extension](./notification-service-extension) for details.
+The `appGroupIdentifier` must match the App Group you configure in Xcode for both the main app and the Notification Service Extension. See [Notification Service Extension](./notification-service-extension.md) for details.
 
 The `notificationChannelName` sets the Android notification channel name (Android 8.0+). If not specified, it defaults to blank.
 :::
@@ -239,7 +239,7 @@ If you implement a custom solution, don't forget to call `Ometria.onNotification
 
 The Ometria Expo config plugin automatically creates the Notification Service Extension during `npx expo prebuild`. **No manual setup is needed** — just make sure `["react-native-ometria"]` is in your `app.json` plugins.
 
-See [Notification Service Extension](./notification-service-extension) for plugin options like `customAppGroupIdentifier` and `skipNSE`.
+See [Notification Service Extension](./notification-service-extension.md) for plugin options like `customAppGroupIdentifier` and `skipNSE`.
 
 #### Android
 
@@ -275,7 +275,7 @@ You can pass `notificationChannelName` in `ometriaOptions` to set the Android no
 
 You must manually add a Notification Service Extension target in Xcode, configure App Groups, and update the `NotificationService.swift` file.
 
-See [Notification Service Extension](./notification-service-extension) for the complete step-by-step guide.
+See [Notification Service Extension](./notification-service-extension.md) for the complete step-by-step guide.
 
 #### Android
 

@@ -215,4 +215,4 @@ Track when a user opens a deep link from a notification:
 Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen');
 ```
 
-See [Handling Notification URLs](./push-notifications/setup#7-handling-notification-urls) for more details.
+See [Handling Notification URLs](./push-notifications/setup.md#7-handling-notification-urls) for more details.

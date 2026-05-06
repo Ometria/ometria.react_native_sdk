@@ -428,7 +428,7 @@ Any other Ometria methods must be called **after** initialization.
 | Parameter               | Platform | Description                                                                                                                                                                                                                                                                                                                                                                                      |
 | ----------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | notificationChannelName | Android  | Custom name for the notification channel. Default is blank.                                                                                                                                                                                                                                                                                                                                      |
-| appGroupIdentifier      | iOS      | Specifies the App Group identifier used by the Notification Service Extension.<br/><br/>Expo projects: by default, this value is set to `group.{bundleIdentifier}`. You may override it if a different identifier is needed.<br/><br/>Bare React Native: this value must match the App Group configured in Xcode. Refer to [iOS Push Setup](./push-notifications/notification-service-extension) for configuration details. |
+| appGroupIdentifier      | iOS      | Specifies the App Group identifier used by the Notification Service Extension.<br/><br/>Expo projects: by default, this value is set to `group.{bundleIdentifier}`. You may override it if a different identifier is needed.<br/><br/>Bare React Native: this value must match the App Group configured in Xcode. Refer to [iOS Push Setup](./push-notifications/notification-service-extension.md) for configuration details. |
 
 :::tip Reinitialization
 Since version 2.3.0, the SDK allows for reinitialization of the Ometria instance. You can call `initializeWithApiToken` again later in the app if needed.
@@ -456,4 +456,4 @@ Ometria.trackBasketUpdatedEvent({
 });
 ```
 
-See [Event Tracking](./events/overview) for the complete list of available events.
+See [Event Tracking](./events/overview.md) for the complete list of available events.

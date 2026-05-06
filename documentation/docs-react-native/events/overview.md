@@ -17,17 +17,17 @@ These events are tracked automatically once the SDK is initialized:
 | **Application launched**     | App was launched                                                                                                          |
 | **Application foregrounded** | App brought to foreground from background                                                                                 |
 | **Application backgrounded** | App sent to background                                                                                                    |
-| **Notification received**    | Push notification received in quit state (iOS only, requires [Notification Service Extension](../push-notifications/notification-service-extension)) |
+| **Notification received**    | Push notification received in quit state (iOS only, requires [Notification Service Extension](../push-notifications/notification-service-extension.md)) |
 
 ## Manually Tracked Events
 
 See the following guides for details on each event type:
 
-- [Profile Events](./profile-events) - User identification and logout
-- [Product Events](./product-events) - Product views and listings
-- [Basket Events](./basket-events) - Shopping cart interactions
-- [Order Events](./order-events) - Checkout and purchases
-- [Custom Events](./custom-events) - App-specific events
+- [Profile Events](./profile-events.md) - User identification and logout
+- [Product Events](./product-events.md) - Product views and listings
+- [Basket Events](./basket-events.md) - Shopping cart interactions
+- [Order Events](./order-events.md) - Checkout and purchases
+- [Custom Events](./custom-events.md) - App-specific events
 
 ## Event Batching
 
