@@ -93,3 +93,8 @@ Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
 :::tip
 For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo) directory in the SDK repository.
 :::
+
+## Looking for another platform?
+
+- [iOS SDK](/ios)
+- [Android SDK](/android)
