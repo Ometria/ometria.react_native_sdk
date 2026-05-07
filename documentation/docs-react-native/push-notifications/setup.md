@@ -67,8 +67,10 @@ import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 ```
 
-:::warning Firebase Version
+:::warning[Firebase Version]
+
 We recommend using Firebase CocoaPods version 10.10.0 or newer.
+
 :::
 
   </TabItem>
@@ -311,8 +313,10 @@ You can pass `notificationChannelName` in `ometriaOptions` to set the Android no
 The `ometriaToken` is required because the SDK needs to initialize in the background context where your normal app initialization hasn't run.
 :::
 
-:::info Deprecated Methods
+:::info[Deprecated Methods]
+
 As of version 2.4.0, `Ometria.setBackgroundMessageHandler` is deprecated. Use `Ometria.onAndroidBackgroundMessage` instead.
+
 :::
 
 ## 6. Handle Notification Interaction
@@ -335,8 +339,10 @@ messaging().onNotificationOpenedApp((remoteMessage) =>
 );
 ```
 
-:::info Deprecated Methods
+:::info[Deprecated Methods]
+
 As of version 2.4.0, `Ometria.onNotificationInteracted` is deprecated. Use `Ometria.onNotificationOpenedApp` instead.
+
 :::
 
 ## 7. Handling Notification URLs

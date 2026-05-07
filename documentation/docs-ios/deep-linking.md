@@ -30,7 +30,7 @@ This will ensure that when your customers click on links in Ometria emails, your
 
 The apple-app-site-association file is used to create a relationship between a domain and your app. You can [find out more about it here](https://developer.apple.com/library/archive/documentation/General/Conceptual/AppSearch/UniversalLinks.html) but for the purpose of this guide we will go with the most basic example which should look like this:
 
-```javascript
+```json
 {
     "applinks": {
         "details": [

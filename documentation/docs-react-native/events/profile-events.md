@@ -59,7 +59,8 @@ Ometria.updateStoreId('store_uk');
 Ometria.updateStoreId(null); // reset
 ```
 
-:::warning Identifier Consistency
+:::warning[Identifier Consistency]
+
 If your business already integrates with Ometria, the identifiers sent here must correspond to those in other integrations.
 
 Events are merged on Ometria's side into one cross-channel view of customer behaviour. Inconsistent email/customer IDs could result in duplicate profiles or data loss.
@@ -69,6 +70,7 @@ Events are merged on Ometria's side into one cross-channel view of customer beha
 - A typical error: the app generates a new customer ID on each login instead of using the server-generated ID stored in Ometria
 
 **Recommendation:** Generate IDs centrally on your servers and send consistent ones through both the Ometria mobile SDK and Data API. If consistent IDs are impractical, use only email to identify contacts.
+
 :::
 
 ## Profile Deidentified

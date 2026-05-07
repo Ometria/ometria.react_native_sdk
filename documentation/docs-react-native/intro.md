@@ -40,7 +40,7 @@ This is the recommended setup for new projects using Expo with the New Architect
     yarn add react-native-ometria
     ```
   </TabItem>
-  <TabItem value="npm" label="npm" >
+  <TabItem value="npm" label="npm">
     ```bash
     npm install react-native-ometria
     ```

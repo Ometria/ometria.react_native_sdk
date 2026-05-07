@@ -13,7 +13,7 @@ This library includes built-in support for the React Native New Architecture. Wh
 ## 1. Install the library
 
 <Tabs>
-<TabItem value="expo" label="Expo"  default>
+<TabItem value="expo" label="Expo" default>
 
 The easiest way to integrate Ometria is using Expo with the config plugin. This automatically handles all native configuration.
 
@@ -136,7 +136,8 @@ Then run:
 pod install
 ```
 
-:::note Why is the TurboModule patch needed?
+:::note[Why is the TurboModule patch needed?]
+
 The Ometria SDK is written in Swift, but React Native's TurboModule specs use C++ types that Swift cannot directly implement. We use an Objective-C++ wrapper (`OmetriaReactNativeSdkTurboModule`) to bridge this gap.
 
 React Native's codegen generates a file called `RCTModuleProviders.mm` that maps module names to their implementation classes. However, codegen doesn't know about our custom wrapper class.
@@ -144,6 +145,7 @@ React Native's codegen generates a file called `RCTModuleProviders.mm` that maps
 The `patch_ometria_turbomodule` function adds a build phase that patches `RCTModuleProviders.mm` to include our module mapping. This happens during each build, after codegen generates the file but before it's compiled.
 
 **This is a temporary workaround** - we are actively working on a solution that won't require manual Podfile changes.
+
 :::
 
 :::tip
@@ -159,11 +161,13 @@ use_frameworks! :linkage => :static
 
 New Architecture is enabled by default.
 
-:::note Requirements
+:::note[Requirements]
+
 Android builds require:
 
 - `compileSdkVersion` / `targetSdkVersion`: 36
 - `minSdkVersion`: 24
+
 :::
 
 </TabItem>
@@ -419,8 +423,10 @@ await Ometria.initializeWithApiToken('API_KEY', {
 });
 ```
 
-:::warning Ometria needs to be initialized first
+:::warning[Ometria needs to be initialized first]
+
 Any other Ometria methods must be called **after** initialization.
+
 :::
 
 #### Optional Parameters
@@ -430,8 +436,10 @@ Any other Ometria methods must be called **after** initialization.
 | notificationChannelName | Android  | Custom name for the notification channel. Default is blank.                                                                                                                                                                                                                                                                                                                                      |
 | appGroupIdentifier      | iOS      | Specifies the App Group identifier used by the Notification Service Extension.<br/><br/>Expo projects: by default, this value is set to `group.{bundleIdentifier}`. You may override it if a different identifier is needed.<br/><br/>Bare React Native: this value must match the App Group configured in Xcode. Refer to [iOS Push Setup](./push-notifications/notification-service-extension.md) for configuration details. |
 
-:::tip Reinitialization
+:::tip[Reinitialization]
+
 Since version 2.3.0, the SDK allows for reinitialization of the Ometria instance. You can call `initializeWithApiToken` again later in the app if needed.
+
 :::
 
 ---
