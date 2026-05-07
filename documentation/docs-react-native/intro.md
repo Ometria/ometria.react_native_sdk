@@ -21,7 +21,7 @@ For your mobile app, this means:
 
 You can also look at the sample apps we have included for reference implementations. [↗](https://github.com/Ometria/ometria.react_native_sdk/tree/master/example-expo)
 
-**Before you begin** you need to get an API key from Ometria. [↗](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
+**Before you begin** visit the Ometria help centre and follow the steps there to get an API key. [↗](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
 
 ## Quick Start
 

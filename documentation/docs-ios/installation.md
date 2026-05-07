@@ -15,7 +15,7 @@ The easiest way to get Ometria into your iOS project is by using [CocoaPods](htt
 
 ## 2. Initialise the library
 
-To initialise Ometria, you need to enter the API key from [Before you begin](./intro.md#before-you-begin).
+To initialise Ometria, you need to enter the API key from the [Getting Started](./intro.md) page.
 
 The best place to do this is in [application(_:didFinishLaunchingWithOptions:)](https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIApplicationDelegate_Protocol/#//apple_ref/occ/intfm/UIApplicationDelegate/application:didFinishLaunchingWithOptions:).
 
