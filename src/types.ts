@@ -180,7 +180,7 @@ export type OmetriaBasket = {
   currency: string;
   totalPrice: number;
   items: OmetriaBasketItem[];
-  link: string;
+  link?: string;
 };
 
 export type OmetriaOptions = {
