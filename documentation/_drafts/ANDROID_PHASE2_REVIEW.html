@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Android Docs — Phase 2 Fixes for Review</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e1e4e8;
+    --text: #24292e;
+    --muted: #586069;
+    --accent: #0366d6;
+    --del-bg: #ffeef0;
+    --del-border: #fdb8c0;
+    --add-bg: #e6ffed;
+    --add-border: #acf2bd;
+    --code-bg: #f6f8fa;
+    --pill-bg: #eaeef2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+  }
+  h1 { font-size: 28px; margin: 0 0 6px; }
+  .subtitle { color: var(--muted); margin: 0; }
+  h2 {
+    font-size: 20px;
+    margin: 36px 0 16px;
+    padding: 6px 12px;
+    background: var(--pill-bg);
+    border-radius: 6px;
+  }
+  .group-1 { background: #ffe4e1; }
+  .group-2 { background: #fff5cc; }
+  .group-3 { background: #e1f5e1; }
+  .item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .item h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+  }
+  .num {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    margin-right: 8px;
+    font-size: 13px;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .meta code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+  .why {
+    font-size: 14px;
+    color: var(--text);
+    margin: 10px 0;
+  }
+  .source {
+    font-size: 13px;
+    color: #144a1a;
+    background: #e6ffed;
+    border-left: 3px solid #28a745;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border-radius: 3px;
+  }
+  .source code {
+    background: rgba(255,255,255,0.6);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .diff {
+    margin: 8px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: ui-monospace, "SF Mono", Monaco, Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .diff-row {
+    display: flex;
+    padding: 4px 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .diff-del { background: var(--del-bg); border-left: 3px solid var(--del-border); }
+  .diff-add { background: var(--add-bg); border-left: 3px solid var(--add-border); }
+  .diff-marker {
+    color: var(--muted);
+    margin-right: 8px;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 6px;
+  }
+  .label-before { background: var(--del-bg); color: #86181d; }
+  .label-after { background: var(--add-bg); color: #144a1a; }
+  .pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: ui-monospace, "SF Mono", Monaco, Menlo, Consolas, monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 4px 0;
+  }
+  .pre.before { background: var(--del-bg); border-color: var(--del-border); }
+  .pre.after { background: var(--add-bg); border-color: var(--add-border); }
+  footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Android Docs — Phase 2 Fixes for Review</h1>
+  <p class="subtitle">5 fixes applied to <code>documentation/docs-android/</code>, each cross-referenced against the live SDK source at <a href="https://github.com/Ometria/ometria.android_sdk/tree/master/OmetriaSDK">ometria.android_sdk @ master</a>.</p>
+</header>
+
+<p>The new Docusaurus Android docs were ported verbatim from the legacy <code>README_android.md</code>, then reviewed for defects. The issues below were found in the source README and have been fixed in the docs. Each item shows the change, the file, the reason, and (where applicable) the SDK source line confirming it. Build verified clean (<code>pnpm build</code>, zero broken-link warnings).</p>
+
+<h2 class="group-2">Group 1 — Documentation/data inconsistencies</h2>
+
+<div class="item">
+  <h3><span class="num">1</span><code>OmetriaBasketItem</code> description copy-pasted from <code>OmetriaBasket</code></h3>
+  <div class="meta">File: <code>docs-android/events/basket-events.md</code> § <code>OmetriaBasketItem</code></div>
+  <div class="diff">
+    <div class="diff-row diff-del"><span class="diff-marker">-</span>An object that describes the contents of a shopping basket.</div>
+    <div class="diff-row diff-add"><span class="diff-marker">+</span>An object representing one entry of a particular item in a basket.</div>
+  </div>
+  <p class="why"><strong>Why:</strong> The first sentence was verbatim the description of <code>OmetriaBasket</code> (one section above). <code>OmetriaBasketItem</code> represents a single line item, not the whole basket.</p>
+  <p class="source"><strong>SDK source:</strong> the new wording is taken directly from <code>OmetriaBasketItem.kt</code>'s class docstring: "An object representing one entry of a particular item in a basket."</p>
+</div>
+
+<div class="item">
+  <h3><span class="num">2</span><code>OmetriaBasket.totalPrice</code> type cased <code>(float, ...)</code> instead of <code>(Float, ...)</code></h3>
+  <div class="meta">File: <code>docs-android/events/basket-events.md</code> § <code>OmetriaBasket</code> → Properties</div>
+  <div class="diff">
+    <div class="diff-row diff-del"><span class="diff-marker">-</span>* `totalPrice`: (`float`, required) - A float value representing the pricing.</div>
+    <div class="diff-row diff-add"><span class="diff-marker">+</span>* `totalPrice`: (`Float`, required) - A float value representing the pricing.</div>
+  </div>
+  <p class="why"><strong>Why:</strong> Kotlin's primitive is <code>Float</code> (capital F). The basket properties table used lowercase; the item table immediately below it used the correct capitalised <code>Float</code>. Now consistent.</p>
+  <p class="source"><strong>SDK source:</strong> <code>OmetriaBasket.kt</code> declares <code>val totalPrice: Float</code>. The full data class init is <code>OmetriaBasket(id: String? = null, totalPrice: Float, currency: String, items: List&lt;OmetriaBasketItem&gt; = listOf(), link: String? = null)</code> — the docs table now matches.</p>
+</div>
+
+<div class="item">
+  <h3><span class="num">3</span><code>loggingEnabled(true)</code> example dropped optional parameters</h3>
+  <div class="meta">File: <code>docs-android/troubleshooting.md</code></div>
+  <div class="pre before"><span class="label label-before">Before</span>
+Ometria.initialize(
+    application = this,
+    apiToken = "YOUR_API_TOKEN",
+    notificationIcon = R.drawable.ic_notification_nys
+).loggingEnabled(true)</div>
+  <div class="pre after"><span class="label label-after">After</span>
+Ometria.initialize(
+    application = this,
+    apiToken = "YOUR_API_TOKEN",
+    notificationIcon = R.drawable.ic_notification_nys,
+    notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
+    notificationChannelName = "Custom Channel Name"
+).loggingEnabled(true)</div>
+  <p class="why"><strong>Why:</strong> The Installation page's main init example uses the full 5-arg form. The Troubleshooting page's "advanced logging" example previously dropped <code>notificationColor</code> and <code>notificationChannelName</code>. Both forms compile (the optional params have defaults), but readers comparing the two were unsure why parameters appeared and disappeared. Now the only difference between the two examples is the <code>.loggingEnabled(true)</code> chain — which is the actual point of the snippet.</p>
+  <p class="source"><strong>SDK source:</strong> <code>Ometria.kt</code> declares <code>fun initialize(application: Application, apiToken: String, notificationIcon: Int, notificationColor: Int? = COLOR_DEFAULT, notificationChannelName: String = OMETRIA_CHANNEL_NAME)</code>. Both optional params have defaults; passing them explicitly with the documented values is harmless and makes the example consistent with the Installation page.</p>
+</div>
+
+<h2 class="group-3">Group 2 — Misleading or outdated content</h2>
+
+<div class="item">
+  <h3><span class="num">4</span><code>intro.md</code> event-tracking bullet rephrased</h3>
+  <div class="meta">File: <code>docs-android/intro.md</code></div>
+  <div class="diff">
+    <div class="diff-row diff-del"><span class="diff-marker">-</span>1. Tracking customer behaviour through events - handled by Ometria.
+2. Sending and displaying push notifications - requires the app developers.</div>
+    <div class="diff-row diff-add"><span class="diff-marker">+</span>1. **Tracking customer behaviour** through events - a subset of events is automatically handled by the Ometria SDK, but you have to customize it to your needs.
+2. **Sending and displaying push notifications** - requires the app developers.</div>
+  </div>
+  <p class="why"><strong>Why:</strong> The original bullet implied event tracking was zero-effort. The Events page makes clear that <em>most</em> events are manually tracked. New wording matches the React Native and (now) iOS intros.</p>
+</div>
+
+<div class="item">
+  <h3><span class="num">5</span>Removed <code>their_id</code> jargon from customer-facing docs</h3>
+  <div class="meta">File: <code>docs-android/events/product-events.md</code> § "View list of products"</div>
+  <div class="diff">
+    <div class="diff-row diff-del"><span class="diff-marker">-</span>* "id" which should be an attribute their_id that exists in the Ometria database. For example "red".</div>
+    <div class="diff-row diff-add"><span class="diff-marker">+</span>* "id" which should be the attribute identifier as it exists in the Ometria database. For example "red".</div>
+  </div>
+  <p class="why"><strong>Why:</strong> <code>their_id</code> reads like an internal database column name. The same wording appears in iOS (already fixed) and React Native (still pending).</p>
+</div>
+
+<footer>
+  <p>SDK references verified against <a href="https://github.com/Ometria/ometria.android_sdk/tree/master/OmetriaSDK">ometria.android_sdk @ master</a>.</p>
+  <p>One item remains outside this review:</p>
+  <ul>
+    <li>The Gradle Sync screenshot in <code>installation.md</code> is hosted on <code>user-images.githubusercontent.com</code> (uploaded user asset, can be deleted/changed). Migrate to <code>documentation/static/img/android/</code> in a follow-up.</li>
+  </ul>
+</footer>
+
+</div>
+</body>
+</html>

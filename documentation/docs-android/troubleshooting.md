@@ -15,6 +15,8 @@ You can enable advanced logging if you want more information on what's happening
 Ometria.initialize(
     application = this,
     apiToken = "YOUR_API_TOKEN",
-    notificationIcon = R.drawable.ic_notification_nys
+    notificationIcon = R.drawable.ic_notification_nys,
+    notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
+    notificationChannelName = "Custom Channel Name"
 ).loggingEnabled(true)
 ```

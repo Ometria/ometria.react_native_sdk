@@ -32,7 +32,7 @@ Then, all you have to do is to reference the **OmetriaFirebaseMessagingService**
     android:name="com.android.ometriasdk.notification.OmetriaFirebaseMessagingService"
     android:exported="false">
     <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING\_EVENT" />
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
     </intent-filter>
 </service>
 ```
@@ -63,7 +63,7 @@ Now reference your `Service` inside the `AndroidManifest` file:
     android:name=".YourFirebaseMessagingService"
     android:exported="false">
     <intent-filter>
-        <action android:name="com.google.firebase.MESSAGING\_EVENT" />
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
     </intent-filter>
 </service>
 ```
