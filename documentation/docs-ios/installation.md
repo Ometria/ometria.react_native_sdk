@@ -22,7 +22,9 @@ The best place to do this is in [application(_:didFinishLaunchingWithOptions:)](
 Initialise the library by adding **import Ometria** and then calling **Ometria.initialize(apiToken:appGroupIdentifier:)** with your API key and the App Group Identifier you have just created as its arguments.
 
 :::info
+
 The `appGroupIdentifier` will allow the notification service extension to read and write data directly inside the cache used by the Ometria SDK.
+
 :::
 
 Once you've called this method once, you can access your instance throughout the rest of your application with **sharedInstance()**.
@@ -42,7 +44,7 @@ Once complete you will have something like this:
 import Ometria
 
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    Ometria.initialize(apiToken: "OMETRIA_API_TOKEN", appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
+    Ometria.initialize(apiToken: "YOUR_API_KEY", appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
     FirebaseApp.configure()
     return true
 }
@@ -55,13 +57,15 @@ Ometria logs any errors encountered during runtime by default. See [Troubleshoot
 Method Swizzling is the ability to change the functionality of an existing selector/method at runtime.
 
 :::info
+
 By default, the Ometria SDK uses Swizzling in order to gain access to data arriving in push messages. We have chosen this method so implementers have to do less work to integrate with the SDK. However, if you are not comfortable with using Swizzling, we have provided a set of methods that need to be called in order to provide the Ometria SDK with the required information to show Push Notifications to the user.
+
 :::
 
 First of all, you will have to update your initializer so that it doesn't use Swizzling.
 
 ```swift
-Ometria.initialize(apiToken: "YOUR_API_TOKEN_HERE", enableSwizzling: false, appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
+Ometria.initialize(apiToken: "YOUR_API_KEY", enableSwizzling: false, appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
 ```
 
 Next, you will need to provide the Firebase push token every time Firebase updates it. You can do this in the delegate method from Messaging:

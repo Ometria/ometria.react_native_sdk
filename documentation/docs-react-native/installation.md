@@ -63,7 +63,9 @@ Add to your `app.json` or `app.config.js`:
 ```
 
 :::info
+
 `forceStaticLinking` is required for iOS — without it, `RNFBApp` and `RNFBMessaging` are compiled as framework modules, causing a build error when they import React Native headers.
+
 :::
 
 #### Plugin Options
@@ -418,7 +420,7 @@ After installation, initialize the SDK in your app:
 ```js
 import Ometria from 'react-native-ometria';
 
-await Ometria.initializeWithApiToken('API_KEY', {
+await Ometria.initializeWithApiToken('YOUR_API_KEY', {
   // optional params
 });
 ```

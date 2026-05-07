@@ -14,7 +14,7 @@ You can enable advanced logging if you want more information on what's happening
 ```kotlin
 Ometria.initialize(
     application = this,
-    apiToken = "YOUR_API_TOKEN",
+    apiToken = "YOUR_API_KEY",
     notificationIcon = R.drawable.ic_notification_nys,
     notificationColor = ContextCompat.getColor(this, R.color.colorAccent),
     notificationChannelName = "Custom Channel Name"

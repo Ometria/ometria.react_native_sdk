@@ -16,7 +16,9 @@ Ometria.trackCheckoutStartedEvent('order_123');
 ```
 
 :::note
+
 This event is currently only used to count page views and has no other effect in Ometria.
+
 :::
 
 ## Order Completed

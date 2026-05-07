@@ -31,7 +31,7 @@ class SampleApp : Application(), OmetriaNotificationInteractionHandler {
         // Note: Replace api token with your own
         Ometria.initialize(
             this,
-            "YOUR_API_TOKEN",
+            "YOUR_API_KEY",
             R.mipmap.ic_launcher
         ).loggingEnabled(true)
 

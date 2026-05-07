@@ -29,7 +29,9 @@ You can also look at the sample app we have included for reference implementatio
 - [Troubleshooting](./troubleshooting.md)
 
 :::tip
+
 For a complete working example, see the [Ometria Sample app](https://github.com/Ometria/ometria.ios_sdk/tree/master/Ometria%20Sample) in the SDK repository.
+
 :::
 
 ## Looking for another platform?

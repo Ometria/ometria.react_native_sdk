@@ -39,7 +39,9 @@ Ometria.trackProfileIdentifiedByEmailEvent(
 ```
 
 :::tip
+
 Having a **customerId** makes profile matching more robust. Send either event as soon as you have the information - they're not mutually exclusive.
+
 :::
 
 #### Store Identifier

@@ -47,7 +47,9 @@ Ometria.trackBasketUpdatedEvent({
 ```
 
 :::info
+
 Always send the **full current basket** - not just the updated parts. This helps recover from lost or out-of-sync events; the latest update is always authoritative.
+
 :::
 
 ## Data Types

@@ -16,7 +16,7 @@ your email campaigns, but if not ask your Ometria contact to set one up, and the
 
 To do this, select your project in Xcode, and go to **Targets > Your application Target > Signing & Capabilities**, and add the **Associated Domains** capability.
 
-![](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/target_capabilities.png)
+![Xcode target editor — Signing & Capabilities tab](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/target_capabilities.png)
 
 Once enabled, input your Ometria tracking domain as below.
 
@@ -24,7 +24,7 @@ This will ensure that when your customers click on links in Ometria emails, your
 
 **Note:** This does not associate your website's domain with the app, only the tracking domain.
 
-![](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/associated_domain.png)
+![Associated Domains capability with Ometria tracking domain entered](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/associated_domain.png)
 
 ## Create an apple-app-site-association file and send it to your Ometria contact.
 

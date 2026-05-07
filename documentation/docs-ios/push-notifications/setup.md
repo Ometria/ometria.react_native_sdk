@@ -16,7 +16,9 @@ Follow these steps:
 5. Add a **Notification Service Extension** to your app in order to enable receiving rich content notifications.
 
 :::info
+
 Although on Android you are allowed to change what icon is displayed on push notifications, Apple is being more restrictive in this sense. Therefore, push notifications on iOS and ipadOS always use the application icon, and the only changes in layout can be done by user controlled preferences. To find out more about this, see [Notifications Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/components/system-experiences/notifications)
+
 :::
 
 ## Configure push notifications in your application
@@ -35,7 +37,7 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Ometria.initialize(apiToken: "OMETRIA_API_TOKEN")
+        Ometria.initialize(apiToken: "YOUR_API_KEY")
         FirebaseApp.configure()
         configurePushNotifications()
 

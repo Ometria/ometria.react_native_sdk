@@ -152,7 +152,7 @@ class NotificationService: OmetriaNotificationServiceExtension {
 Update your Ometria initialization to include the app group identifier:
 
 ```js
-await Ometria.initializeWithApiToken('API_KEY', {
+await Ometria.initializeWithApiToken('YOUR_API_KEY', {
   appGroupIdentifier: 'group.com.yourcompany.yourapp',
 });
 ```

@@ -9,11 +9,11 @@ For apps that require background processing of notifications (for example, when 
 
 In order to add the extension, go to **File > New > Target**, and select **Notification Service Extension > Next**.
 
-![](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/notification_service_extension.png)
+![Xcode New Target dialog with Notification Service Extension selected](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/notification_service_extension.png)
 
 A new item is displayed in your target list:
 
-![](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/project_targets.png)
+![Xcode project navigator showing the new Notification Service Extension target](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/project_targets.png)
 
 Next, make sure that the Ometria SDK is also available to this new target by updating your podfile to include your newly added target and specify Ometria as a dependency.
 
@@ -37,12 +37,12 @@ At this point the main application and the extension function as two separate en
 
 In your project navigator, select your project, then go to **Signing & Capabilities** and select **+ Capability** in the top left corner.
 
-![](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/dd8cd6e7-ff00-41be-9573-2589436a4616)
+![Xcode Signing & Capabilities — Add Capability button highlighted](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/dd8cd6e7-ff00-41be-9573-2589436a4616)
 
 Once you have done so, a new section will be displayed below Signing. It will allow you to add a new app group. Make sure you select a relevant identifier (e.g.`group.[BUNDLE_IDENTIFIER]`), and retain the value, as you will need it when instantiating Ometria.
 Repeat the process for the Notification Service Extension target, and you should be good to go.
 
-![alt text](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/3d9d0500-3832-4312-a918-e5b05404886d)
+![Xcode App Groups capability with custom group identifier entered](https://github.com/Ometria/ometria.ios_sdk/assets/6207062/3d9d0500-3832-4312-a918-e5b05404886d)
 
 ## Update NotificationService
 

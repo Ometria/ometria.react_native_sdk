@@ -106,7 +106,9 @@ Add the `react-native-permissions` Expo plugin to your `app.json`:
 ```
 
 :::note
+
 Only `iosPermissions` is needed in the plugin config — this tells the build which native iOS permission handlers to include. Android permissions don't require plugin configuration; they are handled via the manifest and runtime request automatically.
+
 :::
 
   </TabItem>
@@ -161,7 +163,7 @@ import {
   onTokenRefresh,
 } from '@react-native-firebase/messaging';
 
-await Ometria.initializeWithApiToken('API_KEY', {
+await Ometria.initializeWithApiToken('YOUR_API_KEY', {
   notificationChannelName: 'Promotions', // optional, Android only
 });
 
@@ -187,7 +189,7 @@ The `notificationChannelName` sets the Android notification channel name (Androi
 import Ometria from 'react-native-ometria';
 import messaging from '@react-native-firebase/messaging';
 
-await Ometria.initializeWithApiToken('API_KEY', {
+await Ometria.initializeWithApiToken('YOUR_API_KEY', {
   notificationChannelName: 'Example Channel Name', // optional, Android only
   appGroupIdentifier: 'group.com.yourcompany.yourapp', // required for iOS NSE
 });
@@ -267,7 +269,9 @@ if (Platform.OS === 'android') {
 ```
 
 :::tip
+
 You can pass `notificationChannelName` in `ometriaOptions` to set the Android notification channel when the SDK initializes in the background.
+
 :::
 
   </TabItem>
@@ -303,14 +307,18 @@ if (Platform.OS === 'android') {
 ```
 
 :::tip
+
 You can pass `notificationChannelName` in `ometriaOptions` to set the Android notification channel when the SDK initializes in the background.
+
 :::
 
   </TabItem>
 </Tabs>
 
 :::note
+
 The `ometriaToken` is required because the SDK needs to initialize in the background context where your normal app initialization hasn't run.
+
 :::
 
 :::info[Deprecated Methods]

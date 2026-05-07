@@ -91,7 +91,9 @@ Ometria.initializeWithApiToken('YOUR_API_KEY').then(() => {
 - [Deep Linking](./deep-linking.md) - Handle app links from emails
 
 :::tip
+
 For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react_native_sdk/tree/master/example-expo) directory in the SDK repository.
+
 :::
 
 ## Looking for another platform?
