@@ -19,7 +19,7 @@ For your mobile app, this means:
 - **Tracking customer behaviour** through events - a subset of events is automatically handled by the Ometria SDK, but you have to customize it to your needs [↗](https://support.ometria.com/hc/en-gb/articles/360018440917-Creating-an-event-tracking-plan-for-your-mobile-app)
 - **Sending and displaying push notifications** - requires app developer integration
 
-You can also look at the sample apps we have included for reference implementations. [↗](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo)
+You can also look at the sample apps we have included for reference implementations. [↗](https://github.com/Ometria/ometria.react_native_sdk/tree/master/example-expo)
 
 **Before you begin** you need to get an API key from Ometria. [↗](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
 
@@ -77,10 +77,10 @@ import Ometria from 'react-native-ometria';
 
 ...
 
-Ometria.initializeWithApiToken('YOUR_API_KEY');
-
-// Track user identity
-Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
+Ometria.initializeWithApiToken('YOUR_API_KEY').then(() => {
+  // Track user identity
+  Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
+});
 ```
 
 ## What's Next?
@@ -91,7 +91,7 @@ Ometria.trackProfileIdentifiedByEmailEvent('user@example.com');
 - [Deep Linking](./deep-linking.md) - Handle app links from emails
 
 :::tip
-For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo) directory in the SDK repository.
+For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react_native_sdk/tree/master/example-expo) directory in the SDK repository.
 :::
 
 ## Looking for another platform?

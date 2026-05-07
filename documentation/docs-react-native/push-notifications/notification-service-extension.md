@@ -178,5 +178,5 @@ With the Notification Service Extension configured, notifications received when 
 No additional React Native code is needed for iOS background handling — the NSE handles everything natively.
 
 :::tip Sample App
-For a complete example, see the [Expo sample app](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo/src/App.tsx).
+For a complete example, see the [Expo sample app](https://github.com/Ometria/ometria.react_native_sdk/tree/master/example-expo/src/App.tsx).
 :::

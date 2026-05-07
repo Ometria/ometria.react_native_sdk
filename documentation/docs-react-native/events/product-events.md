@@ -49,7 +49,7 @@ Ometria.trackProductListingViewedEvent(listingType, listingAttributes);
 | Field  | Type     | Description                                                                        |
 | ------ | -------- | ---------------------------------------------------------------------------------- |
 | `type` | `string` | An attribute that exists in the Ometria database (e.g., "shoe-colour", "category") |
-| `id`   | `string` | The attribute `their_id` that exists in the Ometria database (e.g., "red")         |
+| `id`   | `string` | The attribute identifier as it exists in the Ometria database (e.g., "red")         |
 
 Both `type` and `id` are required to correctly specify attributes.
 

@@ -49,4 +49,4 @@ Run `npx expo prebuild --clean` to regenerate the native projects from scratch. 
 
 ## Resources
 
-For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react-native-sdk/tree/main/example-expo) directory in the SDK repository.
+For a complete working example, see the [example-expo](https://github.com/Ometria/ometria.react_native_sdk/tree/master/example-expo) directory in the SDK repository.
