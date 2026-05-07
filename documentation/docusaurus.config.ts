@@ -93,7 +93,9 @@ const config: Config = {
     footer: {
       style: 'dark',
       links: [],
-      copyright: `<a href="https://github.com/Ometria/ometria.react_native_sdk" target="_blank">GitHub</a> · <a href="https://ometria.com" target="_blank">Ometria</a> · <a href="https://support.ometria.com/" target="_blank">Support</a> · Copyright © ${new Date().getFullYear()} Ometria`,
+      // Placeholder — actual copyright is rendered by src/theme/Footer/Copyright/index.tsx.
+      // Docusaurus only mounts the bottom row (and our swizzled Copyright) when this is non-empty.
+      copyright: ' ',
     },
     prism: {
       theme: prismThemes.github,
