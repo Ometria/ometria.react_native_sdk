@@ -43,7 +43,7 @@ The apple-app-site-association file is used to create a relationship between a d
 }
 ```
 
-Save it and name it "apple_app_site_association" (notice that no extension has been used, although it's just a normal
+Save it and name it "apple-app-site-association" (notice that no extension has been used, although it's just a normal
 JSON file). Then send it to your Ometria contact - we will upload this for you so that it will be available behind the
 tracking domain.
 
@@ -71,7 +71,9 @@ func application(_ application: UIApplication, continue userActivity: NSUserActi
                 // an error may have occurred
             }
         }
+        return true
     }
+    return false
 }
 ```
 **Warning**: The method above runs asynchronously. Depending on the Internet speed on the device, processing time can vary. For best results, you could implement a loading state that is displayed while the URL is being processed.

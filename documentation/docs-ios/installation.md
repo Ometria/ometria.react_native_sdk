@@ -9,10 +9,9 @@ title: Installation
 
 The easiest way to get Ometria into your iOS project is by using [CocoaPods](https://cocoapods.org/).
 
-1. If you are using CocoaPods for the first time, install CocoaPods using `gem install cocoapods` in terminal. Otherwise, go to step 3.
-2. Run `pod setup` to create a local CocoaPods spec mirror.
-3. Create a Podfile in your Xcode project directory by running `pod init` in your terminal, edit the Podfile generated and add the following line: `pod 'Ometria'`.
-4. Run `pod install` in your Xcode project directory. CocoaPods should download and install the library, and create a new Xcode workspace. Open this workspace in Xcode or typing `open *.xcworkspace` in your terminal.
+1. If you are using CocoaPods for the first time, install CocoaPods using `gem install cocoapods` in terminal.
+2. Create a Podfile in your Xcode project directory by running `pod init` in your terminal, edit the Podfile generated and add the following line: `pod 'Ometria'`.
+3. Run `pod install` in your Xcode project directory. CocoaPods should download and install the library, and create a new Xcode workspace. Open this workspace in Xcode or typing `open *.xcworkspace` in your terminal.
 
 ## 2. Initialise the library
 
@@ -45,7 +44,7 @@ import Ometria
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     Ometria.initialize(apiToken: "OMETRIA_API_TOKEN", appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
     FirebaseApp.configure()
-    return
+    return true
 }
 ```
 
@@ -62,7 +61,7 @@ By default, the Ometria SDK uses Swizzling in order to gain access to data arriv
 First of all, you will have to update your initializer so that it doesn't use Swizzling.
 
 ```swift
-Ometria.initialize(apiToken: "YOUR_API_TOKEN_HERE", enableSwizzling: false)
+Ometria.initialize(apiToken: "YOUR_API_TOKEN_HERE", enableSwizzling: false, appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
 ```
 
 Next, you will need to provide the Firebase push token every time Firebase updates it. You can do this in the delegate method from Messaging:
@@ -80,6 +79,7 @@ Finally the Ometria SDK needs to know when users receive and interact with push 
 ```swift
 func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
     Ometria.sharedInstance().handleNotificationResponse(response)
+    completionHandler()
 }
 
 func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {

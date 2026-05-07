@@ -94,7 +94,7 @@ This way your app will start receiving notifications from Ometria. Handling thos
 
 ### **Option 1: Using `handleNotification` Method (Recommended)**
 
-Ometria provides a method that allows you to handle notifications directly in your app without creating a separate extension. This approach is simpler and works for most apps that want full push notification functionality.
+Ometria provides a `handleNotification` method that wraps all the SDK's notification-handling logic into a single call. You still need to create a Notification Service Extension and configure the App Group (see [Notification Service Extension](./notification-service-extension.md) for the prerequisites) — this method just lets you replace the body of your `NotificationService.didReceive(_:withContentHandler:)` with a one-liner that delegates to Ometria.
 
 #### Usage:
 
@@ -107,10 +107,10 @@ func handleNotification(
 ```
 
 **Explanation:**
-* This method gives you the same functionality as the Notification Service Extension:
+* This method gives you the same functionality as a hand-written Notification Service Extension:
 * Ometria can intercept the notification
 * Media content (images, videos) attached to notifications will be displayed correctly
-* No separate target or extension is needed
+* You don't have to write the NSE logic yourself — just call this method from inside your `NotificationService` subclass
 * Ideal for apps that want to keep the setup simple while still supporting rich notifications
 
 ### **Option 2: Using Notification Service Extension**

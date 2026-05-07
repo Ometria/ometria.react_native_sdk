@@ -53,8 +53,8 @@ import UserNotifications
 import Ometria
 
 class NotificationService: OmetriaNotificationServiceExtension {
-    override func initializeOmetria -> Ometria? {
-        return Ometria.initializeForExtension(appGroupIdentifier: "YOUR_App_GROUP_IDENTIFIER")
+    override func instantiateOmetria() -> Ometria? {
+        return Ometria.initializeForExtension(appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
     }
 }
 ```

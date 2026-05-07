@@ -15,8 +15,8 @@ The app has two key objectives:
 
 For your mobile app, this means:
 
-1. Tracking customer behaviour through events - handled by Ometria.
-2. Sending and displaying push notifications - **requires the app developers**.
+1. **Tracking customer behaviour** through events - a subset of events is automatically handled by the Ometria SDK, but you have to customize it to your needs.
+2. **Sending and displaying push notifications** - requires the app developers.
 
 ## Before you begin
 
