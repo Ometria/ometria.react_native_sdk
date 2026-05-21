@@ -10,15 +10,17 @@ title: Order Events
 The user has started the checkout process.
 
 ```swift
-trackCheckoutStartedEvent(orderId: String)
+trackCheckoutStartedEvent(orderId: String? = nil)
 ```
+
+`orderId` is optional — pass it when you have one, otherwise omit.
 
 ## Order Completed
 
 The order has been completed and paid for:
 
 ```swift
-trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket)
+trackOrderCompletedEvent(orderId: String, basket: OmetriaBasket? = nil)
 ```
 
-See [Basket Events](./basket-events.md) for the `OmetriaBasket` data type.
+`basket` is optional. See [Basket Events](./basket-events.md) for the `OmetriaBasket` data type.

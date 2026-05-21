@@ -37,7 +37,7 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Ometria.initialize(apiToken: "YOUR_API_KEY")
+        Ometria.initialize(apiToken: "OMETRIA_API_TOKEN")
         FirebaseApp.configure()
         configurePushNotifications()
 
@@ -94,30 +94,49 @@ This way your app will start receiving notifications from Ometria. Handling thos
 
 ## Handling Push Notifications
 
-### **Option 1: Using `handleNotification` Method (Recommended)**
+Both options below require a Notification Service Extension target with the App Group configured — see [Notification Service Extension](./notification-service-extension.md) for the prerequisites. The difference is whether you call into Ometria's helper from inside your own NSE (Option 1) or subclass Ometria's NSE class (Option 2).
 
-Ometria provides a `handleNotification` method that wraps all the SDK's notification-handling logic into a single call. You still need to create a Notification Service Extension and configure the App Group (see [Notification Service Extension](./notification-service-extension.md) for the prerequisites) — this method just lets you replace the body of your `NotificationService.didReceive(_:withContentHandler:)` with a one-liner that delegates to Ometria.
+### Option 1: Call `handleNotification` from your own NSE (Recommended)
 
-#### Usage:
+`OmetriaNotificationProcessor.handleNotification` is a static helper you can call from inside your own `NotificationService.didReceive` to delegate notification processing to Ometria without subclassing `OmetriaNotificationServiceExtension`. This is the composition-friendly path that plays well with other SDKs (Firebase, etc.) that also need to process notifications.
+
+#### Usage
 
 ```swift
-func handleNotification(
-    _ request: UNNotificationRequest,
-    using ometria: Ometria,
-    contentHandler: @escaping (UNNotificationContent) -> Void
-)
+import UserNotifications
+import Ometria
+
+class NotificationService: UNNotificationServiceExtension {
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
+        let ometria = Ometria.initializeForExtension(appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
+        OmetriaNotificationProcessor.handleNotification(
+            request,
+            using: ometria,
+            contentHandler: contentHandler
+        )
+    }
+}
 ```
 
-**Explanation:**
-* This method gives you the same functionality as a hand-written Notification Service Extension:
-* Ometria can intercept the notification
-* Media content (images, videos) attached to notifications will be displayed correctly
-* You don't have to write the NSE logic yourself — just call this method from inside your `NotificationService` subclass
-* Ideal for apps that want to keep the setup simple while still supporting rich notifications
+**What this gives you:**
 
-### **Option 2: Using Notification Service Extension**
+* Ometria intercepts the notification and tracks the received event
+* Media content (images, videos) attached to notifications is displayed correctly
+* You don't have to subclass `OmetriaNotificationServiceExtension`, so the same NSE can host logic for other SDKs
 
-For apps that require background processing of notifications (for example, when the user hasn't opened the app), you can use a Notification Service Extension. See [Notification Service Extension](./notification-service-extension.md) for the full setup.
+### Option 2: Subclass `OmetriaNotificationServiceExtension`
+
+If your NSE only needs to process Ometria notifications, you can subclass `OmetriaNotificationServiceExtension` and override `instantiateOmetria()`. The SDK takes care of calling `handleNotification` for you.
+
+See [Notification Service Extension](./notification-service-extension.md) for the full setup, including creating the App Group and overriding `instantiateOmetria()`.
+
+**Result:**
+
+* Rich media content (images, videos) will be displayed in notifications
+* Notifications can be tracked even if the user hasn't opened the app
 
 ## Next steps
 

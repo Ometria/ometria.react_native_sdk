@@ -26,7 +26,7 @@ Once the SDK is initialised, you can track an event by calling its dedicated met
 ```swift
 let myItem = OmetriaBasketItem(
         productId: "product-1",
-        variantId: "variant-product-1"
+        variantId: "variant-product-1",
         sku: "sku-product-1",
         quantity: 1,
         price: 12.0)

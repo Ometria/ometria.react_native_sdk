@@ -7,31 +7,59 @@ title: Installation
 
 ## 1. Install the library
 
-The easiest way to get Ometria into your iOS project is by using [CocoaPods](https://cocoapods.org/).
+There are 2 ways to install Ometria into your iOS project: using **Swift Package Manager** or by using [**CocoaPods**](https://cocoapods.org/).
 
-1. If you are using CocoaPods for the first time, install CocoaPods using `gem install cocoapods` in terminal.
-2. Create a Podfile in your Xcode project directory by running `pod init` in your terminal, edit the Podfile generated and add the following line: `pod 'Ometria'`.
-3. Run `pod install` in your Xcode project directory. CocoaPods should download and install the library, and create a new Xcode workspace. Open this workspace in Xcode or typing `open *.xcworkspace` in your terminal.
+### Option 1: Install via Swift Package Manager
+
+1. Open your project in Xcode.
+2. Go to **File → Add Package Dependencies…**
+3. Enter the repository URL:
+
+   ```
+   https://github.com/Ometria/ometria.ios_sdk
+   ```
+
+4. Select the version rule you want to use (for example, **Up to Next Major Version**).
+5. Click **Add Package**.
+6. Select the target(s) where you want to add the SDK.
+7. Import the SDK where needed:
+
+   ```swift
+   import Ometria
+   ```
+
+### Option 2: Install via CocoaPods
+
+1. If you are using CocoaPods for the first time, install CocoaPods using `gem install cocoapods` in terminal. Otherwise, go to step 3.
+2. Run `pod setup` to create a local CocoaPods spec mirror.
+3. Create a Podfile in your Xcode project directory by running `pod init` in your terminal, edit the Podfile generated and add the following line: `pod 'Ometria'`.
+4. Run `pod install` in your Xcode project directory. CocoaPods should download and install the library, and create a new Xcode workspace. Open this workspace in Xcode or by typing `open *.xcworkspace` in your terminal.
 
 ## 2. Initialise the library
 
 To initialise Ometria, you need to enter the API key from the [Getting Started](./intro.md) page.
 
-The best place to do this is in [application(_:didFinishLaunchingWithOptions:)](https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIApplicationDelegate_Protocol/#//apple_ref/occ/intfm/UIApplicationDelegate/application:didFinishLaunchingWithOptions:).
-
-Initialise the library by adding **import Ometria** and then calling **Ometria.initialize(apiToken:appGroupIdentifier:)** with your API key and the App Group Identifier you have just created as its arguments.
-
 :::info
 
-The `appGroupIdentifier` will allow the notification service extension to read and write data directly inside the cache used by the Ometria SDK.
+Although on Android you are allowed to change what icon is displayed on push notifications, Apple is being more restrictive in this sense. Therefore, push notifications on iOS and ipadOS always use the application icon, and the only changes in layout can be done by user controlled preferences. To find out more about this, see [Notifications Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/components/system-experiences/notifications).
 
 :::
 
-Once you've called this method once, you can access your instance throughout the rest of your application with **sharedInstance()**.
+The best place to do this is in [`application(_:didFinishLaunchingWithOptions:)`](https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIApplicationDelegate_Protocol/#//apple_ref/occ/intfm/UIApplicationDelegate/application:didFinishLaunchingWithOptions:).
 
-Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices.
+Initialise the library by adding `import Ometria` and then calling `Ometria.initialize(apiToken:appGroupIdentifier:)` with your API key and the App Group Identifier you have just created as its arguments.
 
-To do this, add 'Firebase/Messaging' as a dependency of Ometria.
+:::info
+
+The `appGroupIdentifier` allows the Notification Service Extension to read and write data directly inside the cache used by the Ometria SDK.
+
+:::
+
+Once you've called this method once, you can access your instance throughout the rest of your application with `sharedInstance()`.
+
+Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to mobile devices.
+
+To do this, add `Firebase/Messaging` as a dependency of Ometria.
 
 * If you installed the library via CocoaPods it is automatically installed.
 * If you added Ometria manually in your project, you should [install the Firebase SDK](https://firebase.google.com/docs/cloud-messaging/ios/client) separately.
@@ -44,7 +72,7 @@ Once complete you will have something like this:
 import Ometria
 
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    Ometria.initialize(apiToken: "YOUR_API_KEY", appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
+    Ometria.initialize(apiToken: "OMETRIA_API_TOKEN", appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
     FirebaseApp.configure()
     return true
 }
@@ -65,7 +93,7 @@ By default, the Ometria SDK uses Swizzling in order to gain access to data arriv
 First of all, you will have to update your initializer so that it doesn't use Swizzling.
 
 ```swift
-Ometria.initialize(apiToken: "YOUR_API_KEY", enableSwizzling: false, appGroupIdentifier: "YOUR_APP_GROUP_IDENTIFIER")
+Ometria.initialize(apiToken: "YOUR_API_TOKEN_HERE", enableSwizzling: false)
 ```
 
 Next, you will need to provide the Firebase push token every time Firebase updates it. You can do this in the delegate method from Messaging:

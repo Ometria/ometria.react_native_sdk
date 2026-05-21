@@ -22,7 +22,7 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate,  OmetriaNotificationInteractionDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Ometria.initialize(apiToken: "YOUR_API_KEY")
+        Ometria.initialize(apiToken: "OMETRIA_API_TOKEN")
         Ometria.sharedInstance().notificationInteractionDelegate = self
 
         return true

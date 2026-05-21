@@ -15,21 +15,24 @@ A new item is displayed in your target list:
 
 ![Xcode project navigator showing the new Notification Service Extension target](https://raw.githubusercontent.com/wiki/Ometria/ometria.ios_sdk/images/project_targets.png)
 
-Next, make sure that the Ometria SDK is also available to this new target by updating your podfile to include your newly added target and specify Ometria as a dependency.
+Next, make sure that the Ometria SDK is also available to this new target.
 
-```ruby
- platform :ios, '15.0'
+- **If you installed via Swift Package Manager:** in Xcode, select your project, choose the Notification Service Extension target, then under **General → Frameworks and Libraries** add the `Ometria` library.
+- **If you installed via CocoaPods:** update your Podfile to include the newly added target and specify Ometria as a dependency:
 
-target 'OmetriaSample' do
-  use_frameworks!
+  ```ruby
+   platform :ios, '15.0'
 
-  pod 'Ometria'
+  target 'OmetriaSample' do
+    use_frameworks!
 
-  target 'OmetriaSampleNotificationService' do
     pod 'Ometria'
+
+    target 'OmetriaSampleNotificationService' do
+      pod 'Ometria'
+    end
   end
-end
-```
+  ```
 
 ## Create an app group
 
