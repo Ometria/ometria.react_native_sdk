@@ -438,12 +438,6 @@ Any other Ometria methods must be called **after** initialization.
 | notificationChannelName | Android  | Custom name for the notification channel. Default is blank.                                                                                                                                                                                                                                                                                                                                      |
 | appGroupIdentifier      | iOS      | Specifies the App Group identifier used by the Notification Service Extension.<br/><br/>Expo projects: by default, this value is set to `group.{bundleIdentifier}`. You may override it if a different identifier is needed.<br/><br/>Bare React Native: this value must match the App Group configured in Xcode. Refer to [iOS Push Setup](./push-notifications/notification-service-extension.md) for configuration details. |
 
-:::tip[Reinitialization]
-
-Since version 2.3.0, the SDK allows for reinitialization of the Ometria instance. You can call `initializeWithApiToken` again later in the app if needed.
-
-:::
-
 ---
 
 ## 3. Start Tracking Events
@@ -467,3 +461,11 @@ Ometria.trackBasketUpdatedEvent({
 ```
 
 See [Event Tracking](./events/overview.md) for the complete list of available events.
+
+---
+
+## 4. Using multiple API tokens
+
+There are cases where different flows of an application should log events under different tokens (think of different regions in your ecommerce setup, or other similar scenarios). To address this, we offer the possibility of reinitializing the Ometria SDK. Although we currently do not keep references to multiple instances of the SDK, we ensure that on reinitialization there will be a flush attempt for all the events that have been logged up to that point on the old instance.
+
+Reinitializing the SDK requires the exact steps as a normal initialization. Please consult [Initialize the SDK](#2-initialize-the-sdk) in order to make sure everything is set up properly.

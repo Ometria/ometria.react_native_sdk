@@ -5,14 +5,92 @@ title: Custom Events
 
 # Custom Events
 
-Your app might have specific flows or pages that are of interest to the marketing team.
+Track app-specific actions that are relevant to your marketing team.
 
-E.g. Marketing might want to send an email or notification to any user who signed up for a specific promotion, or interacted with a button or specific element of the app.
+## When to Use Custom Events
 
-If you send a custom event corresponding to that action, they will be able to trigger an [automation campaign](https://support.ometria.com/hc/en-gb/articles/360011378398-Automation-campaigns-overview) on it.
+Custom events are useful when:
+
+- Marketing wants to trigger [automation campaigns](https://support.ometria.com/hc/en-gb/articles/360011378398-Automation-campaigns-overview) based on specific user actions
+- You need to track app-specific flows or interactions
+- Users interact with promotional content or special features
+
+**Examples:**
+
+- User signs up for a promotion
+- User completes onboarding
+- User enables notifications
+- User refers a friend
+- User uses a specific feature
 
 Check with the marketing team about the specifics, and what they might need. Especially if they're already using Ometria for email, they will know about automation campaigns and custom events.
 
+## Tracking Custom Events
+
 ```swift
-trackCustomEvent(customEventType: String, additionalInfo: [String: Any]?)
+Ometria.sharedInstance().trackCustomEvent(
+    customEventType: "promotion_signup",
+    additionalInfo: [
+        "promotionId": "summer-sale-2024",
+        "source": "homepage-banner"
+    ]
+)
+```
+
+### Parameters
+
+| Parameter         | Type             | Required | Description                     |
+| ----------------- | ---------------- | -------- | ------------------------------- |
+| `customEventType` | `String`         | Yes      | Custom event type identifier    |
+| `additionalInfo`  | `[String: Any]?` | No       | Additional data about the event |
+
+## Examples
+
+**Promotion signup:**
+
+```swift
+Ometria.sharedInstance().trackCustomEvent(
+    customEventType: "promotion_signup",
+    additionalInfo: [
+        "promotionId": "black-friday-2024",
+        "discountCode": "BF24"
+    ]
+)
+```
+
+**Feature usage:**
+
+```swift
+Ometria.sharedInstance().trackCustomEvent(
+    customEventType: "feature_used",
+    additionalInfo: [
+        "featureName": "wishlist",
+        "action": "add_item",
+        "itemCount": 5
+    ]
+)
+```
+
+**Referral:**
+
+```swift
+Ometria.sharedInstance().trackCustomEvent(
+    customEventType: "referral_sent",
+    additionalInfo: [
+        "method": "email",
+        "referralCode": "USER123"
+    ]
+)
+```
+
+**Survey completion:**
+
+```swift
+Ometria.sharedInstance().trackCustomEvent(
+    customEventType: "survey_completed",
+    additionalInfo: [
+        "surveyId": "nps-q4-2024",
+        "score": 9
+    ]
+)
 ```

@@ -26,6 +26,34 @@ Having a **customerId** makes profile matching more robust.
 It's not mutually exclusive with sending an email event; for optimal integration you should send either event as soon as you have the information.
 These two events are pivotal to the functioning of the SDK, so make sure you send them as early as possible.
 
+### Store Identifier
+
+The optional `storeId` parameter identifies which store the customer belongs to. Ometria supports multiple stores for the same ecommerce platform (e.g. separate stores for different countries).
+
+```swift
+// Pass with profile events
+trackProfileIdentifiedEvent(customerId: String, storeId: String?)
+trackProfileIdentifiedEvent(email: String, storeId: String?)
+
+// Or set separately
+updateStoreId(storeId: String?)
+updateStoreId(nil) // reset
+```
+
+:::warning[Identifier Consistency]
+
+If your business already integrates with Ometria, the identifiers sent here must correspond to those in other integrations.
+
+Events are merged on Ometria's side into one cross-channel view of customer behaviour. Inconsistent email/customer IDs could result in duplicate profiles or data loss.
+
+- The `customerId` and `email` must match what you send via the Ometria Data API
+- If you specify both, **both must match**
+- A typical error: the app generates a new customer ID on each login instead of using the server-generated ID stored in Ometria
+
+**Recommendation:** Generate IDs centrally on your servers and send consistent ones through both the Ometria mobile SDK and Data API. If consistent IDs are impractical, use only email to identify contacts.
+
+:::
+
 ## Profile deidentified
 
 Undo a profileIdentified event.
@@ -36,29 +64,6 @@ Use this if a user logs out, or otherwise signals that this device is no longer 
 trackProfileDeidentifiedEvent()
 ```
 
-## Update store identifier
+This clears the stored email, customer ID, and store identifier from local storage.
 
-Ometria supports multiple stores for the same ecommerce platform (e.g. separate stores for different countries). There are three different methods for interacting with the store identifier for the current app installment.
-
-### 1. Using an optional parameter in the `profileIdentified` events tracking methods
-
-```swift
-trackProfileIdentifiedEvent(email: String, storeId: String?)
-trackProfileIdentifiedEvent(customerId: String,  storeId: String?)
-```
-
-When omitting the `storeId` parameter, or providing a `nil` value, the store identifier will not be affected in any way. Only sending a valid, non-nil parameter will cause the store identifier to be updated to that value.
-
-
-### 2. Using a separate method that allows setting/resetting the store identifier
-
-```swift
-updateStoreId(storeId: String?)
-```
-
-- with a nil `storeId` parameter, the method resets the store identifier.
-- with a non-nil `storeId` parameter, the method sets the store identifier to the provided value.
-
-### 3. Using the `profileDeidentified` event
-
-Tracking a profile deidentified event, will reset the `customerId`, the `email`, and the `storeId` for the current app installment.
+Ometria will keep tracking the user as long as they use the same app installation.

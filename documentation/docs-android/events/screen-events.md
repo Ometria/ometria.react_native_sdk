@@ -5,6 +5,8 @@ title: Screen Events
 
 # Screen Events
 
+Track general screen views to understand user navigation patterns.
+
 ## View home page
 
 The user views the "home page" or landing screen of your app:

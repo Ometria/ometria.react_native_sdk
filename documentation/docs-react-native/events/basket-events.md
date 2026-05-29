@@ -62,7 +62,7 @@ Always send the **full current basket** - not just the updated parts. This helps
 | `currency`   | `string`              | Yes      | ISO 4217 currency code (e.g., "USD", "GBP")                            |
 | `totalPrice` | `number`              | Yes      | Total basket price                                                     |
 | `items`      | `OmetriaBasketItem[]` | Yes      | Array of basket items                                                  |
-| `link`       | `string`              | No       | Deep link to the basket page. Useful for abandoned cart notifications. |
+| `link`       | `string`              | No       | A deeplink to the web or in-app page for this basket. Can be used in a notification sent to the user, e.g. "Forgot to check out? Here's your basket to continue: &lt;link&gt;". Following that link should take them straight to the basket page. |
 
 ### OmetriaBasketItem
 

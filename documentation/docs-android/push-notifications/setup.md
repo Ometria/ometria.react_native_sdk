@@ -3,9 +3,14 @@ sidebar_position: 1
 title: Setup
 ---
 
-# Push notifications guide
+# Push Notifications Setup
 
-Ometria relies on Firebase Cloud Messaging in order to send push notifications to the mobile devices.
+Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices. Ometria can send personalised notifications for your mobile application. Follow these steps:
+
+- Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria
+- Enable Cloud Messaging on your Firebase account
+- Declare the `POST_NOTIFICATIONS` runtime permission (Android 13+)
+- Configure push notifications in your application
 
 Follow [Firebase's Get Started tutorial](https://firebase.google.com/docs/android/setup) or use the Firebase Cloud Messaging wizard in Android studio.
 Ometria requires firebase-messaging, we recommend using the latest version.

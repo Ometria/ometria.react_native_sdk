@@ -18,11 +18,7 @@ This event is about capturing interest from the visitor for this product.
 trackProductViewedEvent(productId: String)
 ```
 
-The product details must be sent to Ometria separately, e.g. using the server-to-server data API, or an eCommerce platform integration (like Shopify).
-
-The value is opaque, and is only used to create segments and automation campaigns in the Ometria app.
-
-Use non-localised, predictable, human readable slugs. E.g. "womens-footwear".
+The product details must be uploaded to Ometria separately, e.g. using the Ometria data API, or an eCommerce platform integration (like Shopify), and the ids passed here must match the ids uploaded there.
 
 ## View list of products
 

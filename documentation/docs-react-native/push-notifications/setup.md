@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Push Notifications Setup
 
-Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices. When correctly set up, Ometria can send personalised notifications for your mobile application. Follow these steps:
+Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices. Ometria can send personalised notifications for your mobile application. Follow these steps:
 
 - Enable your app to receive push notifications by creating an appId and enabling the push notifications entitlement
 - Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria
@@ -203,10 +203,16 @@ messaging()
 messaging().onTokenRefresh((pushToken) => Ometria.onNewToken(pushToken));
 ```
 
+:::warning[App Group Identifier]
+
+The `appGroupIdentifier` **must match** the App Group you configure in Xcode for both the main app and the Notification Service Extension. A mismatch will prevent the extension from accessing Ometria's shared data and notifications will not be tracked. See [Notification Service Extension](./notification-service-extension.md) for details.
+
+:::
+
 :::note
-The `appGroupIdentifier` must match the App Group you configure in Xcode for both the main app and the Notification Service Extension. See [Notification Service Extension](./notification-service-extension.md) for details.
 
 The `notificationChannelName` sets the Android notification channel name (Android 8.0+). If not specified, it defaults to blank.
+
 :::
 
   </TabItem>

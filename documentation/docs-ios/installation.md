@@ -122,7 +122,7 @@ func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent noti
 
 With all these timely provided, the Ometria SDK should have the information it needs to deliver push notifications to users and gather information on interacting with them.
 
-## 4. Using multiple Ometria API tokens within the same app instance (Reinitializing the SDK)
+## 4. Using multiple API tokens
 
 There are cases where different flows of an application should log events under different tokens (think of different regions in your ecommerce setup, or other similar scenarios). To address this, we offer the possibility of reinitializing the Ometria SDK. Although we currently do not keep references to multiple instances of the SDK, we ensure that on reinitialization there will be a flush attempt for all the events that have been logged up to that point on the old instance.
 

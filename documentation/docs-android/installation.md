@@ -54,10 +54,8 @@ Ometria.initialize(
 
 Ometria logs any errors encountered during runtime by default. See [Troubleshooting](./troubleshooting.md) if you want to enable advanced logging.
 
-## 3. Using multiple Ometria API tokens within the same app instance (Reinitializing the SDK)
+## 3. Using multiple API tokens
 
-There are cases where different flows of an application should log events under different tokens (think of different user roles, or other similar scenarios).
-To address this, we offer the possibility of reinitializing the Ometria SDK. Although we currently do not keep references to multiple instances of the SDK,
-we ensure that on reinitialization there will be a flush attempt for all the events that have been logged up to that point on the old instance.
+There are cases where different flows of an application should log events under different tokens (think of different regions in your ecommerce setup, or other similar scenarios). To address this, we offer the possibility of reinitializing the Ometria SDK. Although we currently do not keep references to multiple instances of the SDK, we ensure that on reinitialization there will be a flush attempt for all the events that have been logged up to that point on the old instance.
 
-Reinitializing the SDK requires the exact steps as a normal initialization.
+Reinitializing the SDK requires the exact steps as a normal initialization. Please consult [Initialise the library](#2-initialise-the-library) in order to make sure everything is set up properly.

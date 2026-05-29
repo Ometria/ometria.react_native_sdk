@@ -17,6 +17,8 @@ This event is about capturing interest from the visitor for this product.
 trackProductViewedEvent(productId: String)
 ```
 
+The product details must be uploaded to Ometria separately, e.g. using the Ometria data API, or an eCommerce platform integration (like Shopify), and the ids passed here must match the ids uploaded there.
+
 ## View list of products
 
 The visitor clicks/taps/views/highlights or otherwise shows interest in a product listing. This kind of screen includes search results, listings of products in a group, category, collection or any other screen that presents a list of products.

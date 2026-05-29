@@ -52,13 +52,15 @@ Once you are done, you should be able to successfully open your app by selecting
 ## Process universal links inside the app
 
 The final step is to process the URLs in your app and take the user to the appropriate sections of the app. Note that
-you need to implement the mapping between your website's URLs and the screens of your app.
+you need to implement the mapping between the URLs you send in push notifications or email deep links and the screens of your app. The structure of these URLs is typically shared between your website and the application.
 
 See also [Linking push notifications to app screens](https://support.ometria.com/hc/en-gb/articles/4402644059793-Linking-push-notifications-to-app-screens).
 
 If you are dealing with normal URLs pointing to your website, you can decompose it into different path components and parameters. This will allow you to source the required information to navigate through to the correct screen in your app.
 
-However, Ometria emails contain obfuscated tracking URLs, and these need to be converted back to the original URL, pointing to your website, before you can map the URL to an app screen. To do this, the SDK provides a method called `processUniversalLink`:
+However, Ometria emails contain obfuscated tracking URLs, and these need to be converted back to the original URL before you can map the URL to an app screen. To do this, the SDK provides a method called `processUniversalLink`, which follows redirects — ensuring that the email link tracking works — and returns a link to your website (the original link).
+
+You can also specify a domain for this function. If you do, the function will stop following redirects once it reaches a link with that domain. This is useful when you have internal redirects you don't want to follow at this point.
 
 ```swift
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {

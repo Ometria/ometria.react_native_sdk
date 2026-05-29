@@ -15,6 +15,8 @@ Track when a user shows interest in a specific product (clicks, taps, views, or 
 Ometria.trackProductViewedEvent('product_id');
 ```
 
+The product details must be uploaded to Ometria separately, e.g. using the Ometria data API, or an eCommerce platform integration (like Shopify), and the ids passed here must match the ids uploaded there.
+
 **Parameters:**
 
 | Parameter   | Type     | Description                           |

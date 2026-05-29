@@ -5,6 +5,8 @@ title: Basket Events
 
 # Basket Events
 
+Track shopping cart interactions to understand purchase intent.
+
 ## Basket viewed
 
 The visitor has viewed a dedicated page, screen or modal with the contents of the shopping basket:
@@ -21,9 +23,11 @@ The visitor has changed their shopping basket:
 trackBasketUpdatedEvent(basket: OmetriaBasket)
 ```
 
-This event takes the full current basket as a parameter - not just the updated parts.
+:::info
 
-This helps recover from lost or out of sync basket events: the latest update is always authoritative.
+Always send the **full current basket** - not just the updated parts. This helps recover from lost or out-of-sync events; the latest update is always authoritative.
+
+:::
 
 ## `OmetriaBasket`
 
@@ -33,7 +37,7 @@ An object that describes the contents of a shopping basket.
 
 * `id`: (`String`, optional) - A unique identifier for this basket.
 * `currency`: (`String`, required) - A string representing the currency in ISO currency format. e.g. `"USD"`, `"GBP"`
-* `totalPrice`: (`Float`, required) - A float value representing the pricing.
+* `totalPrice`: (`Float`, required) - Total basket price.
 * `items`: (`Array[OmetriaBasketItem]`) - An array containing the item entries in this basket.
 * `link`: (`String`, optional) - A deeplink to the web or in-app page for this basket. Can be used in a notification sent to the user, e.g. "Forgot to check out? Here's your basket to continue: &lt;link&gt;". Following that link should take them straight to the basket page.
 
@@ -45,8 +49,8 @@ It can have its own price and quantity based on different rules and promotions t
 
 ### Properties
 
-* `productId`: (`String`, required) - A string representing the unique identifier of this product.
-* `variantId`: (`String`, optional) - An identifier for a variant product associated with this line item.
-* `sku`: (`String`, optional) - A string representing the stock keeping unit, which allows identifying a particular item.
-* `quantity`: (`Int`, required) - The number of items that this entry represents.
-* `price`: (`Float`, required) - Float value representing the price for one item. The currency is established by the OmetriaBasket containing this item.
+* `productId`: (`String`, required) - Unique product identifier.
+* `variantId`: (`String`, optional) - Variant product identifier.
+* `sku`: (`String`, optional) - Stock keeping unit.
+* `quantity`: (`Int`, required) - Number of items.
+* `price`: (`Float`, required) - Price per item (currency from parent basket).

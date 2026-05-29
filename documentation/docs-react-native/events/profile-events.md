@@ -44,7 +44,7 @@ Having a **customerId** makes profile matching more robust. Send either event as
 
 :::
 
-#### Store Identifier
+### Store Identifier
 
 The optional `storeId` parameter identifies which store the customer belongs to. Ometria supports multiple stores for the same platform (e.g., different countries or brands).
 
@@ -84,3 +84,5 @@ Ometria.trackProfileDeidentifiedEvent();
 ```
 
 This clears the stored email, customer ID, and store identifier from local storage.
+
+Ometria will keep tracking the user as long as they use the same app installation.

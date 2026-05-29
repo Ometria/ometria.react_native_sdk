@@ -3,17 +3,15 @@ sidebar_position: 1
 title: Setup
 ---
 
-# Push notifications guide
+# Push Notifications Setup
 
-When correctly set up, Ometria can send personalised notifications for your mobile application.
+Ometria uses [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) to send push notifications to the mobile devices. Ometria can send personalised notifications for your mobile application. Follow these steps:
 
-Follow these steps:
-
-1. Enable your app to receive push notifications by creating an appId and enabling the push notifications entitlement.
-2. Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria.
-3. Enable Cloud Messaging on your Firebase account and provide your application's **SSL push certificate**.
-4. Configure push notifications in your application.
-5. Add a **Notification Service Extension** to your app in order to enable receiving rich content notifications.
+- Enable your app to receive push notifications by creating an appId and enabling the push notifications entitlement
+- Set up a [Firebase](https://firebase.google.com/docs/cloud-messaging) account and connect it to Ometria
+- Enable Cloud Messaging on your Firebase account and provide your application's **SSL push certificate**
+- Configure push notifications in your application
+- Add a **Notification Service Extension** to your app in order to enable receiving rich content notifications and to track notifications received in quit state of the app
 
 :::info
 
@@ -28,7 +26,7 @@ Before continuing, you must have already configured:
 * The Ometria SDK
 * Firebase
 
-Once you managed to properly create or modify your application to support push notifications, you can move on to configure everything in your AppDelegate like so:
+Once you have done the above configuration steps, you can move on to configure everything in your AppDelegate like so:
 
 ```swift
 import UserNotifications
@@ -90,11 +88,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
 The Ometria SDK will automatically source all the required tokens and provide them to the backend.
 
-This way your app will start receiving notifications from Ometria. Handling those notifications while the app is running in the foreground is up to you.
+This way your app will start receiving notifications from Ometria. Handling those notifications while the app is running in the foreground is up to you. When the app is in the background or has been quit, iOS displays the notification automatically.
 
 ## Handling Push Notifications
 
 Both options below require a Notification Service Extension target with the App Group configured — see [Notification Service Extension](./notification-service-extension.md) for the prerequisites. The difference is whether you call into Ometria's helper from inside your own NSE (Option 1) or subclass Ometria's NSE class (Option 2).
+
+:::warning[App Group Identifier]
+
+The App Group identifier configured in your Notification Service Extension **must match** the one configured in your main app. A mismatch will prevent the extension from accessing Ometria's shared data and notifications will not be tracked.
+
+:::
 
 ### Option 1: Call `handleNotification` from your own NSE (Recommended)
 

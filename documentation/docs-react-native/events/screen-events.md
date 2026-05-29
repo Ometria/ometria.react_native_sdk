@@ -17,7 +17,17 @@ Ometria.trackHomeScreenViewedEvent();
 
 ## Screen Viewed
 
-Track views of custom screens that are useful for marketing engagement:
+Tracking a visitor's independent screen views helps us track their engagement with the app, as well as where they are in a journey.
+
+An analogous event on a website would be to track independent page views.
+
+The common eCommerce screens all have their own top-level event: basket viewed, list of products viewed, etc.
+
+Your app may have a specific type of page that is useful for marketers to track engagement with.
+
+E.g. if you're running a promotion, and viewing a specific screen indicates interest in the promotion, which marketing might later want to follow up on.
+
+To track these custom screens, use the _Screen viewed_ event:
 
 ```js
 Ometria.trackScreenViewedEvent('OnboardingScreen', { step: '3', variant: 'B' });
@@ -29,10 +39,3 @@ Ometria.trackScreenViewedEvent('OnboardingScreen', { step: '3', variant: 'B' });
 | ---------------- | -------- | ----------------------------------------- |
 | `screenName`     | `string` | Name of the screen                        |
 | `additionalInfo` | `object` | Optional additional data about the screen |
-
-**When to use:**
-
-- Promotion screens
-- Onboarding flows
-- Feature highlights
-- Any screen where marketing might want to track engagement
