@@ -6,23 +6,19 @@ title: Getting Started
 
 # Ometria iOS SDK
 
-Ometria helps your marketing department understand and better engage with your customers by delivering personalised emails and push notifications.
+Ometria helps your marketing department understand and better engage with your customers by delivering personalised emails and push notifications. The app has two key objectives:
 
-The app has two key objectives:
-
-1. Getting information about customers (what do they like?)
-2. Reaching out to customers (saying the right thing to the right people).
+- **Getting information about customers** (what do they like?)
+- **Reaching out to customers** (saying the right thing to the right people)
 
 For your mobile app, this means:
 
-1. **Tracking customer behaviour** through events — handled by Ometria.
-2. **Sending and displaying push notifications** — **requires the app developers**.
+- **Tracking customer behaviour** through events - a subset of events is automatically handled by the Ometria SDK, but you have to customize it to your needs [↗](https://support.ometria.com/hc/en-gb/articles/360018440917-Creating-an-event-tracking-plan-for-your-mobile-app)
+- **Sending and displaying push notifications** - requires app developer integration
 
 You can also look at the sample app we have included for reference implementation. [↗](https://github.com/Ometria/ometria.ios_sdk/tree/master/Ometria%20Sample)
 
-## Before you begin
-
-See [Setting up your mobile app with Firebase credentials](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials) in the Ometria help centre and follow the steps there to get an API key.
+**Before you begin** visit the Ometria help centre and follow the steps there to get an API key. [↗](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
 
 ## What's Next?
 
