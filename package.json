@@ -113,13 +113,9 @@
     "overrides": {
       "minimatch@3": "3.1.5",
       "minimatch@9": "9.0.9",
-      "minimatch@10": "10.2.5",
       "brace-expansion@1": "1.1.13",
       "brace-expansion@2": "2.0.3",
-      "postcss@8": "8.5.15",
-      "shell-quote@1": "1.8.4",
-      "node-forge@1": "1.4.0",
-      "@isaacs/brace-expansion@5": "5.0.1"
+      "shell-quote@1": "1.8.4"
     }
   }
 }

@@ -9,9 +9,7 @@
   },
   "devDependencies": {
     "@expo/config-plugins": "^9.0.0",
+    "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
-  },
-  "peerDependencies": {
-    "expo": ">=53.0.0"
   }
 }
