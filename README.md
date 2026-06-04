@@ -596,7 +596,7 @@ Platform.OS === 'android' &&
 
 #### Enabling heads-up (pop-up) notifications on Android 🤖
 
-For push notifications to appear as a heads-up pop-up (not just a silent drawer entry), they must use a high-importance channel. The SDK creates one (`ometria_high_importance`) on `initializeWithApiToken` — you just need to point Firebase at it in `firebase.json`:
+For push notifications to appear as a heads-up pop-up (not just a silent drawer entry), they must use a high-importance channel. The SDK creates one on `initializeWithApiToken` with the fixed channel id `ometria_high_importance`. You just need to point Firebase at it in `firebase.json` (copy the id exactly):
 
 ```json
 { "react-native": { "messaging_android_notification_channel_id": "ometria_high_importance" } }

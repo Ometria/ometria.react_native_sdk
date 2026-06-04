@@ -44,7 +44,7 @@ Add `GoogleService-Info.plist` (iOS) and `google-services.json` (Android) to you
 }
 ```
 
-The Ometria config plugin handles the Google Services Gradle configuration for Android automatically during `npx expo prebuild`.
+The Ometria config plugin handles the Google Services Gradle configuration for Android automatically during `npx expo prebuild`. It also wires the high-importance notification channel the SDK creates, so Android pushes appear as **heads-up pop-ups** with no extra setup.
 
   </TabItem>
   <TabItem value="bare" label="Bare React Native">
@@ -69,9 +69,23 @@ import messaging from '@react-native-firebase/messaging';
 
 :::warning[Firebase Version]
 
-We recommend using Firebase CocoaPods version 10.10.0 or newer.
+We recommend using Firebase iOS SDK version 10.10.0 or newer.
 
 :::
+
+#### 3. Enable heads-up notifications (Android)
+
+To make Android pushes appear as **heads-up pop-ups** (instead of silent drawer entries), add the SDK's channel id to the `react-native` object in your project-root `firebase.json`. The value `ometria_high_importance` is a fixed constant the SDK uses, so copy it exactly rather than choosing your own:
+
+```json title="firebase.json"
+{
+  "react-native": {
+    "messaging_android_notification_channel_id": "ometria_high_importance"
+  }
+}
+```
+
+If you already have a `firebase.json`, add the `messaging_android_notification_channel_id` key to its existing `react-native` object instead of overwriting the file. The SDK creates this high-importance channel when you call `initializeWithApiToken`.
 
   </TabItem>
 </Tabs>
