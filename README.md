@@ -594,6 +594,16 @@ Platform.OS === 'android' &&
 
 ℹ️ As of version 2.4.0 `Ometria.setBackgroundMessageHandler` is a deprecated method. Use `Ometria.onAndroidBackgroundMessage` instead.
 
+#### Enabling heads-up (pop-up) notifications on Android 🤖
+
+For push notifications to appear as a heads-up pop-up (not just a silent drawer entry), they must use a high-importance channel. The SDK creates one (`ometria_high_importance`) on `initializeWithApiToken` — you just need to point Firebase at it in `firebase.json`:
+
+```json
+{ "react-native": { "messaging_android_notification_channel_id": "ometria_high_importance" } }
+```
+
+Customise the channel's display name with the `notificationChannelName` option. Channel importance is frozen at creation, so reinstall/clear data when re-testing on a device that already received Ometria notifications.
+
 ### F. Handling Notification Interaction (background and quit state)
 
 ---
