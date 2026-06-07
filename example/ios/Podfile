@@ -114,6 +114,29 @@ target 'sampleApp' do
       end
     end
 
+    # Fix 2b: fmt consteval (Xcode 26.5 / newer Apple clang)
+    # fmt 11.0.2 (pinned exactly by RCT-Folly in RN 0.81.x) gates its compile-time
+    # format-string checks on FMT_USE_CONSTEVAL. Xcode 26.5's clang advertises
+    # __cpp_consteval, so fmt's base.h sets FMT_USE_CONSTEVAL=1 and marks the
+    # basic_format_string constructor `consteval` — but this clang then fails to
+    # evaluate it as a constant expression while compiling fmt's own format-inl.h:
+    #   "call to consteval function ... is not a constant expression".
+    # base.h has NO `#ifndef FMT_USE_CONSTEVAL` guard, so a -D define can't override
+    # it. fmt fixed this in 11.1+, but we're locked to 11.0.2. We force both
+    # `#define FMT_USE_CONSTEVAL 1` branches to 0, so FMT_CONSTEVAL becomes empty and
+    # the checks fall back to constexpr/runtime. Done as a source patch (idempotent)
+    # because it must beat the unconditional #define. Re-applied on every pod install.
+    fmt_base_h = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base_h)
+      contents = File.read(fmt_base_h)
+      patched = contents.gsub("#  define FMT_USE_CONSTEVAL 1", "#  define FMT_USE_CONSTEVAL 0")
+      if patched != contents
+        File.chmod(0644, fmt_base_h)   # pod headers are installed read-only
+        File.write(fmt_base_h, patched)
+        Pod::UI.puts "[Ometria] Patched fmt base.h: forced FMT_USE_CONSTEVAL=0 (Xcode 26.5 consteval fix)"
+      end
+    end
+
     # Fix 3: Yoga.h
     # Xcode 26 explicit module scanner validates that headers referenced via
     # #import <yoga/Yoga.h> physically exist inside yoga.framework/Headers/.
