@@ -26,6 +26,7 @@ import { RESULTS, requestNotifications } from 'react-native-permissions';
 import { AuthModalProps } from './models';
 import { version, ometria_sdk_version } from '../../package.json';
 import { Events, customOmetriaOptions, demoBasketItems } from './data';
+import { E2EPanel } from './e2e';
 import {
   getOmetriaTokenFromStorage,
   openUrl,
@@ -318,6 +319,8 @@ const App = () => {
           <Text style={styles.text}>Go to Events 📝</Text>
         </TouchableOpacity>
       )}
+
+      {ometriaIsInitalized && <E2EPanel />}
 
       <View>
         <Text style={styles.textBold}>🔔 Notification Content: </Text>
