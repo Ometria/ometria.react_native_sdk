@@ -1,3 +1,10 @@
+# 2.8.1
+
+2026-07
+
+- Added `setTrackingEnabled(enabled: boolean)` to fully stop or resume event tracking. When disabled, no events (including automatic ones) leave the SDK, a final opt-out is sent to the server, and the state is persisted across app restarts; re-enabling sends an opt-in reflecting the current OS notification permission and resumes tracking.
+- Updated native Ometria SDKs: 🍏 iOS 1.9.1 & 🤖 Android 1.11.3.
+
 # 2.8.0
 
 2026-07
