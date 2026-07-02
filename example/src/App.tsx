@@ -26,6 +26,7 @@ import { RESULTS, requestNotifications } from 'react-native-permissions';
 import { AuthModalProps } from './models';
 import { version, ometria_sdk_version } from '../../package.json';
 import { Events, customOmetriaOptions, demoBasketItems } from './data';
+import { E2EPanel } from './e2e';
 import {
   getOmetriaTokenFromStorage,
   openUrl,
@@ -141,11 +142,9 @@ const App = () => {
       console.log('🔔 Notification has been interacted with and opened app.');
       setNotificationContent(JSON.stringify(remoteMessage, null, 2));
 
-      // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
-      Ometria.onNotificationOpenedApp(remoteMessage as any); // 🏹 Ometria Event Logged: onNotificationInteracted
+      Ometria.onNotificationOpenedApp(remoteMessage); // 🏹 Ometria Event Logged: onNotificationInteracted
 
-      // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
-      const notif = await Ometria.parseNotification(remoteMessage as any);
+      const notif = await Ometria.parseNotification(remoteMessage);
       if (notif?.deepLinkActionUrl) {
         Ometria.trackDeepLinkOpenedEvent(notif.deepLinkActionUrl, 'Browser'); // 🏹 Ometria Event Logged: deepLinkOpened
         openUrl(notif.deepLinkActionUrl);
@@ -175,8 +174,7 @@ const App = () => {
       async remoteMessage => {
         console.log('📭 Foreground message received:', remoteMessage);
         setNotificationContent(JSON.stringify(remoteMessage, null, 2));
-        // TODO: Update RNFB RemoteMessage type that changed in 18.5.0
-        Ometria.onNotificationReceived(remoteMessage as any); // 🏹 Ometria Event Logged: onNotificationReceived
+        Ometria.onNotificationReceived(remoteMessage); // 🏹 Ometria Event Logged: onNotificationReceived
         /* Keep in mind that foreground notifications are NOT shown to the user.
            Instead, you could trigger a local notification or update the in-app UI to signal a new notification.
            Read more at: https://rnfirebase.io/messaging/usage#foreground-state-messages
@@ -192,19 +190,21 @@ const App = () => {
    * @param payload {url: String}
    */
   const handleDeepLinking = ({ url }: any) => {
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) {
-        Ometria.processUniversalLink(url).then(
-          response => {
-            Alert.alert('🔗 URL processed:', response);
-          },
-          error => {
-            console.log(error);
-            Alert.alert('🔗 Unable to process URL: ' + url);
-          },
-        );
-      }
-    });
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      Ometria.processUniversalLink(url).then(
+        response => {
+          Alert.alert('🔗 URL processed:', response);
+        },
+        error => {
+          console.log(error);
+          Alert.alert('🔗 Unable to process URL: ' + url);
+        },
+      );
+    } else {
+      Linking.openURL(url).catch(() => {
+        Alert.alert('🔗 Unable to open URL: ' + url);
+      });
+    }
   };
 
   /**
@@ -320,9 +320,11 @@ const App = () => {
         </TouchableOpacity>
       )}
 
+      {ometriaIsInitalized && <E2EPanel />}
+
       <View>
         <Text style={styles.textBold}>🔔 Notification Content: </Text>
-        <Text>{notificationContent}</Text>
+        <Text style={styles.textDefault}>{notificationContent}</Text>
       </View>
 
       <EventsModal isVisible={evtsModal} onClose={() => setEvtsModal(false)} />
@@ -521,7 +523,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         </TouchableOpacity>
         {ometriaIsInitialized && (
           <>
-            <Text>Customer Id:</Text>
+            <Text style={styles.textDefault}>Customer Id:</Text>
             <TextInput
               style={styles.input}
               value={userId}
@@ -529,7 +531,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               placeholderTextColor="#000"
               onChangeText={setUserId}
             />
-            <Text>Email:</Text>
+            <Text style={styles.textDefault}>Email:</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -537,7 +539,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               placeholderTextColor="#000"
               onChangeText={setUserEmail}
             />
-            <Text>Store Id (optional):</Text>
+            <Text style={styles.textDefault}>Store Id (optional):</Text>
             <TextInput
               style={styles.input}
               placeholder="Store Id"
@@ -623,11 +625,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#000',
   },
   subtitle: {
     fontSize: 14,
     marginBottom: 20,
     textAlign: 'center',
+    color: '#000',
   },
   text: {
     color: '#FFF',
@@ -635,6 +639,10 @@ const styles = StyleSheet.create({
   textBold: {
     fontWeight: 'bold',
     paddingVertical: 4,
+    color: '#000',
+  },
+  textDefault: {
+    color: '#000',
   },
   input: {
     marginTop: 4,

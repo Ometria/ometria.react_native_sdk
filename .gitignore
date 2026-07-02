@@ -2,6 +2,8 @@
 #
 .DS_Store
 
+.claude/
+
 # XDE
 .expo/
 
@@ -12,6 +14,7 @@ jsconfig.json
 # Xcode
 #
 build/
+!plugin/build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3

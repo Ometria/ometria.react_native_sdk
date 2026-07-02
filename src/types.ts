@@ -1,5 +1,11 @@
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
+import type { Spec as NativeOmetriaReactNativeSdkSpec } from './NativeOmetriaReactNativeSdk';
+
+export type NativeModuleType = NativeOmetriaReactNativeSdkSpec & {
+  onNotificationInteracted(remoteMessage: unknown): Promise<void>;
+};
+
 type OmetriaReactNativeSdkCoreType = {
   /**
    * Initializes the Ometria SDK with the API token.
@@ -124,20 +130,6 @@ type OmetriaReactNativeSdkCoreType = {
 
 type OmetriaReactNativeSdkDeprecatedType = {
   /**
-   * @deprecated Deprecated since version 2.2.0.
-   * The event is no longer sent to the Ometria backend.
-   * Will be removed in the next major version.
-   */
-  trackWishlistAddedToEvent(productId: string): void;
-
-  /**
-   * @deprecated Deprecated since version 2.2.0.
-   * The event is no longer sent to the Ometria backend.
-   * Will be removed in the next major version.
-   */
-  trackWishlistRemovedFromEvent(productId: string): void;
-
-  /**
    * @deprecated Deprecated since version 2.3.0.
    * The SDK no longer handles notification interactions.
    * Use your own implementation to listen for notification interactions.
@@ -188,7 +180,7 @@ export type OmetriaBasket = {
   currency: string;
   totalPrice: number;
   items: OmetriaBasketItem[];
-  link: string;
+  link?: string;
 };
 
 export type OmetriaOptions = {

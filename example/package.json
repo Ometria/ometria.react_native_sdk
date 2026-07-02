@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "tsc": "tsc --noEmit",
     "ios:cleanup": "lsof -ti:8081 | xargs kill -9 2>/dev/null || true && rm -rf /tmp/metro-* && rm -rf node_modules/.cache ../.cache ../node_modules/.cache 2>/dev/null || true && watchman watch-del-all 2>/dev/null || true && rm -rf ~/Library/Developer/Xcode/DerivedData/* && cd ios && rm -rf build Pods Podfile.lock && rm -rf sampleApp.xcworkspace/xcuserdata sampleApp.xcodeproj/xcuserdata sampleApp.xcodeproj/project.xcworkspace/xcuserdata 2>/dev/null || true",
     "ios:new:pods": "npm run ios:cleanup && cd ios && RCT_NEW_ARCH_ENABLED=1 pod install",
     "ios:old:pods": "npm run ios:cleanup && cd ios && RCT_NEW_ARCH_ENABLED=0 pod install",
@@ -20,14 +21,13 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@react-native-firebase/app": "^23.4.1",
-    "@react-native-firebase/messaging": "^23.4.1",
-    "@react-native/new-app-screen": "0.81.5",
+    "@react-native-firebase/app": "^23.7.0",
+    "@react-native-firebase/messaging": "^23.7.0",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-permissions": "^5.4.2",
-    "react-native-safe-area-context": "^5.5.2",
-    "react-native-ometria": "file:.."
+    "react-native-permissions": "^5.4.4",
+    "react-native-safe-area-context": "^5.6.2",
+    "react-native-ometria": "link:.."
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -52,5 +52,19 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "minimatch@3": "3.1.5",
+      "minimatch@8": "8.0.7",
+      "minimatch@9": "9.0.9",
+      "brace-expansion@1": "1.1.13",
+      "brace-expansion@2": "2.0.3",
+      "shell-quote@1": "1.8.4",
+      "protobufjs@7": "7.6.2",
+      "fast-xml-parser@4": "4.5.6",
+      "qs@6": "6.15.2",
+      "picomatch@2": "2.3.2"
+    }
   }
 }

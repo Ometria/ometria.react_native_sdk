@@ -1,6 +1,10 @@
 package com.ometriareactnativesdk
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Handler
 import com.android.ometriasdk.core.Ometria
 import com.android.ometriasdk.core.listener.ProcessAppLinkListener
@@ -19,29 +23,75 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
 
   companion object {
     const val NAME = "OmetriaReactNativeSdk"
+    private const val RN_SDK_VERSION_META_KEY = "OmetriaRNSdkVersion"
+    private const val BARE_RN_SDK_VERSION = "2.8.0"
+
+    /**
+     * Id of the high-importance channel the SDK creates so Android displays Ometria's
+     * `notification`-type pushes as heads-up notifications. Bare RN apps set this same value as
+     * `messaging_android_notification_channel_id` in firebase.json so Firebase posts to it.
+     */
+    const val PUSH_NOTIFICATION_CHANNEL_ID = "ometria_high_importance"
   }
 
   private val mainThreadHandler = Handler(reactContext.mainLooper)
   private var deeplinkInteractionPromise: Promise? = null
 
   init {
-    StorageController(reactContext.applicationContext).saveSdkVersionRN("2.7.1")
+    val rnSdkVersion = try {
+      val appInfo = reactContext.packageManager.getApplicationInfo(
+        reactContext.packageName,
+        PackageManager.GET_META_DATA
+      )
+      appInfo.metaData?.getString(RN_SDK_VERSION_META_KEY) ?: BARE_RN_SDK_VERSION
+    } catch (e: Exception) {
+      BARE_RN_SDK_VERSION
+    }
+    StorageController(reactContext.applicationContext).saveSdkVersionRN(rnSdkVersion)
   }
 
   override fun getName(): String = NAME
 
   @ReactMethod
   override fun initializeWithApiToken(apiToken: String, options: ReadableMap?, promise: Promise) {
+    val notificationChannelName = options?.getString("notificationChannelName") ?: " "
     val runOnMainThreadTask = Runnable {
       Ometria.initialize(
         application = reactContext.applicationContext as Application,
         apiToken = apiToken,
         notificationIcon = reactContext.applicationInfo.icon,
-        notificationChannelName = options?.getString("notificationChannelName") ?: " "
+        notificationChannelName = notificationChannelName
       )
+      createPushNotificationChannel(notificationChannelName)
       promise.resolve(null)
     }
     mainThreadHandler.post(runOnMainThreadTask)
+  }
+
+  /**
+   * Creates the high-importance notification channel that Android uses to display Ometria's
+   * `notification`-type pushes as heads-up notifications.
+   *
+   * Ometria pushes are rendered by Android/Firebase directly (not by the SDK), so whether a push
+   * shows as a heads-up pop-up depends on the channel Firebase posts to. Firebase only USES the
+   * channel referenced by `messaging_android_notification_channel_id` (firebase.json) — it never
+   * creates it — so the SDK creates it here. Because Ometria can only deliver a push after the
+   * app has registered its FCM token (i.e. after initialize has run at least once), this channel
+   * always exists before the first push can arrive, including in the killed state.
+   *
+   * The channel id is fixed ([PUSH_NOTIFICATION_CHANNEL_ID]); its display name comes from the
+   * `notificationChannelName` option. Android freezes a channel's importance at creation.
+   */
+  private fun createPushNotificationChannel(channelName: String) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val channel = NotificationChannel(
+        PUSH_NOTIFICATION_CHANNEL_ID,
+        channelName.ifBlank { "Notifications" },
+        NotificationManager.IMPORTANCE_HIGH
+      )
+      reactContext.getSystemService(NotificationManager::class.java)
+        ?.createNotificationChannel(channel)
+    }
   }
 
   @ReactMethod
@@ -103,18 +153,6 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
       listingType,
       listingAttributes?.toHashMap().orEmpty() as Map<String, Any>
     )
-    promise.resolve(null)
-  }
-
-  @ReactMethod
-  override fun trackWishlistAddedToEvent(productId: String, promise: Promise) {
-    Ometria.instance().trackWishlistAddedToEvent(productId)
-    promise.resolve(null)
-  }
-
-  @ReactMethod
-  override fun trackWishlistRemovedFromEvent(productId: String, promise: Promise) {
-    Ometria.instance().trackWishlistRemovedFromEvent(productId)
     promise.resolve(null)
   }
 

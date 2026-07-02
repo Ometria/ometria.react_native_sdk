@@ -24,7 +24,36 @@ setup_permissions(['Notifications'])
 # </OmetriaSetup>
 
 # <OmetriaSetup>
-# Firebase requires use_frameworks with static linkage
+# Firebase requires use_frameworks! :linkage => :static.
+#
+# KNOWN ISSUE (as of RN 0.84.1, March 2026): Xcode 26 + use_frameworks! :linkage => :static
+# is broken for React Native + Firebase across all RN versions. There is no upstream fix.
+# The root cause is that Xcode 26 enables explicit module builds by default
+# (SWIFT_ENABLE_EXPLICIT_MODULES=YES), and its explicit module scanner ignores CocoaPods'
+# VFS overlay YAML files. CocoaPods relies on VFS overlays to expose headers that don't
+# physically exist at expected framework paths — use_frameworks! :linkage => :static depends
+# on this aliasing mechanism, which Xcode 26 breaks entirely.
+#
+# Why no upstream fix exists:
+#   - CocoaPods: no VFS overlay fix; moving toward read-only (Dec 2026)
+#   - React Native: only mitigation is SWIFT_ENABLE_EXPLICIT_MODULES=NO for precompiled
+#     builds (added in RN 0.81.1), but use_frameworks! bypasses the precompiled path entirely
+#   - RN 0.84 precompiled xcframeworks: also bypassed when use_frameworks! is detected;
+#     additionally broken with RNFB headers: https://github.com/invertase/react-native-firebase/issues/8883
+#   - Apple/Swift toolchain: VFS+explicit modules fix merged (https://github.com/swiftlang/swift-build/issues/219)
+#     but only addresses .swiftmodule discovery, not C/ObjC header aliasing
+#
+# Community reports (all unresolved without manual Podfile patches):
+#   - RN 0.83.1 + Xcode 26: https://github.com/react-native-community/discussions-and-proposals/discussions/978
+#   - ReactCodegen fails on Xcode 26 (RN 0.80–0.83): https://github.com/facebook/react-native/issues/53966
+#   - Expo 55 + use_frameworks + missing React headers: https://github.com/expo/expo/issues/41556
+#   - SDK 54 + RNFB + non-modular header errors: https://github.com/expo/expo/issues/39607
+#
+# EAS Build note: Xcode 26 is the DEFAULT image for Expo SDK 54 on EAS Build
+# (macos-sequoia-15.6-xcode-26.0). App Store requires Xcode 26 for all submissions
+# from April 28, 2026. These fixes are required for both local and EAS builds.
+#
+# The post_install fixes below are the current known solution for this stack.
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 # </OmetriaSetup>
@@ -50,6 +79,279 @@ target 'sampleApp' do
     # <OmetriaSetup>
     # Register Ometria TurboModule (required for New Architecture)
     patch_ometria_turbomodule(installer)
+
+    # Fix 1: HEADER_SEARCH_PATHS
+    # With use_frameworks! :linkage => :static (required by Firebase), React Native framework
+    # headers are installed without preserving subdirectory structure. #import <react/debug/...>
+    # style includes fail on Xcode 26 (both old and new arch) because the explicit module
+    # scanner cannot find them via the VFS overlay. Adding ReactCommon source paths to
+    # HEADER_SEARCH_PATHS lets the compiler find headers as plain (non-framework) includes,
+    # bypassing the framework resolution path entirely.
+    react_native_abs = File.expand_path(config[:reactNativePath], Pod::Config.instance.installation_root)
+    react_common = "#{react_native_abs}/ReactCommon"
+    extra_header_paths = [
+      react_common,
+      "#{react_common}/runtimeexecutor",
+      "#{react_common}/runtimeexecutor/platform/ios",
+      "#{react_common}/jsinspector-modern",
+      "#{react_common}/callinvoker",
+      "#{react_common}/react/nativemodule/core",
+    ].map { |p| "\"#{p}\"" }
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_config|
+        existing = Array(build_config.build_settings['HEADER_SEARCH_PATHS'] || '$(inherited)')
+        build_config.build_settings['HEADER_SEARCH_PATHS'] = existing + extra_header_paths
+
+        # Fix 2: -Wno-c++11-narrowing
+        # Xcode 26 uses C++20 by default, which promotes narrowing conversions to errors.
+        # React Native source uses aggregate initialisation with CGFloat (double) values
+        # assigned into Float (float) fields, which is a narrowing conversion.
+        # This flag downgrades those errors back to warnings.
+        existing_cxx = Array(build_config.build_settings['OTHER_CPLUSPLUSFLAGS'] || '$(inherited)')
+        unless existing_cxx.include?('-Wno-c++11-narrowing')
+          build_config.build_settings['OTHER_CPLUSPLUSFLAGS'] = existing_cxx + ['-Wno-c++11-narrowing']
+        end
+      end
+    end
+
+    # Fix 2b: fmt consteval (Xcode 26.5 / newer Apple clang)
+    # fmt 11.0.2 (pinned exactly by RCT-Folly in RN 0.81.x) gates its compile-time
+    # format-string checks on FMT_USE_CONSTEVAL. Xcode 26.5's clang advertises
+    # __cpp_consteval, so fmt's base.h sets FMT_USE_CONSTEVAL=1 and marks the
+    # basic_format_string constructor `consteval` — but this clang then fails to
+    # evaluate it as a constant expression while compiling fmt's own format-inl.h:
+    #   "call to consteval function ... is not a constant expression".
+    # base.h has NO `#ifndef FMT_USE_CONSTEVAL` guard, so a -D define can't override
+    # it. fmt fixed this in 11.1+, but we're locked to 11.0.2. We force both
+    # `#define FMT_USE_CONSTEVAL 1` branches to 0, so FMT_CONSTEVAL becomes empty and
+    # the checks fall back to constexpr/runtime. Done as a source patch (idempotent)
+    # because it must beat the unconditional #define. Re-applied on every pod install.
+    fmt_base_h = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base_h)
+      contents = File.read(fmt_base_h)
+      patched = contents.gsub("#  define FMT_USE_CONSTEVAL 1", "#  define FMT_USE_CONSTEVAL 0")
+      if patched != contents
+        File.chmod(0644, fmt_base_h)   # pod headers are installed read-only
+        File.write(fmt_base_h, patched)
+        Pod::UI.puts "[Ometria] Patched fmt base.h: forced FMT_USE_CONSTEVAL=0 (Xcode 26.5 consteval fix)"
+      end
+    end
+
+    # Fix 3: Yoga.h
+    # Xcode 26 explicit module scanner validates that headers referenced via
+    # #import <yoga/Yoga.h> physically exist inside yoga.framework/Headers/.
+    # CocoaPods' VFS overlay aliases Yoga-umbrella.h as Yoga.h, but the explicit
+    # scanner ignores VFS overlays. We copy the umbrella header and all yoga source
+    # headers into the framework directory via a build phase that runs before compilation.
+    # Needed for both new and old arch when using use_frameworks! :linkage => :static.
+    yoga_target = installer.pods_project.targets.find { |t| t.name == 'Yoga' }
+    if yoga_target
+      unless yoga_target.build_phases.any? { |p| p.respond_to?(:name) && p.name == '[Ometria] Yoga.h fix' }
+        phase = yoga_target.new_shell_script_build_phase('[Ometria] Yoga.h fix')
+        phase.shell_script = <<~SCRIPT
+          YOGA_HEADERS="${BUILT_PRODUCTS_DIR}/yoga.framework/Headers"
+          YOGA_SRC="${PODS_TARGET_SRCROOT}/yoga"
+          # Copy Yoga-umbrella.h → Yoga.h so <yoga/Yoga.h> resolves in explicit module scanner
+          if [ -f "${YOGA_HEADERS}/Yoga-umbrella.h" ] && [ ! -f "${YOGA_HEADERS}/Yoga.h" ]; then
+            cp "${YOGA_HEADERS}/Yoga-umbrella.h" "${YOGA_HEADERS}/Yoga.h"
+          fi
+          # Copy all yoga source headers (including subdirectories) so <yoga/YGEnums.h>,
+          # <yoga/style/Style.h> etc. resolve in explicit module scanner
+          if [ -d "${YOGA_SRC}" ]; then
+            find "${YOGA_SRC}" -name "*.h" | while read f; do
+              rel="${f#${YOGA_SRC}/}"
+              dest="${YOGA_HEADERS}/${rel}"
+              mkdir -p "$(dirname "${dest}")"
+              cp -n "$f" "${dest}"
+            done
+          fi
+        SCRIPT
+      end
+    end
+
+    # Fix 4: React.framework headers + Fix 5: FBReactNativeSpec framework + Fix 6: ReactCommon headers
+    #
+    # Root cause for fixes 4–6:
+    # Xcode 26 explicit module scanner requires headers to physically exist in framework
+    # Headers directories. CocoaPods uses a VFS overlay to expose them without copying,
+    # but Xcode 26's scanner ignores VFS overlays entirely. Each build phase below runs
+    # BEFORE Compile Sources (inserted via add_early_phase) to ensure headers are present
+    # when the scanner runs.
+    #
+    # cp -n is used throughout (copy only if destination does not exist) so that incremental
+    # builds don't fail — using [ ! -f ] && cp would exit 1 on already-copied files.
+    #
+    # Background: https://github.com/react-native-community/discussions-and-proposals/discussions/978
+    #             https://github.com/facebook/react-native/issues/53966
+    def self.add_early_phase(target, name, &block)
+        unless target.build_phases.any? { |p| p.respond_to?(:name) && p.name == name }
+          phase = target.new_shell_script_build_phase(name)
+          compile_phase = target.build_phases.find { |p| p.is_a?(Xcodeproj::Project::Object::PBXSourcesBuildPhase) }
+          target.build_phases.delete(phase)
+          if compile_phase
+            idx = target.build_phases.index(compile_phase)
+            target.build_phases.insert(idx, phase)
+          else
+            target.build_phases.unshift(phase)
+          end
+          block.call(phase)
+        end
+      end
+
+      # Fix 4: React.framework headers
+      # React-Core builds React.framework but its Headers directory only contains what
+      # CocoaPods copies via the VFS overlay — which the explicit scanner ignores.
+      # We copy all ReactCommon/react/**, jsitooling/react/**, FBReactNativeSpec/react/**,
+      # and React/Runtime/*.h into React.framework/Headers/ so every #import <react/...>
+      # resolves physically. Two-pass copy: cxx platform headers first, ios headers second
+      # (ios-specific headers always win over generic cxx equivalents).
+      # Needed for both new and old arch when using use_frameworks! :linkage => :static.
+      react_core_target = installer.pods_project.targets.find { |t| t.name == 'React-Core' }
+      if react_core_target
+        add_early_phase(react_core_target, '[Ometria] Fix React framework headers') do |phase|
+          phase.shell_script = <<~'SCRIPT'
+            # BUILT_PRODUCTS_DIR for React-Core = $(BUILD_DIR)/Debug-iphoneos/React-Core
+            # so React.framework/Headers is directly inside BUILT_PRODUCTS_DIR.
+            REACT_NATIVE_DIR="${PODS_ROOT}/../../node_modules/react-native"
+            REACT_HEADERS="${BUILT_PRODUCTS_DIR}/React.framework/Headers"
+            mkdir -p "${REACT_HEADERS}"
+            # Helper: copy headers from a source root into REACT_HEADERS.
+            # Two-pass: cxx platform headers first, then ios platform headers overwrite,
+            # so iOS-specific headers always win over generic cxx ones.
+            copy_react_headers() {
+              local src="$1"
+              [ -d "$src" ] || return
+              # Pass 1: non-platform headers and platform/cxx headers
+              find -L "$src" -name "*.h" | while IFS= read -r f; do
+                relpath="${f#${src}/}"
+                if echo "$relpath" | grep -q "/platform/ios/"; then
+                  continue
+                elif echo "$relpath" | grep -q "/platform/cxx/react/"; then
+                  relpath="${relpath##*/platform/cxx/react/}"
+                elif echo "$relpath" | grep -q "/platform/"; then
+                  continue
+                elif echo "$relpath" | grep -q "/iosswitch/react/"; then
+                  # iosswitch headers are nested as iosswitch/react/renderer/... → strip to renderer/...
+                  relpath="${relpath##*/iosswitch/react/}"
+                fi
+                destfile="${REACT_HEADERS}/${relpath}"
+                mkdir -p "$(dirname "$destfile")"
+                cp -n "$f" "$destfile"
+              done
+              # Pass 2: platform/ios headers overwrite cxx versions (ios takes precedence)
+              find -L "$src" -name "*.h" -path "*/platform/ios/react/*" | while IFS= read -r f; do
+                relpath="${f#${src}/}"
+                relpath="${relpath##*/platform/ios/react/}"
+                destfile="${REACT_HEADERS}/${relpath}"
+                mkdir -p "$(dirname "$destfile")"
+                cp "$f" "$destfile"
+              done
+            }
+            # ReactCommon/react/** → React.framework/Headers/
+            copy_react_headers "${REACT_NATIVE_DIR}/ReactCommon/react"
+            # ReactCommon/jsitooling/react/** → React.framework/Headers/
+            # (provides react/runtime/JSRuntimeFactory.h etc.)
+            copy_react_headers "${REACT_NATIVE_DIR}/ReactCommon/jsitooling/react"
+            # React/FBReactNativeSpec/react/** → React.framework/Headers/
+            # (provides react/renderer/components/FBReactNativeSpec/*.h etc.)
+            copy_react_headers "${REACT_NATIVE_DIR}/React/FBReactNativeSpec/react"
+            # React/Runtime/*.h → React.framework/Headers/ (flat copy, ObjC headers like RCTHermesInstanceFactory.h)
+            if [ -d "${REACT_NATIVE_DIR}/React/Runtime" ]; then
+              find "${REACT_NATIVE_DIR}/React/Runtime" -maxdepth 1 -name "*.h" | while IFS= read -r f; do
+                fname=$(basename "$f")
+                cp -n "$f" "${REACT_HEADERS}/${fname}"
+              done
+            fi
+          SCRIPT
+        end
+      end
+
+      # Fix 5: FBReactNativeSpec framework
+      # React-RCTFBReactNativeSpec creates React_RCTFBReactNativeSpec.framework but
+      # code imports <FBReactNativeSpec/FBReactNativeSpec.h> expecting a FBReactNativeSpec
+      # framework. The VFS overlay handles this aliasing normally, but Xcode 26's explicit
+      # scanner ignores it. We create FBReactNativeSpec.framework/Headers/ with the correct
+      # headers so the scanner finds them physically.
+      fb_spec_target = installer.pods_project.targets.find { |t| t.name == 'React-RCTFBReactNativeSpec' }
+      if fb_spec_target
+        add_early_phase(fb_spec_target, '[Ometria] Fix FBReactNativeSpec framework') do |phase|
+          phase.shell_script = <<~'SCRIPT'
+            REACT_NATIVE_DIR="${PODS_ROOT}/../../node_modules/react-native"
+            FB_DIR="${REACT_NATIVE_DIR}/React/FBReactNativeSpec"
+            FB_HEADERS="${BUILT_PRODUCTS_DIR}/FBReactNativeSpec.framework/Headers"
+            mkdir -p "${FB_HEADERS}"
+            # Copy FBReactNativeSpec/FBReactNativeSpec/*.h (e.g. FBReactNativeSpec.h)
+            if [ -d "${FB_DIR}/FBReactNativeSpec" ]; then
+              for f in "${FB_DIR}/FBReactNativeSpec"/*.h; do
+                fname=$(basename "$f")
+                cp -n "$f" "${FB_HEADERS}/${fname}"
+              done
+            fi
+            # Copy FBReactNativeSpec/*.h at root (e.g. FBReactNativeSpecJSI.h)
+            for f in "${FB_DIR}"/*.h; do
+              [ -f "$f" ] || continue
+              fname=$(basename "$f")
+              [ ! -f "${FB_HEADERS}/${fname}" ] && cp "$f" "${FB_HEADERS}/${fname}"
+            done
+          SCRIPT
+        end
+      end
+
+      react_common_target = installer.pods_project.targets.find { |t| t.name == 'ReactCommon' }
+      if react_common_target
+        # Fix 6a: Remove system-named headers from ReactCommon's Copy Headers build phase.
+        # ReactCommon includes files like float.h and math.h that shadow standard C headers.
+        # On Xcode 26, builtin-ScanDependencies runs before our cleanup script and sees these
+        # files first, breaking the UIKit → Foundation → CoreFoundation module chain because
+        # the compiler picks up the wrong float.h. Removing them from the Copy Headers phase
+        # means CocoaPods never installs them into ReactCommon.framework/Headers/ at all.
+        system_header_names = %w[float.h math.h stdlib.h stdio.h string.h limits.h
+                                  assert.h errno.h stdint.h stddef.h stdbool.h
+                                  inttypes.h stdarg.h setjmp.h signal.h time.h
+                                  locale.h wchar.h wctype.h]
+        copy_headers_phase = react_common_target.build_phases.find { |p|
+          p.is_a?(Xcodeproj::Project::Object::PBXHeadersBuildPhase)
+        }
+        if copy_headers_phase
+          files_to_remove = copy_headers_phase.files.select { |f|
+            fname = f.file_ref&.path&.split('/')&.last
+            system_header_names.include?(fname)
+          }
+          files_to_remove.each { |f| copy_headers_phase.files.delete(f) }
+        end
+
+        # Fix 6b: Populate ReactCommon.framework/Headers/ with actual ReactCommon headers.
+        # The script also defensively removes any stale system-named headers left from
+        # previous builds (Float.h / float.h are case-equivalent on macOS's case-insensitive
+        # filesystem and must not exist in the framework Headers directory).
+        add_early_phase(react_common_target, '[Ometria] Fix ReactCommon framework headers') do |phase|
+          phase.shell_script = <<~'SCRIPT'
+            # BUILT_PRODUCTS_DIR for ReactCommon = $(BUILD_DIR)/Debug-iphoneos/ReactCommon
+            # so ReactCommon.framework/Headers is directly inside BUILT_PRODUCTS_DIR.
+            REACT_NATIVE_DIR="${PODS_ROOT}/../../node_modules/react-native"
+            RC_HEADERS="${BUILT_PRODUCTS_DIR}/ReactCommon.framework/Headers"
+            mkdir -p "${RC_HEADERS}"
+            # Remove any standard C/C++ headers (and React Native's Float.h) that shadow system
+            # headers via -I include paths. These may be stale from a previous build run.
+            # Note: Float.h (capital F) matches float.h on macOS's case-insensitive filesystem.
+            for sysheader in float.h Float.h math.h stdlib.h stdio.h string.h limits.h assert.h errno.h stdint.h stddef.h stdbool.h inttypes.h stdarg.h setjmp.h signal.h time.h locale.h wchar.h wctype.h; do
+              rm -f "${RC_HEADERS}/${sysheader}"
+            done
+            if [ -d "${REACT_NATIVE_DIR}/ReactCommon" ]; then
+              find -L "${REACT_NATIVE_DIR}/ReactCommon" -name "*.h" -path "*/ReactCommon/*.h" | while IFS= read -r f; do
+                fname=$(basename "$f")
+                # Skip standard C/C++ headers that would shadow system headers via -I include paths.
+                # Also skip Float.h — it belongs in React_graphics.framework/Headers (not here),
+                # and on macOS's case-insensitive FS it would resolve as float.h.
+                case "$fname" in
+                  float.h|Float.h|math.h|stdlib.h|stdio.h|string.h|limits.h|assert.h|errno.h|stdint.h|stddef.h|stdbool.h|inttypes.h|stdarg.h|setjmp.h|signal.h|time.h|locale.h|wchar.h|wctype.h) continue ;;
+                esac
+                cp -n "$f" "${RC_HEADERS}/${fname}"
+              done
+            fi
+          SCRIPT
+        end
+      end
     # </OmetriaSetup>
   end
 end
@@ -58,6 +360,6 @@ end
 # Notification Service Extension target
 target 'NotificationsService' do
   use_frameworks! :linkage => :static
-  pod 'Ometria', '1.8.4'
+  pod 'Ometria', '1.8.9' # Keep in sync with ometria_sdk_version.ios in package.json
 end
 # </OmetriaSetup>

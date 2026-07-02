@@ -16,8 +16,6 @@ using namespace facebook::react;
 - (void)trackProfileDeidentifiedEvent:(id)resolve reject:(id)reject;
 - (void)trackProductViewedEvent:(NSString *)productId resolve:(id)resolve reject:(id)reject;
 - (void)trackProductListingViewedEvent:(NSString *)listingType listingAttributes:(id)listingAttributes resolve:(id)resolve reject:(id)reject;
-- (void)trackWishlistAddedToEvent:(NSString *)productId resolve:(id)resolve reject:(id)reject;
-- (void)trackWishlistRemovedFromEvent:(NSString *)productId resolve:(id)resolve reject:(id)reject;
 - (void)trackBasketViewedEvent:(id)resolve reject:(id)reject;
 - (void)trackBasketUpdatedEvent:(id)basket resolve:(id)resolve reject:(id)reject;
 - (void)trackCheckoutStartedEvent:(NSString *)orderId resolve:(id)resolve reject:(id)reject;
@@ -132,18 +130,6 @@ RCT_EXPORT_MODULE(OmetriaReactNativeSdk)
                                resolve:(RCTPromiseResolveBlock)resolve
                                 reject:(RCTPromiseRejectBlock)reject {
     [self.swiftModule trackProductListingViewedEvent:listingType listingAttributes:listingAttributes resolve:resolve reject:reject];
-}
-
-- (void)trackWishlistAddedToEvent:(NSString *)productId
-                          resolve:(RCTPromiseResolveBlock)resolve
-                           reject:(RCTPromiseRejectBlock)reject {
-    [self.swiftModule trackWishlistAddedToEvent:productId resolve:resolve reject:reject];
-}
-
-- (void)trackWishlistRemovedFromEvent:(NSString *)productId
-                              resolve:(RCTPromiseResolveBlock)resolve
-                               reject:(RCTPromiseRejectBlock)reject {
-    [self.swiftModule trackWishlistRemovedFromEvent:productId resolve:resolve reject:reject];
 }
 
 - (void)trackBasketViewedEvent:(RCTPromiseResolveBlock)resolve

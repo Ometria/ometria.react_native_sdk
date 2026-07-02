@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Ometria Expo Example",
+    "slug": "ometriarn",
+    "version": "2.8.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F2EAE1"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tapptitude.ometria.sampleRN",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "56"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.example.ometriareactnativesdk",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 56
+    },
+    "plugins": [
+      ["react-native-ometria"],
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+          }
+        }
+      ],
+      [
+        "react-native-permissions",
+        {
+          "iosPermissions": ["Notifications"]
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "resizeMode": "contain",
+          "backgroundColor": "#F2EAE1",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 150
+        }
+      ]
+    ]
+  }
+}

@@ -1,99 +1,79 @@
 {
   "name": "react-native-ometria",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "description": "We help retailers create marketing experiences their customers will love",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
-  "types": "lib/typescript/src/index.d.ts",
+  "main": "src/index.tsx",
+  "module": "src/index.tsx",
+  "types": "src/index.tsx",
   "react-native": "src/index",
   "source": "src/index",
+  "app.plugin": "./app.plugin.js",
   "ometria_sdk_version": {
-    "ios": "1.8.4",
-    "android": "1.11.0"
+    "ios": "1.8.9",
+    "android": "1.11.2"
   },
   "files": [
     "src",
-    "lib",
     "android",
     "ios",
     "scripts",
+    "plugin/build",
+    "app.plugin.js",
     "ometria-react-native-sdk.podspec",
-    "!lib/typescript/example",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "!android/build",
+    "!android/.gradle",
+    "!ios/Pods",
+    "!ios/build"
   ],
   "scripts": {
-    "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "eslint --fix \"**/*.{js,ts,tsx}\"",
-    "release": "release-it",
-    "example": "yarn --cwd example",
+    "example": "pnpm --filter example",
     "pods": "cd example && pod-install --quiet",
-    "bootstrap": "yarn example && yarn && yarn pods"
+    "build:plugin": "cd plugin && pnpm run build",
+    "prepare": "husky && pnpm run build:plugin"
   },
   "keywords": [
     "react-native",
+    "expo",
+    "expo-plugin",
     "ios",
-    "android"
+    "android",
+    "push-notifications",
+    "analytics"
   ],
-  "repository": "https://github.com/Ometria/ometria.react-native_sdk",
+  "repository": "https://github.com/Ometria/ometria.react_native_sdk",
   "author": "Ometria <support@ometria.com> (https://github.com/Ometria)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Ometria/ometria.react-native_sdk/issues"
+    "url": "https://github.com/Ometria/ometria.react_native_sdk/issues"
   },
-  "homepage": "https://github.com/Ometria/ometria.react-native_sdk#readme",
+  "homepage": "https://github.com/Ometria/ometria.react_native_sdk#readme",
   "devDependencies": {
-    "@commitlint/config-conventional": "^18.4.3",
-    "@react-native-firebase/messaging": "^11.2.0",
-    "@release-it/conventional-changelog": "^8.0.1",
-    "@types/jest": "^29.5.11",
+    "@expo/config-plugins": "^9.0.0",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@react-native-firebase/messaging": "^23.7.0",
     "@types/react": "^19.1.2",
     "@types/react-native": "0.73.0",
-    "commitlint": "^18.4.3",
     "eslint": "^8.19.0",
-    "husky": "^4.2.5",
-    "jest": "^26.0.1",
+    "husky": "^9.1.7",
     "pod-install": "^0.1.39",
     "prettier": "^2.4.1",
     "react": "19.1.0",
-    "release-it": "^17.0.1",
-    "typescript": "5.0.4",
-    "@react-native-community/eslint-config": "^3.2.0",
-    "react-native": "0.81.4"
+    "react-native": "0.81.5",
+    "typescript": "5.0.4"
   },
   "peerDependencies": {
+    "expo": ">=53.0.0",
     "react": "*",
     "react-native": "*"
   },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
     }
   },
   "eslintConfig": {
@@ -131,6 +111,15 @@
     "jsSrcsDir": "./src",
     "android": {
       "javaPackageName": "com.ometriareactnativesdk"
+    }
+  },
+  "pnpm": {
+    "overrides": {
+      "minimatch@3": "3.1.5",
+      "minimatch@9": "9.0.9",
+      "brace-expansion@1": "1.1.13",
+      "brace-expansion@2": "2.0.3",
+      "shell-quote@1": "1.8.4"
     }
   }
 }

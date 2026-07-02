@@ -13,6 +13,9 @@ import React
 class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     fileprivate enum Constants {
         static let appGroupIdentifierKey = "appGroupIdentifier"
+        static let expoDefaultAppGroupIdentifierKey = "OmetriaExpoDefaultAppGroupIdentifier"
+        static let rnSdkVersionKey = "OmetriaRNSdkVersion"
+        static let bareRnSdkVersion = "2.8.0"
     }
 
     @objc
@@ -30,10 +33,17 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         NSLog("🔵 [Ometria Native] initialize called with token: %@", token)
         NSLog("🔵 [Ometria Native] options: %@", String(describing: options))
 
-        OmetriaStorageKeys.rnVersion = "2.7.1"
+        OmetriaStorageKeys.rnVersion = Bundle.main.object(forInfoDictionaryKey: Constants.rnSdkVersionKey) as? String ?? Constants.bareRnSdkVersion
         DispatchQueue.main.async {
             NSLog("🔵 [Ometria Native] About to call Ometria.initialize")
-            let appGroupIdentifier = options?[Constants.appGroupIdentifierKey] as? String
+            // Use provided appGroupIdentifier, or fallback to Expo plugin default from Info.plist
+            var appGroupIdentifier = options?[Constants.appGroupIdentifierKey] as? String
+            if appGroupIdentifier == nil {
+                appGroupIdentifier = Bundle.main.object(forInfoDictionaryKey: Constants.expoDefaultAppGroupIdentifierKey) as? String
+                if let expoDefault = appGroupIdentifier {
+                    NSLog("🔵 [Ometria Native] Using Expo default appGroupIdentifier: %@", expoDefault)
+                }
+            }
             let ometriaInit = Ometria.initialize(apiToken: token, enableSwizzling: false, appGroupIdentifier: appGroupIdentifier)
             NSLog("🔵 [Ometria Native] Ometria.initialize returned")
             resolve(ometriaInit)
@@ -82,18 +92,6 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     @objc(trackProductListingViewedEvent:listingAttributes:resolve:reject:)
     func trackProductListingViewedEvent(listingType: String?, listingAttributes: [String: Any]?, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().trackProductListingViewedEvent(listingType: listingType, listingAttributes: listingAttributes)
-        resolve(nil)
-    }
-
-    @objc(trackWishlistAddedToEvent:resolve:reject:)
-    func trackWishlistAddedToEvent(productId: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        NSLog("trackWishlistAddedToEvent is deprecated and not supported on iOS")
-        resolve(nil)
-    }
-
-    @objc(trackWishlistRemovedFromEvent:resolve:reject:)
-    func trackWishlistRemovedFromEvent(productId: String, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
-        NSLog("trackWishlistRemovedFromEvent is deprecated and not supported on iOS")
         resolve(nil)
     }
 

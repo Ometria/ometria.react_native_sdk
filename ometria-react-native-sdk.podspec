@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "11.0" }
+  s.platforms    = { :ios => "15.0" }
   s.source       = { :git => "https://github.com/Ometria/ometria.react-native_sdk.git", :tag => "#{s.version}" }
   s.requires_arc = true
   s.static_framework = true
@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "Ometria", '1.8.4'
+  s.dependency "Ometria", package["ometria_sdk_version"]["ios"]
 
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1'
     if respond_to?(:install_modules_dependencies, true)
