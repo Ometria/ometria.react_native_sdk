@@ -9,8 +9,6 @@
   </p>
 </div>
 
----
-
 The app has two key objectives:
 
 - **Getting information about customers** (what do they like?)
