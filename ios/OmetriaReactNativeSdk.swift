@@ -194,6 +194,12 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         resolve(nil)
     }
 
+    @objc(setTrackingEnabled:resolve:reject:)
+    func setTrackingEnabled(enabled: Bool, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().setTrackingEnabled(enabled)
+        resolve(nil)
+    }
+
     @objc(isLoggingEnabled:resolve:reject:)
     func isLoggingEnabled(enabled: Bool, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().isLoggingEnabled = enabled

@@ -436,6 +436,12 @@ const EventsModal: React.FC<{
       case Events.CUSTOM:
         Ometria.trackCustomEvent('my_custom_type');
         break;
+      case Events.ENABLE_TRACKING:
+        Ometria.setTrackingEnabled(true);
+        break;
+      case Events.DISABLE_TRACKING:
+        Ometria.setTrackingEnabled(false);
+        break;
       case Events.FLUSH:
         Ometria.flush();
         break;

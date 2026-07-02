@@ -26,6 +26,7 @@ using namespace facebook::react;
 - (void)trackCustomEvent:(NSString *)customEventType additionalInfo:(id)additionalInfo resolve:(id)resolve reject:(id)reject;
 - (void)flush:(id)resolve reject:(id)reject;
 - (void)clear:(id)resolve reject:(id)reject;
+- (void)setTrackingEnabled:(BOOL)enabled resolve:(id)resolve reject:(id)reject;
 - (void)isLoggingEnabled:(BOOL)enabled resolve:(id)resolve reject:(id)reject;
 - (void)processUniversalLink:(NSString *)url resolve:(id)resolve reject:(id)reject;
 - (void)onNewToken:(NSString *)token resolve:(id)resolve reject:(id)reject;
@@ -228,6 +229,12 @@ RCT_EXPORT_MODULE(OmetriaReactNativeSdk)
 - (void)clear:(RCTPromiseResolveBlock)resolve
        reject:(RCTPromiseRejectBlock)reject {
     [self.swiftModule clear:resolve reject:reject];
+}
+
+- (void)setTrackingEnabled:(BOOL)enabled
+                   resolve:(RCTPromiseResolveBlock)resolve
+                    reject:(RCTPromiseRejectBlock)reject {
+    [self.swiftModule setTrackingEnabled:enabled resolve:resolve reject:reject];
 }
 
 - (void)isLoggingEnabled:(BOOL)enabled
