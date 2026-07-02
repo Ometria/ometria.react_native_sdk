@@ -22,7 +22,11 @@
     "ometria-react-native-sdk.podspec",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "!android/build",
+    "!android/.gradle",
+    "!ios/Pods",
+    "!ios/build"
   ],
   "scripts": {
     "typescript": "tsc --noEmit",
@@ -41,13 +45,13 @@
     "push-notifications",
     "analytics"
   ],
-  "repository": "https://github.com/Ometria/ometria.react-native_sdk",
+  "repository": "https://github.com/Ometria/ometria.react_native_sdk",
   "author": "Ometria <support@ometria.com> (https://github.com/Ometria)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Ometria/ometria.react-native_sdk/issues"
+    "url": "https://github.com/Ometria/ometria.react_native_sdk/issues"
   },
-  "homepage": "https://github.com/Ometria/ometria.react-native_sdk#readme",
+  "homepage": "https://github.com/Ometria/ometria.react_native_sdk#readme",
   "devDependencies": {
     "@expo/config-plugins": "^9.0.0",
     "@react-native-community/eslint-config": "^3.2.0",
