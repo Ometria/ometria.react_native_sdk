@@ -10,7 +10,7 @@
   "app.plugin": "./app.plugin.js",
   "ometria_sdk_version": {
     "ios": "1.9.1",
-    "android": "1.11.3"
+    "android": "1.11.4"
   },
   "files": [
     "src",
