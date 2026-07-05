@@ -237,6 +237,11 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   }
 
   @ReactMethod
+  override fun getTrackingEnabled(promise: Promise) {
+    promise.resolve(Ometria.instance().getTrackingEnabled())
+  }
+
+  @ReactMethod
   override fun isLoggingEnabled(enabled: Boolean, promise: Promise) {
     Ometria.instance().loggingEnabled(enabled)
     promise.resolve(null)

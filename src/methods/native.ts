@@ -129,6 +129,8 @@ export const createNativeMethods = (OmetriaSDK: NativeModuleType) => ({
     void OmetriaSDK.setTrackingEnabled(enabled);
   },
 
+  getTrackingEnabled: () => OmetriaSDK.getTrackingEnabled(),
+
   isLoggingEnabled: (enabled: boolean) => OmetriaSDK.isLoggingEnabled(enabled),
 
   processUniversalLink: (url: string) => OmetriaSDK.processUniversalLink(url),

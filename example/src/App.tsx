@@ -429,6 +429,11 @@ const EventsModal: React.FC<{
       case Events.DISABLE_TRACKING:
         Ometria.setTrackingEnabled(false);
         break;
+      case Events.GET_TRACKING_STATE:
+        Ometria.getTrackingEnabled().then(enabled =>
+          Alert.alert('Tracking enabled', String(enabled)),
+        );
+        break;
       case Events.FLUSH:
         Ometria.flush();
         break;

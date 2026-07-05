@@ -103,6 +103,16 @@ type OmetriaReactNativeSdkCoreType = {
    */
   setTrackingEnabled: (enabled: boolean) => void;
 
+  /**
+   * Returns whether event tracking is currently enabled.
+   *
+   * The value is persisted locally and reflects the last state set via
+   * `setTrackingEnabled`. Defaults to `true` until changed.
+   *
+   * @returns A promise resolving to `true` if tracking is enabled, `false` otherwise.
+   */
+  getTrackingEnabled: () => Promise<boolean>;
+
   isLoggingEnabled: (enabled: boolean) => Promise<void>;
 
   processUniversalLink: (url: string) => Promise<string>;
