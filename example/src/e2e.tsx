@@ -147,15 +147,23 @@ export function E2EPanel() {
     }
   };
 
+  const clear = () => {
+    setInfo(null);
+    setLog([]);
+  };
+
+  // Once a run has finished, the same button clears the logs and returns to "Run E2E suite".
+  const hasRun = info !== null && !running;
+
   return (
     <View>
       <TouchableOpacity
         style={[styles.btn, running && styles.btnDisabled]}
         disabled={running}
-        onPress={run}
+        onPress={hasRun ? clear : run}
       >
         <Text style={styles.btnText}>
-          {running ? '🧪 Running…' : '🧪 Run E2E suite'}
+          {running ? '🧪 Running…' : hasRun ? '🧹 Clear E2E logs' : '🧪 Run E2E suite'}
         </Text>
       </TouchableOpacity>
 
