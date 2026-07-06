@@ -301,7 +301,10 @@ const App = () => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 48 }}
+    >
       <Text style={styles.title}>Ometria React Native Demo {version}</Text>
       <Text style={styles.subtitle}>
         {Platform.OS === 'android' ? 'Android' : 'iOS'} SDK version{' '}
