@@ -15,7 +15,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.tapptitude.ometria.sampleRN",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "56"
+      "buildNumber": "60"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +26,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.example.ometriareactnativesdk",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 56
+      "versionCode": 60
     },
     "plugins": [
       ["react-native-ometria"],
