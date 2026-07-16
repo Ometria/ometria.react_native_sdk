@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import Ometria from 'react-native-ometria';
 import { demoBasketItems } from './data';
 
@@ -50,7 +50,6 @@ export async function runE2ESuite(ids: E2EIds, log: (line: string) => void) {
   };
 
   Ometria.isLoggingEnabled(true);
-  log(`▶︎ E2E run ${runId} (${Platform.OS})`);
   await sleep(1000);
 
   await step('customEvent e2e_start', () => Ometria.trackCustomEvent('e2e_start', { runId }));
@@ -66,10 +65,64 @@ export async function runE2ESuite(ids: E2EIds, log: (line: string) => void) {
   await step('deepLinkOpened /profile', () => Ometria.trackDeepLinkOpenedEvent('/profile', 'ProfileScreen'));
   await step('customEvent e2e_end', () => Ometria.trackCustomEvent('e2e_end', { runId }));
   await step('flush', () => Ometria.flush());
+
+  log(`✅ done — run ${runId}`);
+}
+
+/**
+ * Tracking-switch tester — validates setTrackingEnabled(false/true).
+ *
+ * Fires a bracketed run (ts_start … ts_end, both carry runId). While tracking is
+ * OFF it fires clearly-tagged events that MUST be blocked (a ts_blocked customEvent,
+ * a ts-blocked-product productViewed, and a flush). The only events that should
+ * reach the dashboard inside the window are: ts_start, the final opt-out
+ * permissionsUpdate, the re-enable permissionsUpdate, and ts_end. Verify with
+ * ~/Dev/ometria-build-artifacts/verify-events.{mjs,html} (filter by runId).
+ *
+ * Note: the "app starts with tracking off sends nothing" acceptance criterion
+ * needs a real app restart, so it must be checked manually — it is not covered by
+ * this single in-app run.
+ */
+export async function runTrackingSwitchSuite(ids: E2EIds, log: (line: string) => void) {
+  const { runId } = ids;
+
+  const step = async (label: string, fn: () => void) => {
+    fn();
+    log(`✓ ${label}`);
+    await sleep(1000);
+  };
+
+  Ometria.isLoggingEnabled(true);
+  await sleep(1000);
+
+  // Baseline on (before the bracket, so its permissionsUpdate falls outside the window).
+  await step('setTrackingEnabled(true) [baseline]', () => Ometria.setTrackingEnabled(true));
+  await step('customEvent ts_start', () => Ometria.trackCustomEvent('ts_start', { runId }));
+
+  // Disable → SDK sends one final opt-out permissionsUpdate + flush, then blocks.
+  await step('setTrackingEnabled(false)', () => Ometria.setTrackingEnabled(false));
+  const offState = await Ometria.getTrackingEnabled();
+  log(`${offState === false ? '✓' : '✗'} getTrackingEnabled() === false${offState === false ? '' : ` (got ${offState})`}`);
+
+  // Everything below MUST be blocked — nothing here should reach the dashboard.
+  await step('BLOCKED customEvent ts_blocked', () => Ometria.trackCustomEvent('ts_blocked', { runId }));
+  await step('BLOCKED productViewed ts-blocked-product', () => Ometria.trackProductViewedEvent('ts-blocked-product'));
+  await step('BLOCKED flush', () => Ometria.flush());
+
+  // Re-enable → SDK sends the OS-value permissionsUpdate + flush, resumes tracking.
+  await step('setTrackingEnabled(true)', () => Ometria.setTrackingEnabled(true));
+  const onState = await Ometria.getTrackingEnabled();
+  log(`${onState === true ? '✓' : '✗'} getTrackingEnabled() === true${onState === true ? '' : ` (got ${onState})`}`);
+
+  await step('customEvent ts_end', () => Ometria.trackCustomEvent('ts_end', { runId }));
+  await step('flush', () => Ometria.flush());
+
+  // Deidentify only at the very end, so the whole E2E (funnel + tracking-switch) runs
+  // under the identified profile.
   await step('profileDeidentified', () => Ometria.trackProfileDeidentifiedEvent());
   await step('flush', () => Ometria.flush());
 
-  log(`✅ done — run ${runId}`);
+  log(`✅ done — tracking-switch run ${runId}`);
 }
 
 /** Button + live progress log. Drop into any screen: `<E2EPanel />`. */
@@ -83,8 +136,10 @@ export function E2EPanel() {
     setInfo(ids);
     setLog([]);
     setRunning(true);
+    const append = (line: string) => setLog(prev => [...prev, line]);
     try {
-      await runE2ESuite(ids, line => setLog(prev => [...prev, line]));
+      await runE2ESuite(ids, append);
+      await runTrackingSwitchSuite(ids, append);
     } catch (error) {
       setLog(prev => [...prev, `❌ ${String(error)}`]);
     } finally {
@@ -92,15 +147,23 @@ export function E2EPanel() {
     }
   };
 
+  const clear = () => {
+    setInfo(null);
+    setLog([]);
+  };
+
+  // Once a run has finished, the same button clears the logs and returns to "Run E2E suite".
+  const hasRun = info !== null && !running;
+
   return (
     <View>
       <TouchableOpacity
         style={[styles.btn, running && styles.btnDisabled]}
         disabled={running}
-        onPress={run}
+        onPress={hasRun ? clear : run}
       >
         <Text style={styles.btnText}>
-          {running ? '🧪 Running E2E suite…' : '🧪 Run E2E suite'}
+          {running ? '🧪 Running…' : hasRun ? '🧹 Clear E2E logs' : '🧪 Run E2E suite'}
         </Text>
       </TouchableOpacity>
 

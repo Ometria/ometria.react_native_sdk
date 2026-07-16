@@ -73,6 +73,8 @@ export interface Spec extends TurboModule {
   ): Promise<void>;
   flush(): Promise<void>;
   clear(): Promise<void>;
+  setTrackingEnabled(enabled: boolean): Promise<void>;
+  getTrackingEnabled(): Promise<boolean>;
   isLoggingEnabled(enabled: boolean): Promise<void>;
   processUniversalLink(url: string): Promise<string>;
   onNewToken(token: string): Promise<void>;

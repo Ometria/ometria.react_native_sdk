@@ -15,7 +15,7 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         static let appGroupIdentifierKey = "appGroupIdentifier"
         static let expoDefaultAppGroupIdentifierKey = "OmetriaExpoDefaultAppGroupIdentifier"
         static let rnSdkVersionKey = "OmetriaRNSdkVersion"
-        static let bareRnSdkVersion = "2.8.0"
+        static let bareRnSdkVersion = "2.8.1"
     }
 
     @objc
@@ -192,6 +192,17 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
     func clear(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         Ometria.sharedInstance().clear()
         resolve(nil)
+    }
+
+    @objc(setTrackingEnabled:resolve:reject:)
+    func setTrackingEnabled(enabled: Bool, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        Ometria.sharedInstance().setTrackingEnabled(enabled)
+        resolve(nil)
+    }
+
+    @objc(getTrackingEnabled:reject:)
+    func getTrackingEnabled(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+        resolve(Ometria.sharedInstance().isTrackingEnabled())
     }
 
     @objc(isLoggingEnabled:resolve:reject:)

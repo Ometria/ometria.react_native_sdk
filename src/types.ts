@@ -87,6 +87,32 @@ type OmetriaReactNativeSdkCoreType = {
 
   clear: () => void;
 
+  /**
+   * Fully stops or resumes all event tracking.
+   *
+   * When disabled, no events (including automatic ones such as permissionsUpdate,
+   * pushTokenRefreshed and lifecycle events) leave the SDK. The server is notified
+   * via a final opt-out (permissionsUpdate) event before tracking stops.
+   *
+   * When re-enabled, an opt-in (permissionsUpdate) event reflecting the current OS
+   * notification permission is sent and normal tracking resumes.
+   *
+   * The state is persisted and survives app restarts.
+   *
+   * @param enabled - `true` to enable tracking, `false` to disable it.
+   */
+  setTrackingEnabled: (enabled: boolean) => void;
+
+  /**
+   * Returns whether event tracking is currently enabled.
+   *
+   * The value is persisted locally and reflects the last state set via
+   * `setTrackingEnabled`. Defaults to `true` until changed.
+   *
+   * @returns A promise resolving to `true` if tracking is enabled, `false` otherwise.
+   */
+  getTrackingEnabled: () => Promise<boolean>;
+
   isLoggingEnabled: (enabled: boolean) => Promise<void>;
 
   processUniversalLink: (url: string) => Promise<string>;

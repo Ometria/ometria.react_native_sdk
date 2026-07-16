@@ -301,7 +301,10 @@ const App = () => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 48 }}
+    >
       <Text style={styles.title}>Ometria React Native Demo {version}</Text>
       <Text style={styles.subtitle}>
         {Platform.OS === 'android' ? 'Android' : 'iOS'} SDK version{' '}
@@ -435,6 +438,17 @@ const EventsModal: React.FC<{
         break;
       case Events.CUSTOM:
         Ometria.trackCustomEvent('my_custom_type');
+        break;
+      case Events.ENABLE_TRACKING:
+        Ometria.setTrackingEnabled(true);
+        break;
+      case Events.DISABLE_TRACKING:
+        Ometria.setTrackingEnabled(false);
+        break;
+      case Events.GET_TRACKING_STATE:
+        Ometria.getTrackingEnabled().then(enabled =>
+          Alert.alert('Tracking enabled', String(enabled)),
+        );
         break;
       case Events.FLUSH:
         Ometria.flush();

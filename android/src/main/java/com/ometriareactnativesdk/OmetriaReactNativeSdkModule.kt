@@ -24,7 +24,7 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   companion object {
     const val NAME = "OmetriaReactNativeSdk"
     private const val RN_SDK_VERSION_META_KEY = "OmetriaRNSdkVersion"
-    private const val BARE_RN_SDK_VERSION = "2.8.0"
+    private const val BARE_RN_SDK_VERSION = "2.8.1"
 
     /**
      * Id of the high-importance channel the SDK creates so Android displays Ometria's
@@ -228,6 +228,17 @@ class OmetriaReactNativeSdkModule(private val reactContext: ReactApplicationCont
   override fun clear(promise: Promise) {
     Ometria.instance().clear()
     promise.resolve(null)
+  }
+
+  @ReactMethod
+  override fun setTrackingEnabled(enabled: Boolean, promise: Promise) {
+    Ometria.instance().setTrackingEnabled(enabled)
+    promise.resolve(null)
+  }
+
+  @ReactMethod
+  override fun getTrackingEnabled(promise: Promise) {
+    promise.resolve(Ometria.instance().getTrackingEnabled())
   }
 
   @ReactMethod
