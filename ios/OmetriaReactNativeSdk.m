@@ -8,10 +8,6 @@
 @interface RCT_EXTERN_MODULE(OmetriaReactNativeSdk, NSObject)
 
 RCT_EXTERN_METHOD(initializeWithApiToken:(NSString *)apiToken
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(initializeWithApiToken:(NSString *)apiToken
                   options:(NSDictionary *)options
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)

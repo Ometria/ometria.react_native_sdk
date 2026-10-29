@@ -1,6 +1,6 @@
 {
   "name": "react-native-ometria",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "description": "We help retailers create marketing experiences their customers will love",
   "main": "src/index.tsx",
   "module": "src/index.tsx",
@@ -10,7 +10,7 @@
   "app.plugin": "./app.plugin.js",
   "ometria_sdk_version": {
     "ios": "1.9.1",
-    "android": "1.11.4"
+    "android": "1.11.5"
   },
   "files": [
     "src",
@@ -34,6 +34,7 @@
     "example": "pnpm --filter example",
     "pods": "cd example && pod-install --quiet",
     "build:plugin": "cd plugin && pnpm run build",
+    "test:plugin": "cd plugin && pnpm run test",
     "prepare": "husky && pnpm run build:plugin"
   },
   "keywords": [
@@ -55,7 +56,6 @@
   "devDependencies": {
     "@expo/config-plugins": "^9.0.0",
     "@react-native-community/eslint-config": "^3.2.0",
-    "@react-native-firebase/messaging": "^23.7.0",
     "@types/react": "^19.1.2",
     "@types/react-native": "0.73.0",
     "eslint": "^8.19.0",

@@ -1,6 +1,4 @@
-import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-
-import type { MaybeNull } from './types';
+import type { MaybeNull, OmetriaRemoteMessage } from './types';
 
 export const LINKING_ERROR =
   `The package 'react-native-ometria' is not linked correctly.\n` +
@@ -20,8 +18,8 @@ export const parseOmetriaData = (
 };
 
 export const withParsedOmetriaPayload = (
-  remoteMessage: FirebaseMessagingTypes.RemoteMessage
-): FirebaseMessagingTypes.RemoteMessage => ({
+  remoteMessage: OmetriaRemoteMessage
+): OmetriaRemoteMessage => ({
   ...remoteMessage,
   data: {
     ometria: parseOmetriaData(remoteMessage?.data?.ometria),

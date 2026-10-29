@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ometria Expo Example",
     "slug": "ometriarn",
-    "version": "2.8.1",
+    "version": "2.9.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -30,8 +30,9 @@
     },
     "plugins": [
       ["react-native-ometria"],
-      "@react-native-firebase/app",
+      ["@react-native-firebase/app", { "ios": { "disableSPM": true } }],
       "@react-native-firebase/messaging",
+      ["./plugins/withFirebaseSdkVersion", "12.19.0"],
       [
         "expo-build-properties",
         {

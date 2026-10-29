@@ -2,7 +2,11 @@ import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
 import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 
-declare const global: { __turboModuleProxy?: object };
+declare const global: {
+  __turboModuleProxy?: object;
+  RN$Bridgeless?: boolean;
+  process?: { env?: { [key: string]: string | undefined } };
+};
 
 export type NullableString = string | null | undefined;
 
@@ -86,6 +90,12 @@ export interface Spec extends TurboModule {
 }
 
 export const isTurboModuleEnabled = global.__turboModuleProxy != null;
+
+// Bridgeless mode only exists on the New Architecture
+export const isNewArchitecture =
+  isTurboModuleEnabled || global.RN$Bridgeless === true;
+
+export const isRunningInJest = global.process?.env?.JEST_WORKER_ID != null;
 
 const moduleProxy = isTurboModuleEnabled
   ? TurboModuleRegistry.getEnforcing<Spec>('OmetriaReactNativeSdk')

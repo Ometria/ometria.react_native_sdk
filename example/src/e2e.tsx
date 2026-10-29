@@ -9,8 +9,8 @@ import { demoBasketItems } from './data';
  * <E2EPanel /> renders a button that fires the full tracking catalog in a fixed
  * funnel order against a unique throwaway test profile, pausing 1s between
  * events (distinct dashboard timestamps + live on-screen log). After running on
- * a device, verify the events in the Ometria dashboard — filter by the printed
- * runId — using ~/Dev/ometria-build-artifacts/verify-events.mjs.
+ * a device, verify the events in the Ometria dashboard, filtered by the printed
+ * runId.
  */
 
 export type E2EIds = {
@@ -76,8 +76,7 @@ export async function runE2ESuite(ids: E2EIds, log: (line: string) => void) {
  * OFF it fires clearly-tagged events that MUST be blocked (a ts_blocked customEvent,
  * a ts-blocked-product productViewed, and a flush). The only events that should
  * reach the dashboard inside the window are: ts_start, the final opt-out
- * permissionsUpdate, the re-enable permissionsUpdate, and ts_end. Verify with
- * ~/Dev/ometria-build-artifacts/verify-events.{mjs,html} (filter by runId).
+ * permissionsUpdate, the re-enable permissionsUpdate, and ts_end.
  *
  * Note: the "app starts with tracking off sends nothing" acceptance criterion
  * needs a real app restart, so it must be checked manually — it is not covered by

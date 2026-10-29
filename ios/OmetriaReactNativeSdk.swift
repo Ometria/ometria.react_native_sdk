@@ -15,7 +15,7 @@ class OmetriaReactNativeSdk: NSObject, OmetriaNotificationInteractionDelegate {
         static let appGroupIdentifierKey = "appGroupIdentifier"
         static let expoDefaultAppGroupIdentifierKey = "OmetriaExpoDefaultAppGroupIdentifier"
         static let rnSdkVersionKey = "OmetriaRNSdkVersion"
-        static let bareRnSdkVersion = "2.8.1"
+        static let bareRnSdkVersion = "2.9.0"
     }
 
     @objc

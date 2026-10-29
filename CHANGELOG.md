@@ -1,3 +1,15 @@
+# 2.9.0
+
+2026-11
+
+- **Deprecated the Old Architecture.** 2.9.x is the last release line that supports React Native's Old Architecture; react-native-ometria 3.0 requires the New Architecture and moves the iOS dependencies to Swift Package Manager. Old Architecture apps can stay on 2.9.x, and in development builds the SDK now logs a one-time warning when it runs on the Old Architecture (not under Jest).
+- Fixed push notifications on Expo SDK 58 with React Native Firebase 26 or earlier: the Expo config plugin now adds `FirebaseApp.configure()` to `AppDelegate.swift` when React Native Firebase's own plugin skips it, so Firebase is initialised and a push token is issued. If you added `FirebaseApp.configure()` yourself as a workaround, remove it when you upgrade.
+- Fixed TypeScript types with React Native Firebase 26: the SDK no longer uses RNFB's `FirebaseMessagingTypes` namespace (removed in RNFB 26), so `onNotificationReceived`, `onNotificationOpenedApp`, `parseNotification` and `onAndroidBackgroundMessage` accept the `RemoteMessage` of any RNFB version. The new `OmetriaRemoteMessage` type is exported.
+- Removed a leftover duplicate `initializeWithApiToken` declaration from the iOS Old Architecture bridge.
+- Updated the native Ometria Android SDK to 🤖 1.11.5 (iOS stays on 🍏 1.9.1). No behaviour change for React Native apps: 1.11.5 only changes notifications that the native SDK displays itself, which React Native apps don't use.
+- Updated the Expo sample app to Expo SDK 58 (React Native 0.88.1) with React Native Firebase 26.4.1. The bare sample app stays on React Native 0.81, the last version with the Old Architecture.
+- The sample apps now use Firebase iOS SDK 12.19.0, the last Firebase release with FirebaseMessaging on CocoaPods. On 2.x, use React Native Firebase 26.x or earlier; React Native Firebase 27 is supported from 3.0.
+
 # 2.8.1
 
 2026-07
