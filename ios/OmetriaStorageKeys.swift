@@ -20,4 +20,13 @@ public struct OmetriaStorageKeys {
             UserDefaults.standard.synchronize()
         }
     }
+
+    // The Notification Service Extension runs in its own process and can't read the app's standard
+    // UserDefaults. The native SDK reads sdkVersionRN from the App Group suite first, so mirror it there.
+    public static func setRNVersion(_ version: String?, appGroupIdentifier: String?) {
+        rnVersion = version
+        guard let appGroupIdentifier = appGroupIdentifier,
+              let suite = UserDefaults(suiteName: appGroupIdentifier) else { return }
+        suite.set(version, forKey: "sdkVersionRN")
+    }
 }
