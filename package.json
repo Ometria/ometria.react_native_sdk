@@ -9,7 +9,7 @@
   "source": "src/index",
   "app.plugin": "./app.plugin.js",
   "ometria_sdk_version": {
-    "ios": "1.9.2",
+    "ios": "1.9.3",
     "android": "1.11.5"
   },
   "files": [
