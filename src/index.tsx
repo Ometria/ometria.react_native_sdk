@@ -36,7 +36,7 @@ if (!OmetriaSDK) {
 if (__DEV__ && !isNewArchitecture && !isRunningInJest) {
   console.warn(
     '[react-native-ometria] The Old Architecture is deprecated. 2.9.x is the last version that supports it; ' +
-      'react-native-ometria 3.0 requires the New Architecture. Old Architecture apps can stay on 2.9.x.'
+      'the next major version will require the New Architecture. Old Architecture apps can stay on 2.9.x.'
   );
 }
 

@@ -136,7 +136,7 @@ const withOmetriaPodfile: ConfigPlugin<InternalPluginProps> = (config, props) =>
         '[react-native-ometria] React Native Firebase detected. On iOS, Ometria 2.x needs static linking: ' +
           'set "useFrameworks": "static" and "forceStaticLinking": ["RNFBApp", "RNFBMessaging"] in expo-build-properties, ' +
           'and with React Native Firebase 26.1 or later also set { "ios": { "disableSPM": true } } on the ' +
-          '"@react-native-firebase/app" plugin. React Native Firebase 27 needs react-native-ometria 3.0. ' +
+          '"@react-native-firebase/app" plugin. React Native Firebase 27 isn\'t supported on 2.x; it will be in the next major version. ' +
           'See: https://mobile-sdk.docs.ometria.com/react-native/installation'
       );
     }

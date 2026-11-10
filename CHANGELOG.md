@@ -2,14 +2,14 @@
 
 2026-11
 
-- **Deprecated the Old Architecture.** 2.9.x is the last release line that supports React Native's Old Architecture; react-native-ometria 3.0 requires the New Architecture and moves the iOS dependencies to Swift Package Manager. Old Architecture apps can stay on 2.9.x, and in development builds the SDK now logs a one-time warning when it runs on the Old Architecture (not under Jest).
+- **Deprecated the Old Architecture.** 2.9.x is the last release line that supports React Native's Old Architecture; the next major version will require the New Architecture and move the iOS dependencies to Swift Package Manager. Old Architecture apps can stay on 2.9.x, and in development builds the SDK now logs a one-time warning when it runs on the Old Architecture (not under Jest).
 - Fixed push notifications on Expo SDK 58 with React Native Firebase 26 or earlier: the Expo config plugin now adds `FirebaseApp.configure()` to `AppDelegate.swift` when React Native Firebase's own plugin skips it, so Firebase is initialised and a push token is issued. If you added `FirebaseApp.configure()` yourself as a workaround, remove it when you upgrade.
 - Fixed TypeScript types with React Native Firebase 26: the SDK no longer uses RNFB's `FirebaseMessagingTypes` namespace (removed in RNFB 26), so `onNotificationReceived`, `onNotificationOpenedApp`, `parseNotification` and `onAndroidBackgroundMessage` accept the `RemoteMessage` of any RNFB version. The new `OmetriaRemoteMessage` type is exported.
 - Fixed the missing React Native SDK version on iOS `notificationReceived` events sent by the Notification Service Extension: the SDK now also stores its version in the App Group, where the extension can read it. Apps without an App Group behave as before.
 - Removed a leftover duplicate `initializeWithApiToken` declaration from the iOS Old Architecture bridge.
 - Updated native Ometria SDKs: 🍏 iOS 1.9.3 & 🤖 Android 1.11.5. iOS 1.9.2 fixes duplicate `notificationReceived` events when a push is tracked by the Notification Service Extension and again by the app. iOS 1.9.3 makes the Notification Service Extension send `notificationReceived` before the notification is shown, instead of sometimes sending it with the next push; if sending fails, the app sends it the next time it opens. Android 1.11.5 only changes notifications that the native SDK displays itself, which React Native apps don't use.
 - Updated the Expo sample app to Expo SDK 58 (React Native 0.88.1) with React Native Firebase 26.4.1. The bare sample app stays on React Native 0.81, the last version with the Old Architecture.
-- The sample apps now use Firebase iOS SDK 12.19.0, the last Firebase release with FirebaseMessaging on CocoaPods. On 2.x, use React Native Firebase 26.x or earlier; React Native Firebase 27 is supported from 3.0.
+- The sample apps now use Firebase iOS SDK 12.19.0, the last Firebase release with FirebaseMessaging on CocoaPods. On 2.x, use React Native Firebase 26.x or earlier; React Native Firebase 27 will be supported in the next major version.
 
 # 2.8.1
 
