@@ -25,6 +25,8 @@ You can also look at the sample apps we have included for reference implementati
 
 > [!IMPORTANT]
 > 2.9.x is the last release that supports React Native's Old Architecture. See [compatibility](https://mobile-sdk.docs.ometria.com/react-native/installation#compatibility) for supported React Native Firebase versions.
+>
+> On iOS, the [Notification Service Extension](https://mobile-sdk.docs.ometria.com/react-native/push-notifications/notification-service-extension), with an App Group shared with your app, is required. The Expo plugin adds both for you.
 
 ## Quick start
 
