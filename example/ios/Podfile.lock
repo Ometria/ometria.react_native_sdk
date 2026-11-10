@@ -67,7 +67,7 @@ PODS:
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - Ometria (1.9.1):
+  - Ometria (1.9.3):
     - FirebaseMessaging
   - ometria-react-native-sdk (2.9.0):
     - boost
@@ -76,7 +76,7 @@ PODS:
     - fmt
     - glog
     - hermes-engine
-    - Ometria (= 1.9.1)
+    - Ometria (= 1.9.3)
     - RCT-Folly
     - RCT-Folly/Fabric
     - RCTRequired
@@ -2506,7 +2506,7 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - Ometria (= 1.9.1)
+  - Ometria (= 1.9.3)
   - ometria-react-native-sdk (from `../node_modules/react-native-ometria`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2769,8 +2769,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 7dc09b3fa9ecb5c2298b952313d14628b61b9da3
   hermes-engine: 9f4dfe93326146a1c99eb535b1cb0b857a3cd172
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  Ometria: d52f0535bf9afb5d4705a18243448bccd4f2c21e
-  ometria-react-native-sdk: db13f6e523e8b0a145879fcc107c5b79fb7dada3
+  Ometria: 540e8f7284b634b6f3fa74e205ca642bfd1f3924
+  ometria-react-native-sdk: 1dcb69c5e6d93cae2c4214e50c142f732427c461
   PromisesObjC: 752c3227f599e3467650e47ea36f433eeb10c273
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: 5eb1d2eeff5fb91151e8a8eef45b6c7658b6c897
@@ -2843,6 +2843,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: cc4a6600d61e4e9276e860d4d68eebb834a050ba
 
-PODFILE CHECKSUM: aaaec6fe674ee2412be1182039efc7a4c90dbaa3
+PODFILE CHECKSUM: 5d53fcd846eee4e56bf106099a1be2efa6cf1931
 
 COCOAPODS: 1.17.0
