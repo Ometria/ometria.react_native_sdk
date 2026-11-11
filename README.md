@@ -23,6 +23,9 @@ You can also look at the sample apps we have included for reference implementati
 
 **Before you begin**, visit the Ometria help centre and follow the steps there to get an API key. [Get an API key ↗](https://support.ometria.com/hc/en-gb/articles/360013658478-Setting-up-your-mobile-app-with-Firebase-credentials)
 
+> [!IMPORTANT]
+> 2.9.x is the last release that supports React Native's Old Architecture. See [compatibility](https://mobile-sdk.docs.ometria.com/react-native/installation#compatibility) for supported React Native Firebase versions.
+
 ## Quick start
 
 The recommended setup for new projects is Expo with the New Architecture.
@@ -44,7 +47,7 @@ npm install react-native-ometria
   "expo": {
     "plugins": [
       ["react-native-ometria"],
-      "@react-native-firebase/app",
+      ["@react-native-firebase/app", { "ios": { "disableSPM": true } }],
       "@react-native-firebase/messaging",
       [
         "expo-build-properties",

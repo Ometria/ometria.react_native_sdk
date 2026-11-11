@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import {
-  FirebaseMessagingTypes,
+  type RemoteMessage,
   getMessaging,
   getToken,
   onMessage,
@@ -144,9 +144,7 @@ const App = () => {
     });
 
     // D. Function that handles user interaction with push notifications event 🍏 & 🤖
-    const onNotificationOpenedApp = async (
-      remoteMessage: FirebaseMessagingTypes.RemoteMessage
-    ) => {
+    const onNotificationOpenedApp = async (remoteMessage: RemoteMessage) => {
       console.log('🔔 Notification has been interacted with and opened app.');
       setNotificationContent(JSON.stringify(remoteMessage, null, 2));
 

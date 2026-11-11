@@ -1,17 +1,15 @@
 import { Platform } from 'react-native';
-import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 
 import type {
   NativeModuleType,
   OmetriaNotificationData,
   OmetriaOnBackgroundMessagePayload,
+  OmetriaRemoteMessage,
 } from '../types';
 import { withParsedOmetriaPayload, parseOmetriaData } from '../utils';
 
 export const createNotificationMethods = (OmetriaSDK: NativeModuleType) => {
-  const onNotificationReceived = (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ) => {
+  const onNotificationReceived = (remoteMessage: OmetriaRemoteMessage) => {
     const payload =
       Platform.OS === 'ios'
         ? withParsedOmetriaPayload(remoteMessage)
@@ -22,7 +20,7 @@ export const createNotificationMethods = (OmetriaSDK: NativeModuleType) => {
   };
 
   const parseNotification = async (
-    notification: FirebaseMessagingTypes.RemoteMessage
+    notification: OmetriaRemoteMessage
   ): Promise<OmetriaNotificationData | undefined> => {
     if (Platform.OS === 'android') {
       const parsed = (await OmetriaSDK.parseNotification(
@@ -37,7 +35,7 @@ export const createNotificationMethods = (OmetriaSDK: NativeModuleType) => {
   };
 
   const onNotificationOpenedApp = async (
-    notification: FirebaseMessagingTypes.RemoteMessage
+    notification: OmetriaRemoteMessage
   ) => {
     const payload =
       Platform.OS === 'ios'

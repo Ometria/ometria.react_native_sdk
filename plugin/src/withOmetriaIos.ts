@@ -1,5 +1,6 @@
 import {
   ConfigPlugin,
+  withAppDelegate,
   withEntitlementsPlist,
   withInfoPlist,
   withPodfile,
@@ -129,22 +130,15 @@ const withOmetriaInfoPlist: ConfigPlugin<InternalPluginProps> = (
  */
 const withOmetriaPodfile: ConfigPlugin<InternalPluginProps> = (config, props) => {
   return withPodfile(config, (modConfig) => {
-    // Warn if Firebase is detected — user must configure it via expo-build-properties
-    const projectRoot = (config as any)._internal?.projectRoot ?? process.cwd();
-    const pkgPath = path.join(projectRoot, 'package.json');
-    try {
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) ?? {};
-      const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-      if (deps['@react-native-firebase/app']) {
-        console.warn(
-          '[react-native-ometria] Firebase detected. Add expo-build-properties with ' +
-          '"useFrameworks": "static" and "forceStaticLinking" for RNFB pods to your app.json, ' +
-          'and add "@react-native-firebase/app" to your plugins array. ' +
-          'See: https://rnfirebase.io (Expo setup section).'
-        );
-      }
-    } catch {
-      // ignore — package.json unreadable
+    // Remind about the iOS settings React Native Firebase needs with Ometria 2.x
+    if (hasReactNativeFirebase(modConfig.modRequest.projectRoot)) {
+      console.warn(
+        '[react-native-ometria] React Native Firebase detected. On iOS, Ometria 2.x needs static linking: ' +
+          'set "useFrameworks": "static" and "forceStaticLinking": ["RNFBApp", "RNFBMessaging"] in expo-build-properties, ' +
+          'and with React Native Firebase 26.1 or later also set { "ios": { "disableSPM": true } } on the ' +
+          '"@react-native-firebase/app" plugin. React Native Firebase 27 isn\'t supported on 2.x; it will be in the next major version. ' +
+          'See: https://mobile-sdk.docs.ometria.com/react-native/installation'
+      );
     }
 
     let podfile = modConfig.modResults.contents;
@@ -170,6 +164,119 @@ const withOmetriaPodfile: ConfigPlugin<InternalPluginProps> = (config, props) =>
     return modConfig;
   });
 };
+
+function hasReactNativeFirebase(projectRoot: string): boolean {
+  try {
+    const pkgPath = path.join(projectRoot, 'package.json');
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) ?? {};
+    const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+    return Boolean(deps['@react-native-firebase/app']);
+  } catch {
+    // ignore — package.json unreadable
+    return false;
+  }
+}
+
+/**
+ * Makes sure FirebaseApp.configure() runs at launch on Expo apps using React Native Firebase.
+ *
+ * Problem: Expo SDK 58 moved to a scene-based AppDelegate (SceneDelegate starts React Native).
+ * @react-native-firebase/app's config plugin up to 26.x looks for `factory.startReactNative(`,
+ * doesn't find it and skips FirebaseApp.configure() with only a prebuild warning, so Firebase
+ * never initialises and no FCM token is issued. The fix only ships in RNFB 27, which Ometria 2.x
+ * can't use (RNFB 27 is SPM-only).
+ *
+ * Solution: insert the call ourselves when it's missing, using the same anchors as RNFB 27.
+ * If RNFB's plugin already inserted it (Expo <= 57, or RNFB 27+), this is a no-op.
+ */
+const withOmetriaFirebaseConfigure: ConfigPlugin = (config) => {
+  return withAppDelegate(config, (modConfig) => {
+    if (
+      !shouldAddFirebaseConfigure(
+        modConfig.modResults.language,
+        modConfig.ios?.googleServicesFile,
+        modConfig.modRequest.projectRoot
+      )
+    ) {
+      return modConfig;
+    }
+
+    const contents = addFirebaseConfigure(modConfig.modResults.contents);
+    if (contents !== modConfig.modResults.contents) {
+      console.log(
+        '[react-native-ometria] Added FirebaseApp.configure() to AppDelegate.swift ' +
+          '(the @react-native-firebase/app plugin skipped it; its "Skipping Firebase addition" warning can be ignored).'
+      );
+    }
+    modConfig.modResults.contents = contents;
+    return modConfig;
+  });
+};
+
+/**
+ * Only Swift AppDelegates of apps that use React Native Firebase with a GoogleService-Info.plist
+ * get FirebaseApp.configure(); without the plist, configure() would crash at launch.
+ */
+export function shouldAddFirebaseConfigure(
+  language: string,
+  googleServicesFile: string | undefined,
+  projectRoot: string
+): boolean {
+  return (
+    language === 'swift' &&
+    Boolean(googleServicesFile) &&
+    hasReactNativeFirebase(projectRoot)
+  );
+}
+
+const FIREBASE_CONFIGURE_ANCHOR =
+  /(?:self\.moduleName\s*=\s*"[^"]*")|(?:factory\.startReactNative\()|(?:return\s+super\.application\(\s*application\s*,\s*didFinishLaunchingWithOptions:\s*launchOptions\s*\))/;
+
+// `import FirebaseCore` or the `Firebase` umbrella, with any attributes or access level
+const FIREBASE_IMPORT =
+  /^[ \t]*(?:@\w+[ \t]+)*(?:(?:public|package|internal|fileprivate|private)[ \t]+)?import[ \t]+(?:FirebaseCore|Firebase)\b/m;
+
+export function addFirebaseConfigure(appDelegate: string): string {
+  if (/FirebaseApp\.configure\(/.test(appDelegate)) {
+    return appDelegate;
+  }
+
+  const anchor = appDelegate.match(FIREBASE_CONFIGURE_ANCHOR);
+  if (!anchor || anchor.index === undefined) {
+    console.warn(
+      '[react-native-ometria] Could not find where to add FirebaseApp.configure() in AppDelegate.swift. ' +
+        'Add it manually to application(_:didFinishLaunchingWithOptions:), otherwise push notifications will not work.'
+    );
+    return appDelegate;
+  }
+
+  const lineStart = appDelegate.lastIndexOf('\n', anchor.index) + 1;
+  const indent = appDelegate.slice(lineStart).match(/^[ \t]*/)?.[0] ?? '';
+  let contents =
+    appDelegate.slice(0, lineStart) +
+    `${indent}// [Ometria] Configure Firebase (RNFB <= 26 skips this on Expo 58+)\n` +
+    `${indent}if FirebaseApp.app() == nil {\n` +
+    `${indent}  FirebaseApp.configure()\n` +
+    `${indent}}\n` +
+    appDelegate.slice(lineStart);
+
+  if (!FIREBASE_IMPORT.test(contents)) {
+    const importAnchor =
+      contents.match(/^[ \t]*(?:internal\s+)?import\s+Expo[ \t]*$/m) ??
+      contents.match(/^[ \t]*import\b[^\r\n]*$/m);
+    if (importAnchor && importAnchor.index !== undefined) {
+      const insertIndex = importAnchor.index + importAnchor[0].length;
+      contents =
+        contents.slice(0, insertIndex) +
+        '\nimport FirebaseCore' +
+        contents.slice(insertIndex);
+    } else {
+      contents = `import FirebaseCore\n${contents}`;
+    }
+  }
+
+  return contents;
+}
 
 function addTurboModuleRequire(podfile: string): string {
   const requireStatement =
@@ -367,6 +474,9 @@ export const withOmetriaIos: ConfigPlugin<IosPluginProps> = (config, props) => {
 
   // Modify Podfile
   config = withOmetriaPodfile(config, internalProps);
+
+  // Make sure Firebase is configured at launch (RNFB <= 26 skips it on Expo 58+)
+  config = withOmetriaFirebaseConfigure(config);
 
   // Add Notification Service Extension (only if not skipped and appGroupIdentifier is available)
   if (!skipNSE && appGroupIdentifier) {

@@ -1,13 +1,10 @@
-import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-
 import type {
   OmetriaNotificationData,
   OmetriaOnBackgroundMessagePayload,
+  OmetriaRemoteMessage,
 } from '../types';
 
-const deprecatedOnMessageReceived = (
-  _remoteMessage: FirebaseMessagingTypes.RemoteMessage
-) => {
+const deprecatedOnMessageReceived = (_remoteMessage: OmetriaRemoteMessage) => {
   console.warn(
     'onMessageReceived is deprecated. Use your own implementation to listen for new notifications. Call onNotificationReceived for Android to let the SDK know that the notification was received.'
   );

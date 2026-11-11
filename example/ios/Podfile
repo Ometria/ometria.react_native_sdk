@@ -56,6 +56,8 @@ setup_permissions(['Notifications'])
 # The post_install fixes below are the current known solution for this stack.
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
+# Firebase 12.19.0 is the last Firebase release with FirebaseMessaging on CocoaPods (13.x is SPM only)
+$FirebaseSDKVersion = '12.19.0'
 # </OmetriaSetup>
 
 target 'sampleApp' do
@@ -360,6 +362,6 @@ end
 # Notification Service Extension target
 target 'NotificationsService' do
   use_frameworks! :linkage => :static
-  pod 'Ometria', '1.8.9' # Keep in sync with ometria_sdk_version.ios in package.json
+  pod 'Ometria', '1.9.3' # Keep in sync with ometria_sdk_version.ios in package.json
 end
 # </OmetriaSetup>

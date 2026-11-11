@@ -2,6 +2,8 @@ import { NativeModules } from 'react-native';
 
 import { LINKING_ERROR } from './utils';
 import NativeOmetriaReactNativeSdk, {
+  isNewArchitecture,
+  isRunningInJest,
   isTurboModuleEnabled,
 } from './NativeOmetriaReactNativeSdk';
 import {
@@ -17,6 +19,7 @@ import type {
   OmetriaNotificationData,
   OmetriaOptions,
   OmetriaReactNativeSdkType,
+  OmetriaRemoteMessage,
 } from './types';
 
 const OmetriaSDK = (
@@ -27,6 +30,14 @@ const OmetriaSDK = (
 
 if (!OmetriaSDK) {
   throw new Error(LINKING_ERROR);
+}
+
+// 2.9.x is the last release line that supports the Old Architecture
+if (__DEV__ && !isNewArchitecture && !isRunningInJest) {
+  console.warn(
+    '[react-native-ometria] The Old Architecture is deprecated. 2.9.x is the last version that supports it; ' +
+      'the next major version will require the New Architecture. Old Architecture apps can stay on 2.9.x.'
+  );
 }
 
 const OmetriaReactNativeSdk: OmetriaReactNativeSdkType = {
@@ -43,4 +54,5 @@ export {
   OmetriaNotification,
   OmetriaNotificationData,
   OmetriaOptions,
+  OmetriaRemoteMessage,
 };

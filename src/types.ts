@@ -1,5 +1,3 @@
-import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-
 import type { Spec as NativeOmetriaReactNativeSdkSpec } from './NativeOmetriaReactNativeSdk';
 
 export type NativeModuleType = NativeOmetriaReactNativeSdkSpec & {
@@ -123,9 +121,7 @@ type OmetriaReactNativeSdkCoreType = {
    * Function to call when the app is opened from a notification (quit or background state)
    * @param notification - {remoteMessage: RemoteMessage}
    */
-  onNotificationOpenedApp: (
-    notification: FirebaseMessagingTypes.RemoteMessage
-  ) => void;
+  onNotificationOpenedApp: (notification: OmetriaRemoteMessage) => void;
 
   /**
    * Only for Android
@@ -140,9 +136,7 @@ type OmetriaReactNativeSdkCoreType = {
    * Function to call when a notification is received in the foreground state
    * @param handler - Function that will be called when a notification is received
    */
-  onNotificationReceived: (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ) => void;
+  onNotificationReceived: (remoteMessage: OmetriaRemoteMessage) => void;
 
   /**
    * Function to parse the notification from the Firebase SDK
@@ -150,7 +144,7 @@ type OmetriaReactNativeSdkCoreType = {
    * @returns Promise with the parsed notification data
    */
   parseNotification: (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage
+    remoteMessage: OmetriaRemoteMessage
   ) => Promise<OmetriaNotificationData | undefined>;
 };
 
@@ -170,7 +164,7 @@ type OmetriaReactNativeSdkDeprecatedType = {
    * Call the new method `onNotificationReceived` for Android to let the SDK know that the notification was received.
    * Will be removed in the next major version.
    */
-  onMessageReceived(remoteMessage: FirebaseMessagingTypes.RemoteMessage): void;
+  onMessageReceived(remoteMessage: OmetriaRemoteMessage): void;
 
   /**
    * Only for iOS
@@ -220,8 +214,17 @@ export type OmetriaOptions = {
   appGroupIdentifier?: string;
 };
 
+/**
+ * A push message as delivered by @react-native-firebase/messaging (its `RemoteMessage`).
+ * Declared here instead of importing RNFB's type so the SDK works with every RNFB version:
+ * RNFB 26 removed the `FirebaseMessagingTypes` namespace that older versions export.
+ */
+export interface OmetriaRemoteMessage {
+  data?: { [key: string]: string | object };
+}
+
 export type OmetriaNotification = {
-  remoteMessage: FirebaseMessagingTypes.RemoteMessage;
+  remoteMessage: OmetriaRemoteMessage;
 };
 
 export interface OmetriaOnBackgroundMessagePayload extends OmetriaNotification {

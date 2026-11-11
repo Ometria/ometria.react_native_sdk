@@ -5,7 +5,8 @@
   "types": "build/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf build"
+    "clean": "rm -rf build",
+    "test": "tsc && node --test test/*.test.js"
   },
   "devDependencies": {
     "@expo/config-plugins": "^9.0.0",

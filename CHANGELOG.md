@@ -1,3 +1,14 @@
+# 2.9.0
+
+2026-11
+
+- **Deprecated the Old Architecture.** 2.9.x is the last release line that supports it; the next major version will require the New Architecture. Development builds log a one-time warning on the Old Architecture.
+- Fixed push notifications on Expo SDK 58 with React Native Firebase 26 or earlier: the Expo plugin now adds `FirebaseApp.configure()` when React Native Firebase's plugin skips it. If you added it yourself as a workaround, remove it.
+- Fixed TypeScript types with React Native Firebase 26, and exported the new `OmetriaRemoteMessage` type.
+- Fixed the missing React Native SDK version on `notificationReceived` events sent by the iOS Notification Service Extension.
+- Updated native Ometria SDKs: 🍏 iOS 1.9.3 & 🤖 Android 1.11.5. iOS 1.9.3 fixes duplicate `notificationReceived` events and makes the Notification Service Extension send them on time.
+- Updated the Expo sample app to Expo SDK 58 (React Native 0.88.1) and React Native Firebase 26.4.1. On 2.x, use React Native Firebase 26.x or earlier; version 27 will be supported in the next major version.
+
 # 2.8.1
 
 2026-07
